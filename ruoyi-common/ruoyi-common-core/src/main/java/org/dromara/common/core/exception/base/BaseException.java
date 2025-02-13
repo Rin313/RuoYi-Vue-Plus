@@ -1,11 +1,11 @@
 package org.dromara.common.core.exception.base;
 
 import lombok.AllArgsConstructor;
-import org.dromara.common.core.utils.MessageUtils;
-import org.dromara.common.core.utils.StringUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.dromara.common.core.utils.MessageUtils;
+import org.dromara.common.core.utils.StringUtils;
 
 import java.io.Serial;
 

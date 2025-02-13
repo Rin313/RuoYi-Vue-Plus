@@ -1,10 +1,10 @@
 package org.dromara.system.domain.bo;
 
-import org.dromara.common.mybatis.core.domain.BaseEntity;
-import org.dromara.system.domain.SysOss;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
+import org.dromara.system.domain.SysOss;
 
 /**
  * OSS对象存储分页查询对象 sys_oss
