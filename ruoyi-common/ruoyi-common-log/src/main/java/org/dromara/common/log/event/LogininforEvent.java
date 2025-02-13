@@ -1,8 +1,7 @@
 package org.dromara.common.log.event;
 
-import lombok.Data;
-
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,11 +17,6 @@ public class LogininforEvent implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
-    /**
-     * 租户ID
-     */
-    private String tenantId;
 
     /**
      * 用户账号

@@ -1,11 +1,11 @@
 package org.dromara.system.service.impl;
 
-import org.dromara.common.core.constant.TenantConstants;
+import lombok.RequiredArgsConstructor;
+import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.service.ISysMenuService;
 import org.dromara.system.service.ISysPermissionService;
 import org.dromara.system.service.ISysRoleService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -34,7 +34,7 @@ public class SysPermissionServiceImpl implements ISysPermissionService {
         Set<String> roles = new HashSet<>();
         // 管理员拥有所有权限
         if (LoginHelper.isSuperAdmin(userId)) {
-            roles.add(TenantConstants.SUPER_ADMIN_ROLE_KEY);
+            roles.add(SystemConstants.SUPER_ADMIN_ROLE_KEY);
         } else {
             roles.addAll(roleService.selectRolePermissionByUserId(userId));
         }

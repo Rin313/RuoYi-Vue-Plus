@@ -47,21 +47,16 @@ public class OssFactory {
             throw new OssException("系统异常, '" + configKey + "'配置信息不存在!");
         }
         OssProperties properties = JsonUtils.parseObject(json, OssProperties.class);
-        // 使用租户标识避免多个租户相同key实例覆盖
-        String key = configKey;
-        if (StringUtils.isNotBlank(properties.getTenantId())) {
-            key = properties.getTenantId() + ":" + configKey;
-        }
-        OssClient client = CLIENT_CACHE.get(key);
+        OssClient client = CLIENT_CACHE.get(configKey);
         // 客户端不存在或配置不相同则重新构建
         if (client == null || !client.checkPropertiesSame(properties)) {
             LOCK.lock();
             try {
-                client = CLIENT_CACHE.get(key);
+                client = CLIENT_CACHE.get(configKey);
                 if (client == null || !client.checkPropertiesSame(properties)) {
-                    CLIENT_CACHE.put(key, new OssClient(configKey, properties));
+                    CLIENT_CACHE.put(configKey, new OssClient(configKey, properties));
                     log.info("创建OSS实例 key => {}", configKey);
-                    return CLIENT_CACHE.get(key);
+                    return CLIENT_CACHE.get(configKey);
                 }
             } finally {
                 LOCK.unlock();

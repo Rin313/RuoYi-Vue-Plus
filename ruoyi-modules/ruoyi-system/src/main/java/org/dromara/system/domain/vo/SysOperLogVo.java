@@ -2,11 +2,11 @@ package org.dromara.system.domain.vo;
 
 import com.alibaba.excel.annotation.ExcelIgnoreUnannotated;
 import com.alibaba.excel.annotation.ExcelProperty;
+import io.github.linpeilie.annotations.AutoMapper;
+import lombok.Data;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
 import org.dromara.common.excel.convert.ExcelDictConvert;
 import org.dromara.system.domain.SysOperLog;
-import io.github.linpeilie.annotations.AutoMapper;
-import lombok.Data;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -32,11 +32,6 @@ public class SysOperLogVo implements Serializable {
      */
     @ExcelProperty(value = "日志主键")
     private Long operId;
-
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 模块标题

@@ -1,10 +1,10 @@
 package org.dromara.demo.domain;
 
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.dromara.common.encrypt.annotation.EncryptField;
-import org.dromara.common.encrypt.enumd.AlgorithmType;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.dromara.common.encrypt.annotation.EncryptField;
+import org.dromara.common.encrypt.enumd.AlgorithmType;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

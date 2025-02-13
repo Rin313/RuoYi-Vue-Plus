@@ -121,22 +121,6 @@ security:
     - /*/api-docs/**
     - /warm-flow-ui/token-name
 
-# 多租户配置
-tenant:
-  # 是否开启
-  enable: true
-  # 排除表
-  excludes:
-    - sys_menu
-    - sys_tenant
-    - sys_tenant_package
-    - sys_role_dept
-    - sys_role_menu
-    - sys_user_post
-    - sys_user_role
-    - sys_client
-    - sys_oss_config
-
 # MyBatisPlus配置
 # https://baomidou.com/config/
 mybatis-plus:
@@ -191,7 +175,7 @@ springdoc:
 #    persistAuthorization: true
   info:
     # 标题
-    title: '标题：${ruoyi.name}多租户管理系统_接口文档'
+    title: '标题：${ruoyi.name}管理系统_接口文档'
     # 描述
     description: '描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...'
     # 版本

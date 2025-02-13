@@ -1,8 +1,8 @@
 package org.dromara.common.core.enums;
 
-import org.dromara.common.core.utils.StringUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.dromara.common.core.utils.StringUtils;
 
 /**
  * 设备类型

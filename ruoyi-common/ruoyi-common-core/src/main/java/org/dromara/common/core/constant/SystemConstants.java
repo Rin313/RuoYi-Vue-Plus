@@ -68,6 +68,16 @@ public interface SystemConstants {
     String INNER_LINK = "InnerLink";
 
     /**
+     * 超级管理员角色 roleKey
+     */
+    String SUPER_ADMIN_ROLE_KEY = "superadmin";
+
+    /**
+     * 管理员角色 roleKey （保留 roleKey）
+     */
+    String ADMIN_ROLE_KEY = "admin";
+
+    /**
      * 超级管理员ID
      */
     Long SUPER_ADMIN_ID = 1L;

@@ -1,11 +1,11 @@
 package org.dromara.common.translation.core.impl;
 
+import lombok.AllArgsConstructor;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.translation.annotation.TranslationType;
 import org.dromara.common.translation.constant.TransConstant;
 import org.dromara.common.translation.core.TranslationInterface;
-import lombok.AllArgsConstructor;
 
 /**
  * 字典翻译实现

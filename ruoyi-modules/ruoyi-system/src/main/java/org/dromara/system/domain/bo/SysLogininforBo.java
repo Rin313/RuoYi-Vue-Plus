@@ -1,8 +1,8 @@
 package org.dromara.system.domain.bo;
 
-import org.dromara.system.domain.SysLogininfor;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
+import org.dromara.system.domain.SysLogininfor;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -22,11 +22,6 @@ public class SysLogininforBo {
      * 访问ID
      */
     private Long infoId;
-
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 用户账号

@@ -47,7 +47,7 @@ public interface IFlwTaskService {
     TableDataInfo<FlowTaskVo> pageByTaskWait(FlowTaskBo flowTaskBo, PageQuery pageQuery);
 
     /**
-     * 查询当前租户所有待办任务
+     * 查询所有待办任务
      *
      * @param flowTaskBo 参数
      * @param pageQuery  分页
