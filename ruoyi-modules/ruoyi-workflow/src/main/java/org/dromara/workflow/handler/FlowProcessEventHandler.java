@@ -1,9 +1,9 @@
 package org.dromara.workflow.handler;
 
 import lombok.extern.slf4j.Slf4j;
+import org.dromara.common.core.domain.event.ProcessCreateTaskEvent;
 import org.dromara.common.core.domain.event.ProcessDeleteEvent;
 import org.dromara.common.core.domain.event.ProcessEvent;
-import org.dromara.common.core.domain.event.ProcessTaskEvent;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ import java.util.Map;
 public class FlowProcessEventHandler {
 
     /**
-     * 总体流程监听(例如: 草稿，撤销，退回，作废，终止，已完成等)
+     * 总体流程监听(例如: 草稿，撤销，退回，作废，终止，已完成，单任务完成等)
      *
      * @param flowCode   流程定义编码
      * @param businessId 业务id
@@ -41,21 +41,21 @@ public class FlowProcessEventHandler {
     }
 
     /**
-     * 执行办理任务监听
+     * 执行创建任务监听
      *
      * @param flowCode   流程定义编码
      * @param nodeCode   审批节点编码
      * @param taskId     任务id
      * @param businessId 业务id
      */
-    public void processTaskHandler(String flowCode, String nodeCode, Long taskId, String businessId) {
+    public void processCreateTaskHandler(String flowCode, String nodeCode, Long taskId, String businessId) {
         log.info("发布流程任务事件, 流程编码: {}, 节点编码: {}, 任务ID: {}, 业务ID: {}", flowCode, nodeCode, taskId, businessId);
-        ProcessTaskEvent processTaskEvent = new ProcessTaskEvent();
-        processTaskEvent.setFlowCode(flowCode);
-        processTaskEvent.setNodeCode(nodeCode);
-        processTaskEvent.setTaskId(taskId);
-        processTaskEvent.setBusinessId(businessId);
-        SpringUtils.context().publishEvent(processTaskEvent);
+        ProcessCreateTaskEvent processCreateTaskEvent = new ProcessCreateTaskEvent();
+        processCreateTaskEvent.setFlowCode(flowCode);
+        processCreateTaskEvent.setNodeCode(nodeCode);
+        processCreateTaskEvent.setTaskId(taskId);
+        processCreateTaskEvent.setBusinessId(businessId);
+        SpringUtils.context().publishEvent(processCreateTaskEvent);
     }
 
     /**
