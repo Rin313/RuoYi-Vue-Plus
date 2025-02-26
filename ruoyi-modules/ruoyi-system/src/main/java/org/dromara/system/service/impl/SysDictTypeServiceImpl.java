@@ -124,6 +124,7 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @param dictType 字典类型
      * @return 字典类型
      */
+    @Cacheable(cacheNames = CacheNames.SYS_DICT_TYPE, key = "#dictType")
     @Override
     public SysDictTypeVo selectDictTypeByType(String dictType) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysDictType>().eq(SysDictType::getDictType, dictType));
@@ -143,6 +144,7 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
                 throw new ServiceException(String.format("%1$s已分配,不能删除", dictType.getDictName()));
             }
             CacheUtils.evict(CacheNames.SYS_DICT, dictType.getDictType());
+            CacheUtils.evict(CacheNames.SYS_DICT_TYPE, dictType.getDictType());
         }
         baseMapper.deleteByIds(Arrays.asList(dictIds));
     }
@@ -153,6 +155,7 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
     @Override
     public void resetDictCache() {
         CacheUtils.clear(CacheNames.SYS_DICT);
+        CacheUtils.clear(CacheNames.SYS_DICT_TYPE);
     }
 
     /**
@@ -191,6 +194,7 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
         int row = baseMapper.updateById(dict);
         if (row > 0) {
             CacheUtils.evict(CacheNames.SYS_DICT, oldDict.getDictType());
+            CacheUtils.evict(CacheNames.SYS_DICT_TYPE, oldDict.getDictType());
             return dictDataMapper.selectDictDataByType(dict.getDictType());
         }
         throw new ServiceException("操作失败");

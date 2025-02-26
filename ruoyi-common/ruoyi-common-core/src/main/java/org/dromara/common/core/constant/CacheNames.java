@@ -31,6 +31,11 @@ public interface CacheNames {
     String SYS_DICT = "sys_dict";
 
     /**
+     * 数据字典类型
+     */
+    String SYS_DICT_TYPE = "sys_dict_type";
+
+    /**
      * 客户端
      */
     String SYS_CLIENT = GlobalConstants.GLOBAL_REDIS_KEY + "sys_client#30d";
