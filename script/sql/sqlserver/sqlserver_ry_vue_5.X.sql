@@ -1969,7 +1969,7 @@ EXEC sys.sp_addextendedproperty
     'COLUMN', N'role_sort'
 GO
 EXEC sys.sp_addextendedproperty
-    'MS_Description', N'数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限）' ,
+    'MS_Description', N'数据范围（1：全部数据权限 2：自定数据权限 3：本部门数据权限 4：本部门及以下数据权限 5：仅本人数据权限 6：部门及以下或本人数据权限）' ,
     'SCHEMA', N'dbo',
     'TABLE', N'sys_role',
     'COLUMN', N'data_scope'
