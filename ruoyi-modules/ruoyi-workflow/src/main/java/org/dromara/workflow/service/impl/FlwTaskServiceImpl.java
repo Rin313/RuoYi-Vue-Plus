@@ -30,6 +30,8 @@ import org.dromara.warm.flow.core.entity.*;
 import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.service.*;
+import org.dromara.warm.flow.core.utils.ExpressionUtil;
+import org.dromara.warm.flow.core.utils.MapUtil;
 import org.dromara.warm.flow.orm.entity.*;
 import org.dromara.warm.flow.orm.mapper.FlowHisTaskMapper;
 import org.dromara.warm.flow.orm.mapper.FlowInstanceMapper;
@@ -45,6 +47,7 @@ import org.dromara.workflow.handler.FlowProcessEventHandler;
 import org.dromara.workflow.handler.WorkflowPermissionHandler;
 import org.dromara.workflow.mapper.FlwCategoryMapper;
 import org.dromara.workflow.mapper.FlwTaskMapper;
+import org.dromara.workflow.service.IFlwTaskAssigneeService;
 import org.dromara.workflow.service.IFlwTaskService;
 import org.dromara.workflow.utils.WorkflowUtils;
 import org.springframework.stereotype.Service;
@@ -81,6 +84,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
     private final FlwTaskMapper flwTaskMapper;
     private final FlwCategoryMapper flwCategoryMapper;
     private final FlowNodeMapper flowNodeMapper;
+    private final IFlwTaskAssigneeService flwTaskAssigneeService;
 
     /**
      * 启动任务
@@ -491,11 +495,47 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         flowTaskVo.setBusinessId(instance.getBusinessId());
         //设置按钮权限
         FlowNode flowNode = getByNodeCode(flowTaskVo.getNodeCode(), instance.getDefinitionId());
-        if (ObjectUtil.isNotNull(flowNode)) {
-            flowTaskVo.setButtonList(flowTaskVo.getButtonList(flowNode.getExt()));
-            flowTaskVo.setNodeRatio(flowNode.getNodeRatio());
+        if (ObjectUtil.isNull(flowNode)) {
+            throw new NullPointerException("当前【" + flowTaskVo.getNodeCode() + "】节点编码不存在");
         }
+        flowTaskVo.setButtonList(flowTaskVo.getButtonList(flowNode.getExt()));
+        flowTaskVo.setNodeRatio(flowNode.getNodeRatio());
+        flowTaskVo.setApplyNode(flowNode.getNodeCode().equals(WorkflowUtils.applyNodeCode(task.getDefinitionId())));
         return flowTaskVo;
+    }
+
+    /**
+     * 获取下一节点信息
+     *
+     * @param bo 参数
+     */
+    @Override
+    public List<FlowNode> getNextNodeList(FlowNextNodeBo bo) {
+        String taskId = bo.getTaskId();
+        Map<String, Object> variables = bo.getVariables();
+        Task task = taskService.getById(taskId);
+        Instance instance = insService.getById(task.getInstanceId());
+        Definition definition = defService.getById(task.getDefinitionId());
+        //获取下一节点列表
+        List<Node> nextNodeList = nodeService.getNextNodeList(task.getDefinitionId(), task.getNodeCode(), null, SkipType.PASS.getKey(), variables);
+        if (CollUtil.isNotEmpty(nextNodeList)) {
+            //构建以下节点数据
+            List<Task> buildTaskList = StreamUtils.toList(nextNodeList, node -> taskService.addTask(node, instance, definition, null));
+            //办理人变量替换
+            ExpressionUtil.evalVariable(buildTaskList, MapUtil.mergeAll(instance.getVariableMap(), variables));
+            for (Node nextNode : nextNodeList) {
+                buildTaskList.stream().filter(t -> t.getNodeCode().equals(nextNode.getNodeCode())).findFirst().ifPresent(t -> {
+                    nextNode.setPermissionFlag(StringUtils.join(t.getPermissionList(), StringUtils.SEPARATOR));
+                });
+            }
+            List<FlowNode> flowNodes = BeanUtil.copyToList(nextNodeList, FlowNode.class);
+            for (FlowNode flowNode : flowNodes) {
+                if (StringUtils.isNotBlank(flowNode.getPermissionFlag())) {
+                    flwTaskAssigneeService.fetchUsersByStorageId(flowNode.getPermissionFlag());
+                }
+            }
+        }
+        return BeanUtil.copyToList(nextNodeList, FlowNode.class);
     }
 
     /**
@@ -580,10 +620,11 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         }
 
         Long taskId = bo.getTaskId();
-        FlowTaskVo flowTaskVo = selectById(taskId);
+        Task task = taskService.getById(taskId);
+        FlowNode flowNode = getByNodeCode(task.getNodeCode(), task.getDefinitionId());
         if ("addSignature".equals(taskOperation) || "reductionSignature".equals(taskOperation)) {
-            if (flowTaskVo.getNodeRatio().compareTo(BigDecimal.ZERO) == 0) {
-                throw new ServiceException(flowTaskVo.getNodeName() + "不是会签节点！");
+            if (flowNode.getNodeRatio().compareTo(BigDecimal.ZERO) == 0) {
+                throw new ServiceException(task.getNodeName() + "不是会签节点！");
             }
         }
         // 设置任务状态并执行对应的任务操作
