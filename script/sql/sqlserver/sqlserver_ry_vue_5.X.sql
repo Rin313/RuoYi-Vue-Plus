@@ -2566,6 +2566,7 @@ CREATE TABLE sys_oss
     original_name nvarchar(255) DEFAULT ''        NOT NULL,
     file_suffix   nvarchar(10)  DEFAULT ''        NOT NULL,
     url           nvarchar(500)                   NOT NULL,
+    ext1          nvarchar(255) DEFAULT ''        NULL,
     create_dept   bigint                          NULL,
     create_time   datetime2(7)                    NULL,
     create_by     bigint                          NULL,
@@ -2608,6 +2609,12 @@ EXEC sp_addextendedproperty
     'SCHEMA', N'dbo',
     'TABLE', N'sys_oss',
     'COLUMN', N'url'
+GO
+EXEC sp_addextendedproperty
+    'MS_Description', N'扩展字段',
+    'SCHEMA', N'dbo',
+    'TABLE', N'sys_oss',
+    'COLUMN', N'ext1'
 GO
 EXEC sys.sp_addextendedproperty
     'MS_Description', N'创建部门' ,
