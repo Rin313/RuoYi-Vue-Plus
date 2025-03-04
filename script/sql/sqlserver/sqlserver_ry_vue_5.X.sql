@@ -2566,7 +2566,7 @@ CREATE TABLE sys_oss
     original_name nvarchar(255) DEFAULT ''        NOT NULL,
     file_suffix   nvarchar(10)  DEFAULT ''        NOT NULL,
     url           nvarchar(500)                   NOT NULL,
-    ext1          nvarchar(255) DEFAULT ''        NULL,
+    ext1          nvarchar(500) DEFAULT ''        NULL,
     create_dept   bigint                          NULL,
     create_time   datetime2(7)                    NULL,
     create_by     bigint                          NULL,

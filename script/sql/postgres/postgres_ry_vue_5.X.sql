@@ -1031,7 +1031,7 @@ create table if not exists sys_oss
     original_name varchar(255) default ''::varchar not null,
     file_suffix   varchar(10)  default ''::varchar not null,
     url           varchar(500) default ''::varchar not null,
-    ext1          varchar(255) default ''::varchar,
+    ext1          varchar(500) default ''::varchar,
     create_dept   int8,
     create_by     int8,
     create_time   timestamp,
