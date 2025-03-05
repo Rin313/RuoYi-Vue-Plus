@@ -587,9 +587,11 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
             ExpressionUtil.evalVariable(buildNextTaskList, MapUtil.mergeAll(instance.getVariableMap(), variables));
             for (FlowNode flowNode : nextFlowNodes) {
                 buildNextTaskList.stream().filter(t -> t.getNodeCode().equals(flowNode.getNodeCode())).findFirst().ifPresent(t -> {
-                    List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageId(flowNode.getPermissionFlag());
-                    if (CollUtil.isNotEmpty(users)) {
-                        flowNode.setPermissionFlag(StreamUtils.join(users, e -> String.valueOf(e.getUserId())));
+                    if (CollUtil.isNotEmpty(t.getPermissionList())) {
+                        List<UserDTO> users = flwTaskAssigneeService.fetchUsersByStorageId(String.join(StringUtils.SEPARATOR, t.getPermissionList()));
+                        if (CollUtil.isNotEmpty(users)) {
+                            flowNode.setPermissionFlag(StreamUtils.join(users, e -> String.valueOf(e.getUserId())));
+                        }
                     }
                 });
             }
