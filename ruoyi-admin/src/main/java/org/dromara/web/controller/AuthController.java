@@ -41,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -178,6 +179,18 @@ public class AuthController {
         }
         registerService.register(user);
         return R.ok();
+    }
+
+    /**
+     * 登录页面租户下拉框（兼容多租户前端）
+     */
+    @GetMapping("/tenant/list")
+    public R<Map<String, Boolean>> tenantList() {
+        // 返回对象
+        Map<String, Boolean> result = new ConcurrentHashMap<>();
+        // 租户开关响应false（即关闭），让前端关闭租户功能
+        result.put("tenantEnabled", false);
+        return R.ok(result);
     }
 
 }
