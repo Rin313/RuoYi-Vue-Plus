@@ -1,5 +1,6 @@
 package org.dromara.system.service.impl;
 
+import cn.hutool.core.convert.Convert;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.dto.TaskAssigneeDTO;
 import org.dromara.common.core.domain.model.TaskAssigneeBody;
@@ -75,7 +76,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         Map<String, Object> params = bo.getParams();
         params.put("beginTime", taskQuery.getBeginTime());
         params.put("endTime", taskQuery.getEndTime());
-        bo.setBelongDeptId(Long.valueOf(taskQuery.getGroupId()));
+        bo.setBelongDeptId(Convert.toLong(taskQuery.getGroupId()));
         TableDataInfo<SysPostVo> page = postService.selectPagePostList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
@@ -98,7 +99,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         Map<String, Object> params = bo.getParams();
         params.put("beginTime", taskQuery.getBeginTime());
         params.put("endTime", taskQuery.getEndTime());
-        bo.setBelongDeptId(Long.valueOf(taskQuery.getGroupId()));
+        bo.setBelongDeptId(Convert.toLong(taskQuery.getGroupId()));
         TableDataInfo<SysDeptVo> page = deptService.selectPageDeptList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
@@ -122,7 +123,7 @@ public class SysTaskAssigneeServiceImpl implements TaskAssigneeService {
         Map<String, Object> params = bo.getParams();
         params.put("beginTime", taskQuery.getBeginTime());
         params.put("endTime", taskQuery.getEndTime());
-        bo.setDeptId(Long.valueOf(taskQuery.getGroupId()));
+        bo.setDeptId(Convert.toLong(taskQuery.getGroupId()));
         TableDataInfo<SysUserVo> page = userService.selectPageUserList(bo, pageQuery);
         // 使用封装的字段映射方法进行转换
         List<TaskAssigneeDTO.TaskHandler> handlers = TaskAssigneeDTO.convertToHandlerList(page.getRows(),
