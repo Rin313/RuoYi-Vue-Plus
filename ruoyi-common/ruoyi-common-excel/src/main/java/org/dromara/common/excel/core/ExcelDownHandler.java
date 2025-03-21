@@ -16,7 +16,6 @@ import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.xssf.usermodel.XSSFDataValidation;
-import org.dromara.common.core.domain.dto.DictDataDTO;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.utils.SpringUtils;
@@ -103,9 +102,9 @@ public class ExcelDownHandler implements SheetWriteHandler {
                 String converterExp = format.readConverterExp();
                 if (StringUtils.isNotBlank(dictType)) {
                     // 如果传递了字典名，则依据字典建立下拉
-                    Collection<String> values = Optional.ofNullable(dictService.getDictData(dictType))
+                    Collection<String> values = Optional.ofNullable(dictService.getAllDictByDictType(dictType))
                         .orElseThrow(() -> new ServiceException(String.format("字典 %s 不存在", dictType)))
-                        .stream().map(DictDataDTO::getDictLabel).toList();
+                        .values();
                     options = new ArrayList<>(values);
                 } else if (StringUtils.isNotBlank(converterExp)) {
                     // 如果指定了确切的值，则直接解析确切的值

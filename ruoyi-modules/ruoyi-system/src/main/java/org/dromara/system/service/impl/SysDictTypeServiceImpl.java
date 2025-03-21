@@ -33,10 +33,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -265,7 +262,12 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
     @Override
     public Map<String, String> getAllDictByDictType(String dictType) {
         List<SysDictDataVo> list = SpringUtils.getAopProxy(this).selectDictDataByType(dictType);
-        return StreamUtils.toMap(list, SysDictDataVo::getDictValue, SysDictDataVo::getDictLabel);
+        // 保证顺序
+        LinkedHashMap<String, String> map = new LinkedHashMap<>();
+        for (SysDictDataVo vo : list) {
+            map.put(vo.getDictValue(), vo.getDictLabel());
+        }
+        return map;
     }
 
     /**
