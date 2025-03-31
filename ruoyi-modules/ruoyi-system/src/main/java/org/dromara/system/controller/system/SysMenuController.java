@@ -14,7 +14,6 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.SysMenu;
 import org.dromara.system.domain.bo.SysMenuBo;
-import org.dromara.system.domain.vo.MenuTreeSelectVo;
 import org.dromara.system.domain.vo.RouterVo;
 import org.dromara.system.domain.vo.SysMenuVo;
 import org.dromara.system.service.ISysMenuService;
@@ -89,9 +88,9 @@ public class SysMenuController extends BaseController {
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
     public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
         List<SysMenuVo> menus = menuService.selectMenuList(LoginHelper.getUserId());
-        MenuTreeSelectVo selectVo = new MenuTreeSelectVo();
-        selectVo.setCheckedKeys(menuService.selectMenuListByRoleId(roleId));
-        selectVo.setMenus(menuService.buildMenuTreeSelect(menus));
+        MenuTreeSelectVo selectVo = new MenuTreeSelectVo(
+            menuService.selectMenuListByRoleId(roleId),
+            menuService.buildMenuTreeSelect(menus));
         return R.ok(selectVo);
     }
 
@@ -146,6 +145,9 @@ public class SysMenuController extends BaseController {
             return R.warn("菜单已分配,不允许删除");
         }
         return toAjax(menuService.deleteMenuById(menuId));
+    }
+
+    public record MenuTreeSelectVo(List<Long> checkedKeys, List<Tree<Long>> menus) {
     }
 
 }
