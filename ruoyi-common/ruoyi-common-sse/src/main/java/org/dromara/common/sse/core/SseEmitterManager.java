@@ -39,7 +39,9 @@ public class SseEmitterManager {
         Map<String, SseEmitter> emitters = USER_TOKEN_EMITTERS.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
 
         // 创建一个新的 SseEmitter 实例，超时时间设置为 0 表示无限制
-        SseEmitter emitter = emitters.computeIfAbsent(token, k -> new SseEmitter(0L));
+        SseEmitter emitter = new SseEmitter(0L);
+
+        emitters.put(token, emitter);
 
         // 当 emitter 完成、超时或发生错误时，从映射表中移除对应的 token
         emitter.onCompletion(() -> {
