@@ -39,14 +39,27 @@ public class SseEmitterManager {
         Map<String, SseEmitter> emitters = USER_TOKEN_EMITTERS.computeIfAbsent(userId, k -> new ConcurrentHashMap<>());
 
         // 创建一个新的 SseEmitter 实例，超时时间设置为 0 表示无限制
-        SseEmitter emitter = new SseEmitter(0L);
-
-        emitters.put(token, emitter);
+        SseEmitter emitter = emitters.computeIfAbsent(token, k -> new SseEmitter(0L));
 
         // 当 emitter 完成、超时或发生错误时，从映射表中移除对应的 token
-        emitter.onCompletion(() -> emitters.remove(token));
-        emitter.onTimeout(() -> emitters.remove(token));
-        emitter.onError((e) -> emitters.remove(token));
+        emitter.onCompletion(() -> {
+            SseEmitter remove = emitters.remove(token);
+            if (remove != null) {
+                remove.complete();
+            }
+        });
+        emitter.onTimeout(() -> {
+            SseEmitter remove = emitters.remove(token);
+            if (remove != null) {
+                remove.complete();
+            }
+        });
+        emitter.onError((e) -> {
+            SseEmitter remove = emitters.remove(token);
+            if (remove != null) {
+                remove.complete();
+            }
+        });
 
         try {
             // 向客户端发送一条连接成功的事件
@@ -106,7 +119,10 @@ public class SseEmitterManager {
                         .name("message")
                         .data(message));
                 } catch (Exception e) {
-                    emitters.remove(entry.getKey());
+                    SseEmitter remove = emitters.remove(entry.getKey());
+                    if (remove != null) {
+                        remove.complete();
+                    }
                 }
             }
         } else {
