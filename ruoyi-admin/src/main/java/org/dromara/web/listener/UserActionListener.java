@@ -1,8 +1,9 @@
 package org.dromara.web.listener;
 
-import cn.dev33.satoken.config.SaTokenConfig;
 import cn.dev33.satoken.listener.SaTokenListener;
 import cn.dev33.satoken.stp.SaLoginModel;
+import cn.dev33.satoken.stp.StpUtil;
+import cn.hutool.core.convert.Convert;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,6 @@ import java.time.Duration;
 @Slf4j
 public class UserActionListener implements SaTokenListener {
 
-    private final SaTokenConfig tokenConfig;
     private final SysLoginService loginService;
 
     /**
@@ -54,10 +54,10 @@ public class UserActionListener implements SaTokenListener {
         dto.setClientKey((String) loginModel.getExtra(LoginHelper.CLIENT_KEY));
         dto.setDeviceType(loginModel.getDevice());
         dto.setDeptName((String) loginModel.getExtra(LoginHelper.DEPT_NAME_KEY));
-        if(tokenConfig.getTimeout() == -1) {
+        if(loginModel.getTimeout() == -1) {
             RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto);
         } else {
-            RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto, Duration.ofSeconds(tokenConfig.getTimeout()));
+            RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto, Duration.ofSeconds(loginModel.getTimeout()));
         }
         // 记录登录日志
         LogininforEvent logininforEvent = new LogininforEvent();
