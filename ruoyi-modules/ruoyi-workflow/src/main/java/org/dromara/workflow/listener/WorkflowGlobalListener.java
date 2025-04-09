@@ -47,13 +47,10 @@ public class WorkflowGlobalListener implements GlobalListener {
     public void create(ListenerVariable listenerVariable) {
         Instance instance = listenerVariable.getInstance();
         Definition definition = listenerVariable.getDefinition();
-        String businessId = instance.getBusinessId();
-        String flowStatus = instance.getFlowStatus();
         Task task = listenerVariable.getTask();
-        if (task != null && BusinessStatusEnum.WAITING.getStatus().equals(flowStatus)) {
+        if (task != null && BusinessStatusEnum.WAITING.getStatus().equals(instance.getFlowStatus())) {
             // 判断流程状态（发布审批中事件）
-            flowProcessEventHandler.processCreateTaskHandler(definition.getFlowCode(), task.getNodeType(),
-                task.getNodeCode(), task.getNodeName(), task.getId(), businessId);
+            flowProcessEventHandler.processCreateTaskHandler(definition.getFlowCode(), instance, task.getId());
         }
     }
 
@@ -97,8 +94,7 @@ public class WorkflowGlobalListener implements GlobalListener {
         // 判断流程状态（发布：撤销，退回，作废，终止，已完成事件）
         String status = determineFlowStatus(instance);
         if (StringUtils.isNotBlank(status)) {
-            flowProcessEventHandler.processHandler(definition.getFlowCode(), instance.getBusinessId(), instance.getNodeType(),
-                instance.getNodeCode(), instance.getNodeName(), status, params, false);
+            flowProcessEventHandler.processHandler(definition.getFlowCode(), instance, status, params, false);
         }
     }
 
