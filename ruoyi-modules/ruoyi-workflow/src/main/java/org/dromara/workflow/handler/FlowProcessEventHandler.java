@@ -26,14 +26,24 @@ public class FlowProcessEventHandler {
      *
      * @param flowCode   流程定义编码
      * @param businessId 业务id
-     * @param status     状态
+     * @param nodeType   节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
+     * @param nodeCode   流程节点编码
+     * @param nodeName   流程节点名称
+     * @param status     流程状态
+     * @param params     办理参数
      * @param submit     当为true时为申请人节点办理
      */
-    public void processHandler(String flowCode, String businessId, String status, Map<String, Object> params, boolean submit) {
-        log.info("发布流程事件，流程状态: {}, 流程编码: {}, 业务ID: {}, 是否申请人节点办理: {}", status, flowCode, businessId, submit);
+    public void processHandler(String flowCode, String businessId, Integer nodeType, String nodeCode, String nodeName,
+                               String status, Map<String, Object> params, boolean submit) {
+
+        log.info("【流程事件发布】流程编码: {}, 业务ID: {}, 状态: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 是否申请人节点: {}, 参数: {}", flowCode, businessId, status, nodeType, nodeCode, nodeName, submit, params);
+
         ProcessEvent processEvent = new ProcessEvent();
         processEvent.setFlowCode(flowCode);
         processEvent.setBusinessId(businessId);
+        processEvent.setNodeType(nodeType);
+        processEvent.setNodeCode(nodeCode);
+        processEvent.setNodeName(nodeName);
         processEvent.setStatus(status);
         processEvent.setParams(params);
         processEvent.setSubmit(submit);
@@ -44,7 +54,9 @@ public class FlowProcessEventHandler {
      * 执行创建任务监听
      *
      * @param flowCode   流程定义编码
-     * @param nodeCode   审批节点编码
+     * @param nodeType   节点类型（0开始节点 1中间节点 2结束节点 3互斥网关 4并行网关）
+     * @param nodeCode   流程节点编码
+     * @param nodeName   流程节点名称
      * @param taskId     任务id
      * @param businessId 业务id
      */
@@ -52,7 +64,9 @@ public class FlowProcessEventHandler {
         log.info("发布流程任务事件, 流程编码: {}, 节点编码: {}, 任务ID: {}, 业务ID: {}", flowCode, nodeCode, taskId, businessId);
         ProcessCreateTaskEvent processCreateTaskEvent = new ProcessCreateTaskEvent();
         processCreateTaskEvent.setFlowCode(flowCode);
+        processCreateTaskEvent.setNodeType(nodeType);
         processCreateTaskEvent.setNodeCode(nodeCode);
+        processCreateTaskEvent.setNodeName(nodeName);
         processCreateTaskEvent.setTaskId(taskId);
         processCreateTaskEvent.setBusinessId(businessId);
         SpringUtils.context().publishEvent(processCreateTaskEvent);
