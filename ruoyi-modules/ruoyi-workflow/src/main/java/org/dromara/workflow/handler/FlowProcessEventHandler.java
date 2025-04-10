@@ -31,11 +31,9 @@ public class FlowProcessEventHandler {
      * @param params     办理参数
      * @param submit     当为true时为申请人节点办理
      */
-    public void processHandler(String flowCode, Instance instance,
-                               String status, Map<String, Object> params, boolean submit) {
-
-        log.info("【流程事件发布】流程编码: {}, 业务ID: {}, 状态: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 是否申请人节点: {}, 参数: {}", flowCode, instance.getBusinessId(), status, instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), submit, params);
-
+    public void processHandler(String flowCode, Instance instance, String status, Map<String, Object> params, boolean submit) {
+        log.info("【流程事件发布】流程编码: {}, 业务ID: {}, 流程状态: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 是否申请人节点: {}, 参数: {}",
+            flowCode, instance.getBusinessId(), status, instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), submit, params);
         ProcessEvent processEvent = new ProcessEvent();
         processEvent.setFlowCode(flowCode);
         processEvent.setBusinessId(instance.getBusinessId());
@@ -56,7 +54,8 @@ public class FlowProcessEventHandler {
      * @param taskId     任务id
      */
     public void processCreateTaskHandler(String flowCode, Instance instance, Long taskId) {
-        log.info("发布流程任务事件, 流程编码: {}, 节点编码: {}, 任务ID: {}, 业务ID: {}", flowCode, nodeCode, taskId, businessId);
+        log.info("发布流程任务事件, 租户ID: {}, 流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
+            flowCode, instance.getBusinessId(), instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), taskId);
         ProcessCreateTaskEvent processCreateTaskEvent = new ProcessCreateTaskEvent();
         processCreateTaskEvent.setFlowCode(flowCode);
         processCreateTaskEvent.setBusinessId(instance.getBusinessId());
