@@ -1,8 +1,8 @@
 package org.dromara.web.listener;
 
 import cn.dev33.satoken.listener.SaTokenListener;
-import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
+import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
@@ -39,7 +39,7 @@ public class UserActionListener implements SaTokenListener {
      * 每次登录时触发
      */
     @Override
-    public void doLogin(String loginType, Object loginId, String tokenValue, SaLoginModel loginModel) {
+    public void doLogin(String loginType, Object loginId, String tokenValue, SaLoginParameter loginParameter) {
         UserAgent userAgent = UserAgentUtil.parse(ServletUtils.getRequest().getHeader("User-Agent"));
         String ip = ServletUtils.getClientIP();
         UserOnlineDTO dto = new UserOnlineDTO();
@@ -49,15 +49,15 @@ public class UserActionListener implements SaTokenListener {
         dto.setOs(userAgent.getOs().getName());
         dto.setLoginTime(System.currentTimeMillis());
         dto.setTokenId(tokenValue);
-        String username = (String) loginModel.getExtra(LoginHelper.USER_NAME_KEY);
+        String username = (String) loginParameter.getExtra(LoginHelper.USER_NAME_KEY);
         dto.setUserName(username);
-        dto.setClientKey((String) loginModel.getExtra(LoginHelper.CLIENT_KEY));
-        dto.setDeviceType(loginModel.getDevice());
-        dto.setDeptName((String) loginModel.getExtra(LoginHelper.DEPT_NAME_KEY));
-        if(loginModel.getTimeout() == -1) {
+        dto.setClientKey((String) loginParameter.getExtra(LoginHelper.CLIENT_KEY));
+        dto.setDeviceType(loginParameter.getDeviceType());
+        dto.setDeptName((String) loginParameter.getExtra(LoginHelper.DEPT_NAME_KEY));
+        if(loginParameter.getTimeout() == -1) {
             RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto);
         } else {
-            RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto, Duration.ofSeconds(loginModel.getTimeout()));
+            RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto, Duration.ofSeconds(loginParameter.getTimeout()));
         }
         // 记录登录日志
         LogininforEvent logininforEvent = new LogininforEvent();
@@ -67,7 +67,7 @@ public class UserActionListener implements SaTokenListener {
         logininforEvent.setRequest(ServletUtils.getRequest());
         SpringUtils.context().publishEvent(logininforEvent);
         // 更新登录信息
-        loginService.recordLoginInfo((Long) loginModel.getExtra(LoginHelper.USER_KEY), ip);
+        loginService.recordLoginInfo((Long) loginParameter.getExtra(LoginHelper.USER_KEY), ip);
         log.info("user doLogin, userId:{}, token:{}", loginId, tokenValue);
     }
 
