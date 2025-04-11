@@ -986,15 +986,15 @@ INSERT sys_dict_data VALUES (32, 0, N'邮件认证', N'email', N'sys_grant_type'
 GO
 INSERT sys_dict_data VALUES (33, 0, N'小程序认证', N'xcx', N'sys_grant_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'小程序认证')
 GO
-INSERT sys_dict_data VALUES (34, 0, N'三方登录认证', N'`social`', N'sys_grant_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'三方登录认证')
+INSERT sys_dict_data VALUES (34, 0, N'三方登录认证', N'social', N'sys_grant_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'三方登录认证')
 GO
-INSERT sys_dict_data VALUES (35, 0, N'PC', N'`pc`', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'PC')
+INSERT sys_dict_data VALUES (35, 0, N'PC', N'pc', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'PC')
 GO
-INSERT sys_dict_data VALUES (36, 0, N'安卓', N'`android`', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'安卓')
+INSERT sys_dict_data VALUES (36, 0, N'安卓', N'android', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'安卓')
 GO
-INSERT sys_dict_data VALUES (37, 0, N'iOS', N'`ios`', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'iOS')
+INSERT sys_dict_data VALUES (37, 0, N'iOS', N'ios', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'iOS')
 GO
-INSERT sys_dict_data VALUES (38, 0, N'小程序', N'`xcx`', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'小程序')
+INSERT sys_dict_data VALUES (38, 0, N'小程序', N'xcx', N'sys_device_type', N'', N'default', N'N', 103, 1, getdate(), NULL, NULL, N'小程序')
 GO
 
 CREATE TABLE sys_dict_type
