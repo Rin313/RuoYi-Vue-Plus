@@ -172,7 +172,7 @@ public class FlowTaskVo implements Serializable {
     /**
      * 是否为申请人节点
      */
-    private Boolean applyNode;
+    private boolean applyNode;
 
     /**
      * 按钮权限

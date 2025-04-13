@@ -55,6 +55,6 @@ public class ProcessEvent implements Serializable {
     /**
      * 当为true时为申请人节点办理
      */
-    private Boolean submit;
+    private boolean submit;
 
 }

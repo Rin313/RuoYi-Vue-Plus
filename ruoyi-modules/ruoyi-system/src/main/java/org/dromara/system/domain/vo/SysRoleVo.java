@@ -91,9 +91,9 @@ public class SysRoleVo implements Serializable {
     /**
      * 用户是否存在此角色标识 默认不存在
      */
-    private Boolean flag = false;
+    private boolean flag = false;
 
-    public Boolean isSuperAdmin() {
+    public boolean isSuperAdmin() {
         return SystemConstants.SUPER_ADMIN_ID.equals(this.roleId);
     }
 
