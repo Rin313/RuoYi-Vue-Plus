@@ -960,7 +960,7 @@ INSERT sys_dict_data VALUES (18, 1, N'新增', N'1', N'sys_oper_type', N'', N'in
 GO
 INSERT sys_dict_data VALUES (19, 2, N'修改', N'2', N'sys_oper_type', N'', N'info', N'N', 103, 1, getdate(), NULL, NULL, N'修改操作')
 GO
-INSERT sys_dict_data VALUES (20, 3, N'删除', N3, N'sys_oper_type', N'', N'danger', N'N', 103, 1, getdate(), NULL, NULL, N'删除操作')
+INSERT sys_dict_data VALUES (20, 3, N'删除', N'3', N'sys_oper_type', N'', N'danger', N'N', 103, 1, getdate(), NULL, NULL, N'删除操作')
 GO
 INSERT sys_dict_data VALUES (21, 4, N'授权', N'4', N'sys_oper_type', N'', N'primary', N'N', 103, 1, getdate(), NULL, NULL, N'授权操作')
 GO
@@ -2810,7 +2810,7 @@ INSERT INTO sys_oss_config VALUES (N'1', N'minio', N'ruoyi',            N'ruoyi1
 GO
 INSERT INTO sys_oss_config VALUES (N'2', N'qiniu', N'XXXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'ruoyi',            N'', N's3-cn-north-1.qiniucs.com',         N'',N'N', N'',           N'1', N'1', N'', 103, 1, getdate(), 1, getdate(), NULL)
 GO
-INSERT INTO sys_oss_config VALUES (N3, N'aliyun', N'XXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'ruoyi',            N'', N'oss-cn-beijing.aliyuncs.com',       N'',N'N', N'',           N'1', N'1', N'', 103, 1, getdate(), 1, getdate(), NULL)
+INSERT INTO sys_oss_config VALUES (N'3', N'aliyun', N'XXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'ruoyi',            N'', N'oss-cn-beijing.aliyuncs.com',       N'',N'N', N'',           N'1', N'1', N'', 103, 1, getdate(), 1, getdate(), NULL)
 GO
 INSERT INTO sys_oss_config VALUES (N'4', N'qcloud', N'XXXXXXXXXXXXXXX', N'XXXXXXXXXXXXXXX', N'ruoyi-1250000000', N'', N'cos.ap-beijing.myqcloud.com',       N'',N'N', N'ap-beijing', N'1', N'1', N'', 103, 1, getdate(), 1, getdate(), NULL)
 GO
