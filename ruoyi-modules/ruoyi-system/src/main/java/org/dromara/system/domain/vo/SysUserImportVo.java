@@ -1,10 +1,10 @@
 package org.dromara.system.domain.vo;
 
-import com.alibaba.excel.annotation.ExcelProperty;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import cn.idev.excel.annotation.ExcelProperty;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
 import org.dromara.common.excel.convert.ExcelDictConvert;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
