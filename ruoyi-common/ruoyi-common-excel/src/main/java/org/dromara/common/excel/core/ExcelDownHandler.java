@@ -175,7 +175,7 @@ public class ExcelDownHandler implements SheetWriteHandler {
         List<String> firstOptions = options.getOptions();
         Map<String, List<String>> secoundOptionsMap = options.getNextOptions();
 
-        // 采用按行填充数据的方式，避免EasyExcel出现数据无法写入的问题
+        // 采用按行填充数据的方式，避免出现数据无法写入的问题
         // Attempting to write a row in the range that is already written to disk
 
         // 使用ArrayList记载数据，防止乱序
