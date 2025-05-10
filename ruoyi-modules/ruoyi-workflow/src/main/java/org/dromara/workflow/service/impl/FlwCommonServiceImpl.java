@@ -12,8 +12,9 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
+import org.dromara.warm.flow.core.FlowEngine;
 import org.dromara.warm.flow.core.constant.ExceptionCons;
-import org.dromara.warm.flow.core.dto.FlowParams;
+import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
@@ -23,6 +24,7 @@ import org.dromara.warm.flow.core.service.NodeService;
 import org.dromara.warm.flow.core.service.TaskService;
 import org.dromara.warm.flow.core.service.UserService;
 import org.dromara.warm.flow.core.utils.AssertUtil;
+import org.dromara.warm.flow.core.utils.MapUtil;
 import org.dromara.warm.flow.orm.entity.FlowNode;
 import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.warm.flow.orm.entity.FlowUser;
@@ -177,42 +179,6 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         }
     }
 
-    /**
-     * 驳回
-     *
-     * @param message        审批意见
-     * @param instanceId     流程实例id
-     * @param targetNodeCode 目标节点
-     * @param flowStatus     流程状态
-     * @param flowHisStatus  节点操作状态
-     */
-    @Override
-    public void backTask(String message, Long instanceId, String targetNodeCode, String flowStatus, String flowHisStatus) {
-        IFlwTaskService flwTaskService = SpringUtils.getBean(IFlwTaskService.class);
-        List<FlowTask> list = flwTaskService.selectByInstId(instanceId);
-        if (CollUtil.isNotEmpty(list)) {
-            List<FlowTask> tasks = StreamUtils.filter(list, e -> e.getNodeCode().equals(targetNodeCode));
-            if (list.size() == tasks.size()) {
-                return;
-            }
-        }
-        for (FlowTask task : list) {
-            List<UserDTO> userList = flwTaskService.currentTaskAllUser(task.getId());
-            FlowParams flowParams = FlowParams.build()
-                .nodeCode(targetNodeCode)
-                .message(message)
-                .skipType(SkipType.PASS.getKey())
-                .flowStatus(flowStatus).hisStatus(flowHisStatus)
-                .ignore(true);
-            //解决会签没权限问题
-            if (CollUtil.isNotEmpty(userList)) {
-                flowParams.handler(userList.get(0).getUserId().toString());
-            }
-            taskService.skip(task.getId(), flowParams);
-        }
-        //解决会签多人审批问题
-        backTask(message, instanceId, targetNodeCode, flowStatus, flowHisStatus);
-    }
 
     /**
      * 申请人节点编码
@@ -231,17 +197,13 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         return nextNode.getNodeCode();
     }
 
-    /**
-     * 删除运行中的任务
-     *
-     * @param taskIds 任务id
-     */
     @Override
-    public void deleteRunTask(List<Long> taskIds) {
-        if (CollUtil.isEmpty(taskIds)) {
-            return;
+    public void mergeVariable(Instance instance, Map<String, Object> variable) {
+        if (MapUtil.isNotEmpty(variable)) {
+            String variableStr = instance.getVariable();
+            Map<String, Object> deserialize = FlowEngine.jsonConvert.strToMap(variableStr);
+            deserialize.putAll(variable);
+            instance.setVariable(FlowEngine.jsonConvert.objToStr(deserialize));
         }
-        userService.deleteByTaskIds(taskIds);
-        flowTaskMapper.deleteByIds(taskIds);
     }
 }
