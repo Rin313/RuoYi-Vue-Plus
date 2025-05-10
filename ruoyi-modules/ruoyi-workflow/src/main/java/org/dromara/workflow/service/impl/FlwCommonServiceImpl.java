@@ -2,7 +2,6 @@ package org.dromara.workflow.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.domain.dto.UserDTO;
@@ -13,23 +12,16 @@ import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.constant.ExceptionCons;
 import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
-import org.dromara.warm.flow.core.enums.NodeType;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.service.NodeService;
-import org.dromara.warm.flow.core.service.TaskService;
 import org.dromara.warm.flow.core.service.UserService;
-import org.dromara.warm.flow.core.utils.AssertUtil;
 import org.dromara.warm.flow.core.utils.MapUtil;
-import org.dromara.warm.flow.orm.entity.FlowNode;
 import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.warm.flow.orm.entity.FlowUser;
-import org.dromara.warm.flow.orm.mapper.FlowNodeMapper;
-import org.dromara.warm.flow.orm.mapper.FlowTaskMapper;
 import org.dromara.workflow.common.ConditionalOnEnable;
 import org.dromara.workflow.common.enums.MessageTypeEnum;
 import org.dromara.workflow.common.enums.TaskAssigneeType;
@@ -52,11 +44,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Service
 public class FlwCommonServiceImpl implements IFlwCommonService {
-
-    private final FlowNodeMapper flowNodeMapper;
-    private final FlowTaskMapper flowTaskMapper;
     private final UserService userService;
-    private final TaskService taskService;
     private final NodeService nodeService;
 
     /**
@@ -188,11 +176,7 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
      */
     @Override
     public String applyNodeCode(Long definitionId) {
-        //获取已发布的流程节点
-        List<FlowNode> flowNodes = flowNodeMapper.selectList(new LambdaQueryWrapper<FlowNode>().eq(FlowNode::getDefinitionId, definitionId));
-        AssertUtil.isTrue(CollUtil.isEmpty(flowNodes), ExceptionCons.NOT_PUBLISH_NODE);
-        Node startNode = flowNodes.stream().filter(t -> NodeType.isStart(t.getNodeType())).findFirst().orElse(null);
-        AssertUtil.isNull(startNode, ExceptionCons.LOST_START_NODE);
+        Node startNode = nodeService.getStartNode(definitionId);
         Node nextNode = nodeService.getNextNode(definitionId, startNode.getNodeCode(), null, SkipType.PASS.getKey());
         return nextNode.getNodeCode();
     }
