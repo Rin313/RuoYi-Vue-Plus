@@ -72,11 +72,8 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         IFlwTaskAssigneeService taskAssigneeService = SpringUtils.getBean(IFlwTaskAssigneeService.class);
         Map<String, List<User>> userListMap = StreamUtils.groupByKey(userList, User::getType);
         for (Map.Entry<String, List<User>> entry : userListMap.entrySet()) {
-            List<String> processedBys = entry.getValue().stream()
-                .map(User::getProcessedBy)
-                .filter(StringUtils::isNotBlank)
-                .distinct()
-                .collect(Collectors.toList());
+            List<User> entryValue = entry.getValue();
+            String processedBys = StreamUtils.join(entryValue, User::getProcessedBy);
             // 根据 processedBy 前缀判断处理人类型，分别获取用户列表
             List<UserDTO> users = taskAssigneeService.fetchUsersByStorageIds(processedBys);
             // 转换为 FlowUser 并添加到结果集合
