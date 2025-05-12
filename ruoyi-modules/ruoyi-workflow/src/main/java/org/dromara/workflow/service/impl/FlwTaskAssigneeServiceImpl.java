@@ -176,7 +176,7 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
     public List<UserDTO> fetchUsersByStorageId(String storageId) {
         Pair<TaskAssigneeEnum, Long> parsed = this.parseStorageId(storageId);
         if (parsed == null) {
-            return Collections.emptyList();
+            return List.of();
         }
         return this.getUsersByType(parsed.getKey(), Collections.singletonList(parsed.getValue()));
     }
@@ -190,9 +190,12 @@ public class FlwTaskAssigneeServiceImpl implements IFlwTaskAssigneeService, Hand
      * @return 合并后的用户列表，去重后返回，非法格式的标识将被跳过
      */
     @Override
-    public List<UserDTO> fetchUsersByStorageIds(String storageIds) {
+    public List<UserDTO> fetchUsersByStorageIds(List<String> storageIds) {
+        if (CollUtil.isEmpty(storageIds)) {
+            return List.of();
+        }
         Map<TaskAssigneeEnum, List<Long>> typeIdMap = new EnumMap<>(TaskAssigneeEnum.class);
-        for (String storageId : storageIds.split(StrUtil.COMMA)) {
+        for (String storageId : storageIds) {
             Pair<TaskAssigneeEnum, Long> parsed = this.parseStorageId(storageId);
             if (parsed != null) {
                 typeIdMap.computeIfAbsent(parsed.getKey(), k -> new ArrayList<>()).add(parsed.getValue());

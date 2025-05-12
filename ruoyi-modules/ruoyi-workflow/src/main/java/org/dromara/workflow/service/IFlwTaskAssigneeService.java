@@ -28,6 +28,6 @@ public interface IFlwTaskAssigneeService {
      * @param storageIds 多个存储标识符字符串（逗号分隔）
      * @return 合并后的用户列表，去重后返回，非法格式的标识将被跳过
      */
-    List<UserDTO> fetchUsersByStorageIds(String storageIds);
+    List<UserDTO> fetchUsersByStorageIds(List<String> storageIds);
 
 }
