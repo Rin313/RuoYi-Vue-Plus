@@ -112,7 +112,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
         if (ObjectUtil.isNotNull(flowInstance)) {
             BusinessStatusEnum.checkStartStatus(flowInstance.getFlowStatus());
             List<Task> taskList = taskService.list(new FlowTask().setInstanceId(flowInstance.getId()));
-            flwCommonService.mergeVariable(flowInstance, variables);
+            taskService.mergeVariable(flowInstance, variables);
             insService.updateById(flowInstance);
             StartProcessReturnDTO dto = new StartProcessReturnDTO();
             dto.setProcessInstanceId(taskList.get(0).getInstanceId());
@@ -217,7 +217,7 @@ public class FlwTaskServiceImpl implements IFlwTaskService {
                 variableMap.remove(task.getNodeCode());
             }
         }
-        flwCommonService.mergeVariable(inst, variableMap);
+        taskService.mergeVariable(inst, variableMap);
     }
 
     /**

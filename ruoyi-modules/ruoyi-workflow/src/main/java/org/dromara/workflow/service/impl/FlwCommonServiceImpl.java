@@ -11,15 +11,12 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mail.utils.MailUtils;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
-import org.dromara.warm.flow.core.FlowEngine;
-import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.Node;
 import org.dromara.warm.flow.core.entity.Task;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.enums.SkipType;
 import org.dromara.warm.flow.core.service.NodeService;
 import org.dromara.warm.flow.core.service.UserService;
-import org.dromara.warm.flow.core.utils.MapUtil;
 import org.dromara.warm.flow.orm.entity.FlowTask;
 import org.dromara.warm.flow.orm.entity.FlowUser;
 import org.dromara.workflow.common.ConditionalOnEnable;
@@ -179,15 +176,5 @@ public class FlwCommonServiceImpl implements IFlwCommonService {
         Node startNode = nodeService.getStartNode(definitionId);
         Node nextNode = nodeService.getNextNode(definitionId, startNode.getNodeCode(), null, SkipType.PASS.getKey());
         return nextNode.getNodeCode();
-    }
-
-    @Override
-    public void mergeVariable(Instance instance, Map<String, Object> variable) {
-        if (MapUtil.isNotEmpty(variable)) {
-            String variableStr = instance.getVariable();
-            Map<String, Object> deserialize = FlowEngine.jsonConvert.strToMap(variableStr);
-            deserialize.putAll(variable);
-            instance.setVariable(FlowEngine.jsonConvert.objToStr(deserialize));
-        }
     }
 }

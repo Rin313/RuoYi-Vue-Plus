@@ -1,11 +1,9 @@
 package org.dromara.workflow.service;
 
-import org.dromara.warm.flow.core.entity.Instance;
 import org.dromara.warm.flow.core.entity.User;
 import org.dromara.warm.flow.core.service.UserService;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -57,12 +55,4 @@ public interface IFlwCommonService {
      * @return 申请人节点编码
      */
     String applyNodeCode(Long definitionId);
-
-    /**
-     * 合并变量
-     *
-     * @param instance 流程实例
-     * @param variable 变量
-     */
-    void mergeVariable(Instance instance, Map<String, Object> variable);
 }
