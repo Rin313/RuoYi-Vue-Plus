@@ -185,12 +185,25 @@ public class AuthController {
      * 登录页面租户下拉框（兼容多租户前端）
      */
     @GetMapping("/tenant/list")
-    public R<Map<String, Boolean>> tenantList() {
-        // 返回对象
-        Map<String, Boolean> result = new ConcurrentHashMap<>();
-        // 租户开关响应false（即关闭），让前端关闭租户功能
-        result.put("tenantEnabled", false);
-        return R.ok(result);
+    public R<TenantListVo> tenantList() {
+        return R.ok(TenantListVo.DISABLED_TENANT);
+    }
+
+    /**
+     * 租户下拉列表
+     *
+     * @param tenantEnabled 租户开关
+     */
+    public record TenantListVo(boolean tenantEnabled){
+
+        /**
+         * 禁用租户，租户开关响应false（即关闭），让前端关闭租户功能
+         */
+        public static final TenantListVo DISABLED_TENANT = TenantListVo.of(false);
+
+        public static TenantListVo of(boolean tenantEnabled){
+            return new TenantListVo(tenantEnabled);
+        }
     }
 
 }
