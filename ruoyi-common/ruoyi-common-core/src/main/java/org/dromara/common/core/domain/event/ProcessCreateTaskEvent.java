@@ -46,4 +46,9 @@ public class ProcessCreateTaskEvent implements Serializable {
      */
     private String businessId;
 
+    /**
+     * 流程状态
+     */
+    private String status;
+
 }
