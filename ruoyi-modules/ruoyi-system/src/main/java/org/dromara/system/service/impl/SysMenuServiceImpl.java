@@ -25,6 +25,7 @@ import org.dromara.system.mapper.SysRoleMapper;
 import org.dromara.system.mapper.SysRoleMenuMapper;
 import org.dromara.system.service.ISysMenuService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -251,6 +252,17 @@ public class SysMenuServiceImpl implements ISysMenuService {
     }
 
     /**
+     * 是否存在菜单子节点
+     *
+     * @param menuIds 菜单ID串
+     * @return 结果
+     */
+    @Override
+    public boolean hasChildByMenuId(List<Long> menuIds) {
+        return baseMapper.exists(new LambdaQueryWrapper<SysMenu>().in(SysMenu::getParentId, menuIds).notIn(SysMenu::getMenuId, menuIds));
+    }
+
+    /**
      * 查询菜单使用数量
      *
      * @param menuId 菜单ID
@@ -294,6 +306,19 @@ public class SysMenuServiceImpl implements ISysMenuService {
     @Override
     public int deleteMenuById(Long menuId) {
         return baseMapper.deleteById(menuId);
+    }
+
+    /**
+     * 批量删除菜单管理信息
+     *
+     * @param menuIds 菜单ID串
+     * @return 结果
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void deleteMenuById(List<Long> menuIds) {
+        baseMapper.deleteByIds(menuIds);
+        roleMenuMapper.deleteByMenuIds(menuIds);
     }
 
     /**
