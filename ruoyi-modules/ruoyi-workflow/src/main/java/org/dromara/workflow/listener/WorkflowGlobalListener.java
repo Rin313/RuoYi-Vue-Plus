@@ -139,6 +139,9 @@ public class WorkflowGlobalListener implements GlobalListener {
             flowProcessEventHandler.processHandler(definition.getFlowCode(), instance, status, params, false);
         }
 
+        if (ObjectUtil.isNull(flowParams)) {
+            return;
+        }
         Map<String, Object> variable = flowParams.getVariable();
         // 只有办理或者退回的时候才执行消息通知和抄送
         if (TaskStatusEnum.PASS.getStatus().equals(flowParams.getHisStatus())
