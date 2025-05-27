@@ -18,8 +18,6 @@ EXPOSE ${SERVER_PORT}
 EXPOSE ${SNAIL_PORT}
 
 ADD ./target/ruoyi-admin.jar ./app.jar
-# 工作流字体文件
-ADD ./zhFonts/ /usr/share/fonts/zhFonts/
 
 SHELL ["/bin/bash", "-c"]
 
