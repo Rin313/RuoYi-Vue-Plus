@@ -110,7 +110,7 @@ security:
     - /error
     - /*/api-docs
     - /*/api-docs/**
-    - /warm-flow-ui/token-name
+    - /warm-flow-ui/config
 
 # MyBatisPlus配置
 # https://baomidou.com/config/
