@@ -316,9 +316,7 @@ public class FlwInstanceServiceImpl implements IFlwInstanceService {
         if (CollUtil.isNotEmpty(flowHisTasks)) {
             list.addAll(BeanUtil.copyToList(flowHisTasks, FlowHisTaskVo.class));
         }
-        String flowChart = chartService.chartIns(instanceId);
-        DefChart defChart = chartService.chartInsObj(instanceId);
-        return Map.of("list", list, "image", flowChart,"defChart",defChart);
+        return Map.of("list", list);
     }
 
     /**
