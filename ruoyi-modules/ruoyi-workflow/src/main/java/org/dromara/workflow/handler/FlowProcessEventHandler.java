@@ -54,7 +54,7 @@ public class FlowProcessEventHandler {
      * @param taskId     任务id
      */
     public void processCreateTaskHandler(String flowCode, Instance instance, Long taskId) {
-        log.info("发布流程任务事件, 租户ID: {}, 流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
+        log.info("【流程任务事件发布】流程编码: {}, 业务ID: {}, 节点类型: {}, 节点编码: {}, 节点名称: {}, 任务ID: {}",
             flowCode, instance.getBusinessId(), instance.getNodeType(), instance.getNodeCode(), instance.getNodeName(), taskId);
         ProcessCreateTaskEvent processCreateTaskEvent = new ProcessCreateTaskEvent();
         processCreateTaskEvent.setFlowCode(flowCode);
@@ -74,7 +74,7 @@ public class FlowProcessEventHandler {
      * @param businessId  业务ID
      */
     public void processDeleteHandler(String flowCode, String businessId) {
-        log.info("发布删除流程事件, 流程编码: {}, 业务ID: {}", flowCode, businessId);
+        log.info("【流程删除事件发布】, 流程编码: {}, 业务ID: {}", flowCode, businessId);
         ProcessDeleteEvent processDeleteEvent = new ProcessDeleteEvent();
         processDeleteEvent.setFlowCode(flowCode);
         processDeleteEvent.setBusinessId(businessId);
