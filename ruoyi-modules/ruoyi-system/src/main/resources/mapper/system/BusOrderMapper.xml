@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.dromara.system.mapper.BusOrderMapper">
+<!-- 分页查询：当前用户是预订人 or 房东 -->
+    <select id="selectMyOrderPage" resultType="org.dromara.system.domain.vo.BusOrderVo">
+        SELECT
+            o.*,
+            r.title      AS roomTitle,
+            u.nick_name  AS customerName   <!-- 或 u.user_name -->
+        FROM bus_order o
+        LEFT JOIN bus_room r ON o.room_id = r.id
+        LEFT JOIN sys_user u ON o.user_id = u.user_id
+        <where>
+            <!-- 只查和当前用户相关的订单 -->
+            (o.user_id = #{userId} OR r.create_by = #{userId})
+
+            <!-- 以下是可选过滤条件，根据 BusOrderBo 动态追加 -->
+            <if test="bo.status != null and bo.status != ''">
+                AND o.status = #{bo.status}
+            </if>
+            <if test="bo.roomId != null">
+                AND o.room_id = #{bo.roomId}
+            </if>
+            <if test="bo.startDate != null">
+                AND o.start_date &gt;= #{bo.startDate}
+            </if>
+            <if test="bo.endDate != null">
+                AND o.end_date &lt;= #{bo.endDate}
+            </if>
+            <!-- 其他条件按需加 -->
+        </where>
+        ORDER BY o.id ASC
+    </select>
+
+    <!-- 不分页列表（导出用） -->
+    <select id="selectMyOrderList" resultType="org.dromara.system.domain.vo.BusOrderVo">
+        SELECT
+            o.*,
+            r.title      AS roomTitle,
+            u.nick_name  AS customerName
+        FROM bus_order o
+        LEFT JOIN bus_room r ON o.room_id = r.id
+        LEFT JOIN sys_user u ON o.user_id = u.user_id
+        <where>
+            (o.user_id = #{userId} OR r.create_by = #{userId})
+
+            <if test="bo.status != null and bo.status != ''">
+                AND o.status = #{bo.status}
+            </if>
+            <if test="bo.roomId != null">
+                AND o.room_id = #{bo.roomId}
+            </if>
+            <if test="bo.startDate != null">
+                AND o.start_date &gt;= #{bo.startDate}
+            </if>
+            <if test="bo.endDate != null">
+                AND o.end_date &lt;= #{bo.endDate}
+            </if>
+        </where>
+        ORDER BY o.id ASC
+    </select>
+</mapper>
