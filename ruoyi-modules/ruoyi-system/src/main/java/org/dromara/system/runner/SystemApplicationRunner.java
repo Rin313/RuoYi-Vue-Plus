@@ -1,6 +1,5 @@
 package org.dromara.system.runner;
 
-import org.dromara.system.service.ISysOssConfigService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -17,12 +16,8 @@ import org.springframework.stereotype.Component;
 @Component
 public class SystemApplicationRunner implements ApplicationRunner {
 
-    private final ISysOssConfigService ossConfigService;
-
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        ossConfigService.init();
-        log.info("初始化OSS配置成功");
     }
 
 }

@@ -1,24 +1,16 @@
 # 开发环境配置
 server:
-  # 服务器的HTTP端口，默认为8080
-  port: 8080
+  port: 8080 #用于跑多个应用
+  tomcat:
+    connection-timeout: 20000 #快速响应的 API：2-5秒 #文件上传或大数据处理： 30-60 秒 #default： 20 秒
+    threads: #增加线程数量
+      max: 500
+      min-spare: 20
+  forward-headers-strategy: framework #使用request.getRemoteAddr时自动处理X-Forwarded-For以获取真实IP
   servlet:
-    # 应用的访问路径
-    context-path: /
-  # undertow 配置
-  undertow:
-    # HTTP post内容的最大大小。当值为-1时，默认值为大小是无限的
-    max-http-post-size: -1
-    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
-    # 每块buffer的空间大小,越小的空间被利用越充分
-    buffer-size: 512
-    # 是否分配的直接内存
-    direct-buffers: true
-    threads:
-      # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程
-      io: 8
-      # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载
-      worker: 256
+#    context-path: 前缀需要添加项目前缀，但后端使用nginx就足以区分了，加这个没道理的
+    jsp: #关闭jsp
+      registered: false
 
 captcha:
   # 是否启用验证码校验
@@ -122,7 +114,7 @@ security:
 # 多租户配置
 tenant:
   # 是否开启
-  enable: true
+  enable: false
   # 排除表
   excludes:
     - sys_menu
@@ -254,7 +246,7 @@ websocket:
 --- # warm-flow工作流配置
 warm-flow:
   # 是否开启工作流，默认true
-  enabled: true
+  enabled: false
   # 是否开启设计器ui
   ui: true
   # 是否显示流程图顶部文字

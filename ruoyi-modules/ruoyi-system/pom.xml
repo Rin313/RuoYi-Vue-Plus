@@ -37,12 +37,6 @@
             <artifactId>ruoyi-common-translation</artifactId>
         </dependency>
 
-        <!-- OSS功能模块 -->
-        <dependency>
-            <groupId>org.dromara</groupId>
-            <artifactId>ruoyi-common-oss</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-log</artifactId>

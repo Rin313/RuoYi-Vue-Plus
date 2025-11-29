@@ -31,7 +31,6 @@
         <redisson.version>3.51.0</redisson.version>
         <lock4j.version>2.2.7</lock4j.version>
         <dynamic-ds.version>4.3.1</dynamic-ds.version>
-        <snailjob.version>1.8.0</snailjob.version>
         <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
         <mapstruct-plus.lombok.version>0.2.0</mapstruct-plus.lombok.version>
         <lombok.version>1.18.40</lombok.version>
@@ -39,8 +38,6 @@
         <justauth.version>1.16.7</justauth.version>
         <!-- 离线IP地址定位库 -->
         <ip2region.version>2.7.0</ip2region.version>
-        <!-- OSS 配置 -->
-        <aws.sdk.version>2.28.22</aws.sdk.version>
         <!-- SMS 配置 -->
         <sms4j.version>3.3.5</sms4j.version>
         <!-- 限制框架中的fastjson版本 -->
@@ -269,18 +266,6 @@
                 <version>${lock4j.version}</version>
             </dependency>
 
-            <!-- SnailJob Client -->
-            <dependency>
-                <groupId>com.aizuda</groupId>
-                <artifactId>snail-job-client-starter</artifactId>
-                <version>${snailjob.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.aizuda</groupId>
-                <artifactId>snail-job-client-job-core</artifactId>
-                <version>${snailjob.version}</version>
-            </dependency>
-
             <!-- 加密包引入 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
@@ -334,12 +319,6 @@
 
             <dependency>
                 <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-job</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.dromara</groupId>
                 <artifactId>ruoyi-generator</artifactId>
                 <version>${revision}</version>
             </dependency>
@@ -363,7 +342,6 @@
     <modules>
         <module>ruoyi-admin</module>
         <module>ruoyi-common</module>
-        <module>ruoyi-extend</module>
         <module>ruoyi-modules</module>
     </modules>
     <packaging>pom</packaging>

@@ -18,9 +18,7 @@ import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.bo.SysUserPasswordBo;
 import org.dromara.system.domain.bo.SysUserProfileBo;
 import org.dromara.system.domain.vo.ProfileUserVo;
-import org.dromara.system.domain.vo.SysOssVo;
 import org.dromara.system.domain.vo.SysUserVo;
-import org.dromara.system.service.ISysOssService;
 import org.dromara.system.service.ISysUserService;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -41,7 +39,6 @@ import java.util.Arrays;
 public class SysProfileController extends BaseController {
 
     private final ISysUserService userService;
-    private final ISysOssService ossService;
 
     /**
      * 个人信息
@@ -119,12 +116,12 @@ public class SysProfileController extends BaseController {
             if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
                 return R.fail("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
             }
-            SysOssVo oss = ossService.upload(avatarfile);
-            String avatar = oss.getUrl();
-            boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(LoginHelper.getUserId(), oss.getOssId()));
-            if (updateSuccess) {
-                return R.ok(new AvatarVo(avatar));
-            }
+            // SysOssVo oss = ossService.upload(avatarfile);
+            // String avatar = oss.getUrl();
+            // boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(LoginHelper.getUserId(), oss.getOssId()));
+            // if (updateSuccess) {
+            //     return R.ok(new AvatarVo(avatar));
+            // }
         }
         return R.fail("上传图片异常，请联系管理员");
     }
