@@ -1,8 +1,6 @@
 package org.dromara.system.domain.vo;
 
 import lombok.Data;
-import org.dromara.common.translation.annotation.Translation;
-import org.dromara.common.translation.constant.TransConstant;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -68,7 +66,6 @@ public class ProfileUserVo implements Serializable {
     /**
      * 头像地址
      */
-    @Translation(type = TransConstant.OSS_ID_TO_URL)
     private Long avatar;
 
     /**
@@ -84,7 +81,6 @@ public class ProfileUserVo implements Serializable {
     /**
      * 部门名
      */
-    @Translation(type = TransConstant.DEPT_ID_TO_NAME, mapper = "deptId")
     private String deptName;
 
 }

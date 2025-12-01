@@ -5,8 +5,6 @@ import cn.idev.excel.annotation.ExcelProperty;
 import cn.idev.excel.annotation.format.DateTimeFormat;
 import org.dromara.common.excel.annotation.ExcelNotation;
 import org.dromara.common.excel.annotation.ExcelRequired;
-import org.dromara.common.translation.annotation.Translation;
-import org.dromara.common.translation.constant.TransConstant;
 import org.dromara.demo.domain.TestDemo;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -88,7 +86,6 @@ public class TestDemoVo implements Serializable {
     /**
      * 创建人账号
      */
-    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
     @ExcelProperty(value = "创建人账号")
     private String createByName;
 
@@ -107,7 +104,6 @@ public class TestDemoVo implements Serializable {
     /**
      * 更新人账号
      */
-    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "updateBy")
     @ExcelProperty(value = "更新人账号")
     private String updateByName;
 

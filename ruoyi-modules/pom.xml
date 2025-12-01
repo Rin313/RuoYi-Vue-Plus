@@ -13,7 +13,6 @@
         <module>ruoyi-demo</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-system</module>
-        <module>ruoyi-workflow</module>
     </modules>
 
     <artifactId>ruoyi-modules</artifactId>

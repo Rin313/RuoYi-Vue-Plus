@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.dromara.common.sensitive.annotation.Sensitive;
 import org.dromara.common.sensitive.core.SensitiveStrategy;
-import org.dromara.common.translation.annotation.Translation;
-import org.dromara.common.translation.constant.TransConstant;
 import org.dromara.system.domain.SysUser;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -78,7 +76,6 @@ public class SysUserVo implements Serializable {
     /**
      * 头像地址
      */
-    @Translation(type = TransConstant.OSS_ID_TO_URL)
     private Long avatar;
 
     /**
@@ -116,7 +113,6 @@ public class SysUserVo implements Serializable {
     /**
      * 部门名
      */
-    @Translation(type = TransConstant.DEPT_ID_TO_NAME, mapper = "deptId")
     private String deptName;
 
     /**

@@ -1,7 +1,5 @@
 package org.dromara.system.domain.vo;
 
-import org.dromara.common.translation.annotation.Translation;
-import org.dromara.common.translation.constant.TransConstant;
 import org.dromara.system.domain.SysNotice;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -62,7 +60,6 @@ public class SysNoticeVo implements Serializable {
     /**
      * 创建人名称
      */
-    @Translation(type = TransConstant.USER_ID_TO_NAME, mapper = "createBy")
     private String createByName;
 
     /**

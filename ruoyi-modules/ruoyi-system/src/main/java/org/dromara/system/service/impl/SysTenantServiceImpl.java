@@ -211,11 +211,11 @@ public class SysTenantServiceImpl implements ISysTenantService {
         configMapper.insertBatch(sysConfigList);
 
         // 未开启工作流不执行下方操作
-        if (SpringUtils.getProperty("warm-flow.enabled", Boolean.class, false)) {
-            WorkflowService workflowService = SpringUtils.getBean(WorkflowService.class);
-            // 新增租户流程定义
-            workflowService.syncDef(tenantId);
-        }
+        // if (SpringUtils.getProperty("warm-flow.enabled", Boolean.class, false)) {
+        //     WorkflowService workflowService = SpringUtils.getBean(WorkflowService.class);
+        //     // 新增租户流程定义
+        //     workflowService.syncDef(tenantId);
+        // }
         return true;
     }
 
