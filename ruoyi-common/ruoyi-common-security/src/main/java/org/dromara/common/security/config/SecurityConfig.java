@@ -87,14 +87,13 @@ public class SecurityConfig implements WebMvcConfigurer {
     }
 
     /**
-     * 对 actuator 健康检查接口 做账号密码鉴权
+     * 做账号密码鉴权
      */
     @Bean
     public SaServletFilter getSaServletFilter() {
         String username = SpringUtils.getProperty("spring.boot.admin.client.username");
         String password = SpringUtils.getProperty("spring.boot.admin.client.password");
         return new SaServletFilter()
-            .addInclude("/actuator", "/actuator/**")
             .setAuth(obj -> {
                 SaHttpBasicUtil.check(username + ":" + password);
             })
