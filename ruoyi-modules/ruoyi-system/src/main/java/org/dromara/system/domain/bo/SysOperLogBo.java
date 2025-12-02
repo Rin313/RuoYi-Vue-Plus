@@ -1,10 +1,10 @@
 package org.dromara.system.domain.bo;
 
-import org.dromara.common.log.event.OperLogEvent;
-import org.dromara.system.domain.SysOperLog;
 import io.github.linpeilie.annotations.AutoMapper;
 import io.github.linpeilie.annotations.AutoMappers;
 import lombok.Data;
+import org.dromara.common.log.event.OperLogEvent;
+import org.dromara.system.domain.SysOperLog;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -29,10 +29,6 @@ public class SysOperLogBo {
      */
     private Long operId;
 
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 模块标题

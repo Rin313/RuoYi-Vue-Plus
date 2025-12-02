@@ -1,8 +1,8 @@
 package org.dromara.common.core.domain;
 
-import org.dromara.common.core.constant.HttpStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.dromara.common.core.constant.HttpStatus;
 
 import java.io.Serial;
 import java.io.Serializable;

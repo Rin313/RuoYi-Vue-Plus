@@ -27,10 +27,6 @@ public class SysOperLog implements Serializable {
     @TableId(value = "oper_id")
     private Long operId;
 
-    /**
-     * 租户编号
-     */
-    private String tenantId;
 
     /**
      * 操作模块
