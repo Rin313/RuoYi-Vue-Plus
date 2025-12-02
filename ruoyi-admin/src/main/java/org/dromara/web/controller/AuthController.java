@@ -19,8 +19,6 @@ import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.json.utils.JsonUtils;
-import org.dromara.common.ratelimiter.annotation.RateLimiter;
-import org.dromara.common.ratelimiter.enums.LimitType;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;
 import org.dromara.common.social.config.properties.SocialProperties;
@@ -178,31 +176,4 @@ public class AuthController {
         registerService.register(user);
         return R.ok();
     }
-
-    /**
-     * 登录页面租户下拉框（兼容多租户前端）
-     */
-    @RateLimiter(time = 60, count = 20, limitType = LimitType.IP)
-    @GetMapping("/tenant/list")
-    public R<TenantListVo> tenantList() {
-        return R.ok(TenantListVo.DISABLED_TENANT);
-    }
-
-    /**
-     * 租户下拉列表
-     *
-     * @param tenantEnabled 租户开关
-     */
-    public record TenantListVo(boolean tenantEnabled){
-
-        /**
-         * 禁用租户，租户开关响应false（即关闭），让前端关闭租户功能
-         */
-        public static final TenantListVo DISABLED_TENANT = TenantListVo.of(false);
-
-        public static TenantListVo of(boolean tenantEnabled){
-            return new TenantListVo(tenantEnabled);
-        }
-    }
-
 }
