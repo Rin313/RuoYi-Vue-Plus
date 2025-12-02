@@ -25,7 +25,6 @@
         <module>ruoyi-common-security</module>
         <module>ruoyi-common-sms</module>
         <module>ruoyi-common-web</module>
-        <module>ruoyi-common-translation</module>
         <module>ruoyi-common-sensitive</module>
         <module>ruoyi-common-json</module>
         <module>ruoyi-common-encrypt</module>

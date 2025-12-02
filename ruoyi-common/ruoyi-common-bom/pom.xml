@@ -116,13 +116,6 @@
                 <version>${revision}</version>
             </dependency>
 
-            <!-- 翻译模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-translation</artifactId>
-                <version>${revision}</version>
-            </dependency>
-
             <!-- 脱敏模块 -->
             <dependency>
                 <groupId>org.dromara</groupId>

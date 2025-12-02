@@ -217,10 +217,11 @@ public class VelocityUtils {
                 importList.add("com.fasterxml.jackson.annotation.JsonFormat");
             } else if (!column.isSuperColumn() && GenConstants.TYPE_BIGDECIMAL.equals(column.getJavaType())) {
                 importList.add("java.math.BigDecimal");
-            } else if (!column.isSuperColumn() && "imageUpload".equals(column.getHtmlType())) {
-                importList.add("org.dromara.common.translation.annotation.Translation");
-                importList.add("org.dromara.common.translation.constant.TransConstant");
-            }
+            } 
+            // else if (!column.isSuperColumn() && "imageUpload".equals(column.getHtmlType())) {
+            //     importList.add("org.dromara.common.translation.annotation.Translation");
+            //     importList.add("org.dromara.common.translation.constant.TransConstant");
+            // }
         }
         return importList;
     }
