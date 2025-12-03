@@ -28,5 +28,8 @@ public class RegisterBody extends LoginBody {
     @Length(min = 5, max = 30, message = "{user.password.length.valid}")
 //    @Pattern(regexp = RegexConstants.PASSWORD, message = "{user.password.format.valid}")
     private String password;
-
+    /**
+     * 邀请码
+     */
+    private String InviteCode;
 }

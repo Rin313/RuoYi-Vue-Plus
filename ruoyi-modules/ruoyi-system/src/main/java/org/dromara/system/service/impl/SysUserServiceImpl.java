@@ -186,6 +186,16 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .eq(SysUser::getStatus, SystemConstants.NORMAL)
             .in(CollUtil.isNotEmpty(userIds), SysUser::getUserId, userIds));
     }
+    /**
+     * 通过邀请码查询用户
+     *
+     * @param phonenumber 手机号
+     * @return 用户对象信息
+     */
+    @Override
+    public SysUserVo selectUserByInviteCode(String inviteCode) {
+        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getInviteCode, inviteCode));
+    }
 
     /**
      * 查询用户所属角色组

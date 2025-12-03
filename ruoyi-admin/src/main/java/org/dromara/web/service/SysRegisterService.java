@@ -18,6 +18,7 @@ import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.web.config.properties.CaptchaProperties;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.bo.SysUserBo;
+import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
 import org.dromara.system.service.ISysUserService;
 import org.springframework.stereotype.Service;
@@ -52,6 +53,10 @@ public class SysRegisterService {
         sysUser.setNickName(username);
         sysUser.setPassword(BCrypt.hashpw(password));
         sysUser.setInviteCode(userService.getUniqueInviteCode());
+        if(registerBody.getInviteCode()!=null){
+            SysUserVo parent=userService.selectUserByInviteCode(registerBody.getInviteCode());
+            sysUser.setParentId(parent.getUserId());
+        }
         boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, sysUser.getUserName()));
         if (exist) {
             throw new UserException("user.register.save.error", username);

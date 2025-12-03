@@ -213,4 +213,12 @@ public interface ISysUserService {
     int deleteUserByIds(Long[] userIds);
 
     String getUniqueInviteCode();
+
+    /**
+     * 通过邀请码查询用户
+     *
+     * @param phonenumber 手机号
+     * @return 用户对象信息
+     */
+    SysUserVo selectUserByInviteCode(String inviteCode);
 }

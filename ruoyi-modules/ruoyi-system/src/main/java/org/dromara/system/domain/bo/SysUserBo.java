@@ -97,6 +97,11 @@ public class SysUserBo extends BaseEntity {
      */
     private String inviteCode;
 
+    /**
+     * 邀请人
+     */
+    private Long parentId;
+
 
     public SysUserBo(Long userId) {
         this.userId = userId;
