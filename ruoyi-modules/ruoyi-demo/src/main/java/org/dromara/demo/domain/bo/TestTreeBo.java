@@ -34,12 +34,6 @@ public class TestTreeBo extends BaseEntity {
     private Long parentId;
 
     /**
-     * 部门id
-     */
-    @NotNull(message = "部门id不能为空", groups = {AddGroup.class, EditGroup.class})
-    private Long deptId;
-
-    /**
      * 用户id
      */
     @NotNull(message = "用户id不能为空", groups = {AddGroup.class, EditGroup.class})

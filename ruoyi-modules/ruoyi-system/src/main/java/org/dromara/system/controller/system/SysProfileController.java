@@ -46,10 +46,9 @@ public class SysProfileController extends BaseController {
     public R<ProfileVo> profile() {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
         String roleGroup = userService.selectUserRoleGroup(user.getUserId());
-        String postGroup = userService.selectUserPostGroup(user.getUserId());
         // 单独做一个vo专门给个人中心用 避免数据被脱敏
         ProfileUserVo profileUser = BeanUtil.toBean(user, ProfileUserVo.class);
-        ProfileVo profileVo = new ProfileVo(profileUser, roleGroup, postGroup);
+        ProfileVo profileVo = new ProfileVo(profileUser, roleGroup);
         return R.ok(profileVo);
     }
 
@@ -136,8 +135,7 @@ public class SysProfileController extends BaseController {
      *
      * @param user      用户信息
      * @param roleGroup 用户所属角色组
-     * @param postGroup 用户所属岗位组
      */
-    public record ProfileVo(ProfileUserVo user, String roleGroup, String postGroup) {}
+    public record ProfileVo(ProfileUserVo user, String roleGroup) {}
 
 }

@@ -36,11 +36,6 @@ public class TestTree extends BaseEntity {
     private Long parentId;
 
     /**
-     * 部门id
-     */
-    private Long deptId;
-
-    /**
      * 用户id
      */
     private Long userId;

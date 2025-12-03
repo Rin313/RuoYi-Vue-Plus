@@ -32,11 +32,6 @@ public class SysUserVo implements Serializable {
     private Long userId;
 
     /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
      * 用户账号
      */
     private String userName;
@@ -106,11 +101,6 @@ public class SysUserVo implements Serializable {
     private Date createTime;
 
     /**
-     * 部门名
-     */
-    private String deptName;
-
-    /**
      * 角色对象
      */
     private List<SysRoleVo> roles;
@@ -119,11 +109,6 @@ public class SysUserVo implements Serializable {
      * 角色组
      */
     private Long[] roleIds;
-
-    /**
-     * 岗位组
-     */
-    private Long[] postIds;
 
     /**
      * 数据权限 当前角色ID

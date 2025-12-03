@@ -66,11 +66,6 @@ public class SysOperLogBo {
     private String operName;
 
     /**
-     * 部门名称
-     */
-    private String deptName;
-
-    /**
      * 请求URL
      */
     private String operUrl;

@@ -52,21 +52,6 @@ public interface CacheNames {
     String SYS_NICKNAME = "sys_nickname#30d";
 
     /**
-     * 部门
-     */
-    String SYS_DEPT = "sys_dept#30d";
-
-    /**
-     * 角色自定义权限
-     */
-    String SYS_ROLE_CUSTOM = "sys_role_custom#30d";
-
-    /**
-     * 部门及以下权限
-     */
-    String SYS_DEPT_AND_CHILD = "sys_dept_and_child#30d";
-
-    /**
      * 在线用户
      */
     String ONLINE_TOKEN = "online_tokens";

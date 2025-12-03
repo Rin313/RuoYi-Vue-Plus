@@ -24,11 +24,6 @@ public class ProfileUserVo implements Serializable {
     private Long userId;
 
     /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
      * 用户账号
      */
     private String userName;
@@ -72,10 +67,5 @@ public class ProfileUserVo implements Serializable {
      * 最后登录时间
      */
     private Date loginDate;
-
-    /**
-     * 部门名
-     */
-    private String deptName;
 
 }

@@ -12,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthUser;
 import org.dromara.common.core.constant.CacheConstants;
 import org.dromara.common.core.constant.Constants;
-import org.dromara.common.core.domain.dto.PostDTO;
 import org.dromara.common.core.domain.dto.RoleDTO;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.enums.LoginType;
@@ -54,8 +53,6 @@ public class SysLoginService {
     private final ISysPermissionService permissionService;
     private final ISysSocialService sysSocialService;
     private final ISysRoleService roleService;
-    private final ISysDeptService deptService;
-    private final ISysPostService postService;
     private final SysUserMapper userMapper;
 
 
@@ -140,21 +137,13 @@ public class SysLoginService {
         LoginUser loginUser = new LoginUser();
         Long userId = user.getUserId();
         loginUser.setUserId(userId);
-        loginUser.setDeptId(user.getDeptId());
         loginUser.setUsername(user.getUserName());
         loginUser.setNickname(user.getNickName());
         loginUser.setUserType(user.getUserType());
         loginUser.setMenuPermission(permissionService.getMenuPermission(userId));
         loginUser.setRolePermission(permissionService.getRolePermission(userId));
-        if (ObjectUtil.isNotNull(user.getDeptId())) {
-            Opt<SysDeptVo> deptOpt = Opt.of(user.getDeptId()).map(deptService::selectDeptById);
-            loginUser.setDeptName(deptOpt.map(SysDeptVo::getDeptName).orElse(StringUtils.EMPTY));
-            loginUser.setDeptCategory(deptOpt.map(SysDeptVo::getDeptCategory).orElse(StringUtils.EMPTY));
-        }
         List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);
-        List<SysPostVo> posts = postService.selectPostsByUserId(userId);
         loginUser.setRoles(BeanUtil.copyToList(roles, RoleDTO.class));
-        loginUser.setPosts(BeanUtil.copyToList(posts, PostDTO.class));
         return loginUser;
     }
 

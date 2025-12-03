@@ -2,7 +2,6 @@ package org.dromara.common.core.domain.model;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.domain.dto.PostDTO;
 import org.dromara.common.core.domain.dto.RoleDTO;
 
 import java.io.Serial;
@@ -26,21 +25,6 @@ public class LoginUser implements Serializable {
      * 用户ID
      */
     private Long userId;
-
-    /**
-     * 部门ID
-     */
-    private Long deptId;
-
-    /**
-     * 部门类别编码
-     */
-    private String deptCategory;
-
-    /**
-     * 部门名
-     */
-    private String deptName;
 
     /**
      * 用户唯一标识
@@ -106,11 +90,6 @@ public class LoginUser implements Serializable {
      * 角色对象
      */
     private List<RoleDTO> roles;
-
-    /**
-     * 岗位对象
-     */
-    private List<PostDTO> posts;
 
     /**
      * 数据权限 当前角色ID

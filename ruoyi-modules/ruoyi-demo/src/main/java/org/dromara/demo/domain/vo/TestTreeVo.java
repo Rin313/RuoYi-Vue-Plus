@@ -37,12 +37,6 @@ public class TestTreeVo implements Serializable {
     private Long parentId;
 
     /**
-     * 部门id
-     */
-    @ExcelProperty(value = "部门id")
-    private Long deptId;
-
-    /**
      * 用户id
      */
     @ExcelProperty(value = "用户id")

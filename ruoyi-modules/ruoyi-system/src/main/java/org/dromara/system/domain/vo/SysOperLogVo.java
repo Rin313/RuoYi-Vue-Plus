@@ -77,12 +77,6 @@ public class SysOperLogVo implements Serializable {
     private String operName;
 
     /**
-     * 部门名称
-     */
-    @ExcelProperty(value = "部门名称")
-    private String deptName;
-
-    /**
      * 请求URL
      */
     @ExcelProperty(value = "请求地址")

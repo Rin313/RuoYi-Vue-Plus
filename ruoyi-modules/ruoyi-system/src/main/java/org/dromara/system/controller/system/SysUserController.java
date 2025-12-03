@@ -23,8 +23,6 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
-import org.dromara.system.domain.bo.SysDeptBo;
-import org.dromara.system.domain.bo.SysPostBo;
 import org.dromara.system.domain.bo.SysRoleBo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.*;
@@ -51,8 +49,6 @@ public class SysUserController extends BaseController {
 
     private final ISysUserService userService;
     private final ISysRoleService roleService;
-    private final ISysPostService postService;
-    private final ISysDeptService deptService;
 
     /**
      * 获取用户列表
@@ -129,13 +125,6 @@ public class SysUserController extends BaseController {
             SysUserVo sysUser = userService.selectUserById(userId);
             userInfoVo.setUser(sysUser);
             userInfoVo.setRoleIds(roleService.selectRoleListByUserId(userId));
-            Long deptId = sysUser.getDeptId();
-            if (ObjectUtil.isNotNull(deptId)) {
-                SysPostBo postBo = new SysPostBo();
-                postBo.setDeptId(deptId);
-                userInfoVo.setPosts(postService.selectPostList(postBo));
-                userInfoVo.setPostIds(postService.selectPostListByUserId(userId));
-            }
         }
         SysRoleBo roleBo = new SysRoleBo();
         roleBo.setStatus(SystemConstants.NORMAL);
@@ -152,7 +141,6 @@ public class SysUserController extends BaseController {
     @RepeatSubmit()
     @PostMapping
     public R<Void> add(@Validated @RequestBody SysUserBo user) {
-        deptService.checkDeptDataScope(user.getDeptId());
         if (!userService.checkUserNameUnique(user)) {
             return R.fail("新增用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
@@ -174,7 +162,6 @@ public class SysUserController extends BaseController {
     public R<Void> edit(@Validated @RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
         userService.checkUserDataScope(user.getUserId());
-        deptService.checkDeptDataScope(user.getDeptId());
         if (!userService.checkUserNameUnique(user)) {
             return R.fail("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
@@ -204,13 +191,11 @@ public class SysUserController extends BaseController {
      * 根据用户ID串批量获取用户基础信息
      *
      * @param userIds 用户ID串
-     * @param deptId  部门ID
      */
     @SaCheckPermission("system:user:query")
     @GetMapping("/optionselect")
-    public R<List<SysUserVo>> optionselect(@RequestParam(required = false) Long[] userIds,
-                                           @RequestParam(required = false) Long deptId) {
-        return R.ok(userService.selectUserByIds(ArrayUtil.isEmpty(userIds) ? null : List.of(userIds), deptId));
+    public R<List<SysUserVo>> optionselect(@RequestParam(required = false) Long[] userIds) {
+        return R.ok(userService.selectUserByIds(ArrayUtil.isEmpty(userIds) ? null : List.of(userIds)));
     }
 
     /**
@@ -272,23 +257,4 @@ public class SysUserController extends BaseController {
         userService.insertUserAuth(userId, roleIds);
         return R.ok();
     }
-
-    /**
-     * 获取部门树列表
-     */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/deptTree")
-    public R<List<Tree<Long>>> deptTree(SysDeptBo dept) {
-        return R.ok(deptService.selectDeptTreeList(dept));
-    }
-
-    /**
-     * 获取部门下的所有用户信息
-     */
-    @SaCheckPermission("system:user:list")
-    @GetMapping("/list/dept/{deptId}")
-    public R<List<SysUserVo>> listByDept(@PathVariable @NotNull Long deptId) {
-        return R.ok(userService.selectUserListByDept(deptId));
-    }
-
 }

@@ -93,7 +93,6 @@ public class LogAspect {
             operLog.setOperUrl(StringUtils.substring(ServletUtils.getRequest().getRequestURI(), 0, 255));
             LoginUser loginUser = LoginHelper.getLoginUser();
             operLog.setOperName(loginUser.getUsername());
-            operLog.setDeptName(loginUser.getDeptName());
 
             if (e != null) {
                 operLog.setStatus(BusinessStatus.FAIL.ordinal());
