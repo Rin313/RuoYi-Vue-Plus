@@ -72,7 +72,6 @@ public class SpringDocConfig {
         Info info = new Info();
         info.setTitle(infoProperties.getTitle());
         info.setDescription(infoProperties.getDescription());
-        info.setContact(infoProperties.getContact());
         info.setLicense(infoProperties.getLicense());
         info.setVersion(infoProperties.getVersion());
         return info;

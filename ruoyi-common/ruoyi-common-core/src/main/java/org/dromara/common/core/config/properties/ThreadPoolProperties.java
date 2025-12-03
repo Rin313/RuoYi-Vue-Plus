@@ -9,7 +9,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author Lion Li
  */
 @Data
-@ConfigurationProperties(prefix = "thread-pool")
+@ConfigurationProperties(prefix = "thread-pool")//thread-pool应该是隐式用某个参数全部默认值了
 public class ThreadPoolProperties {
 
     /**
