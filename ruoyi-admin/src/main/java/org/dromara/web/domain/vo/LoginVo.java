@@ -36,12 +36,6 @@ public class LoginVo {
     private Long refreshExpireIn;
 
     /**
-     * 应用id
-     */
-    @JsonProperty("client_id")
-    private String clientId;
-
-    /**
      * 令牌权限
      */
     private String scope;

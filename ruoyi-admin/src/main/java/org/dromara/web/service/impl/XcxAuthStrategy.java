@@ -17,9 +17,9 @@ import org.dromara.common.core.domain.model.XcxLoginBody;
 import org.dromara.common.core.domain.model.XcxLoginUser;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.utils.ValidatorUtils;
+import org.dromara.common.core.utils.ip.AddressUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
@@ -39,7 +39,7 @@ public class XcxAuthStrategy implements IAuthStrategy {
     private final SysLoginService loginService;
 
     @Override
-    public LoginVo login(String body, SysClientVo client) {
+    public LoginVo login(String body) {
         XcxLoginBody loginBody = JsonUtils.parseObject(body, XcxLoginBody.class);
         ValidatorUtils.validate(loginBody);
         // xcxCode 为 小程序调用 wx.login 授权后获取
@@ -70,24 +70,20 @@ public class XcxAuthStrategy implements IAuthStrategy {
         loginUser.setUserId(user.getUserId());
         loginUser.setUsername(user.getUserName());
         loginUser.setNickname(user.getNickName());
-        loginUser.setClientKey(client.getClientKey());
-        loginUser.setDeviceType(client.getDeviceType());
+        loginUser.setClientKey(AddressUtils.getClientType());
         loginUser.setOpenid(openid);
 
         SaLoginParameter model = new SaLoginParameter();
-        model.setDeviceType(client.getDeviceType());
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(client.getTimeout());
-        model.setActiveTimeout(client.getActiveTimeout());
-        model.setExtra(LoginHelper.CLIENT_KEY, client.getClientId());
+        model.setTimeout(1111);
+        model.setActiveTimeout(1111);
         // 生成token
         LoginHelper.login(loginUser, model);
 
         LoginVo loginVo = new LoginVo();
         loginVo.setAccessToken(StpUtil.getTokenValue());
         loginVo.setExpireIn(StpUtil.getTokenTimeout());
-        loginVo.setClientId(client.getClientId());
         loginVo.setOpenid(openid);
         return loginVo;
     }

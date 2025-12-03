@@ -38,19 +38,7 @@ public class PlusWebSocketInterceptor implements HandshakeInterceptor {
         try {
             // 检查是否登录 是否有token
             LoginUser loginUser = LoginHelper.getLoginUser();
-
             // 解决 ws 不走 mvc 拦截器问题(cloud 版本不受影响)
-            // 检查 header 与 param 里的 clientid 与 token 里的是否一致
-            String headerCid = ServletUtils.getRequest().getHeader(LoginHelper.CLIENT_KEY);
-            String paramCid = ServletUtils.getParameter(LoginHelper.CLIENT_KEY);
-            String clientId = StpUtil.getExtra(LoginHelper.CLIENT_KEY).toString();
-            if (!StringUtils.equalsAny(clientId, headerCid, paramCid)) {
-                // token 无效
-                throw NotLoginException.newInstance(StpUtil.getLoginType(),
-                    "-100", "客户端ID与Token不匹配",
-                    StpUtil.getTokenValue());
-            }
-
             attributes.put(LOGIN_USER_KEY, loginUser);
             return true;
         } catch (NotLoginException e) {

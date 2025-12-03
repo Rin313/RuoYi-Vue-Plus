@@ -38,11 +38,6 @@ public class SysLogininfor implements Serializable {
     private String clientKey;
 
     /**
-     * 设备类型
-     */
-    private String deviceType;
-
-    /**
      * 登录状态 0成功 1失败
      */
     private String status;

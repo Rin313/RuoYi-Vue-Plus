@@ -17,11 +17,11 @@ import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
+import org.dromara.common.core.utils.ip.AddressUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
-import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
 import org.dromara.web.domain.vo.LoginVo;
@@ -43,7 +43,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
     private final SysUserMapper userMapper;
 
     @Override
-    public LoginVo login(String body, SysClientVo client) {
+    public LoginVo login(String body) {
         SmsLoginBody loginBody = JsonUtils.parseObject(body, SmsLoginBody.class);
         ValidatorUtils.validate(loginBody);
         String phonenumber = loginBody.getPhonenumber();
@@ -54,22 +54,18 @@ public class SmsAuthStrategy implements IAuthStrategy {
         // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
         LoginUser loginUser = loginService.buildLoginUser(user);
 
-        loginUser.setClientKey(client.getClientKey());
-        loginUser.setDeviceType(client.getDeviceType());
+        loginUser.setClientKey(AddressUtils.getClientType());
         SaLoginParameter model = new SaLoginParameter();
-        model.setDeviceType(client.getDeviceType());
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(client.getTimeout());
-        model.setActiveTimeout(client.getActiveTimeout());
-        model.setExtra(LoginHelper.CLIENT_KEY, client.getClientId());
+        model.setTimeout(1111);
+        model.setActiveTimeout(1111);
         // 生成token
         LoginHelper.login(loginUser, model);
 
         LoginVo loginVo = new LoginVo();
         loginVo.setAccessToken(StpUtil.getTokenValue());
         loginVo.setExpireIn(StpUtil.getTokenTimeout());
-        loginVo.setClientId(client.getClientId());
         return loginVo;
     }
 

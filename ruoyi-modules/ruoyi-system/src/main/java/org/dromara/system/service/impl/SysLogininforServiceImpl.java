@@ -1,6 +1,5 @@
 package org.dromara.system.service.impl;
 
-import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,13 +15,10 @@ import org.dromara.common.core.utils.ip.AddressUtils;
 import org.dromara.common.log.event.LogininforEvent;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysLogininfor;
 import org.dromara.system.domain.bo.SysLogininforBo;
-import org.dromara.system.domain.vo.SysClientVo;
 import org.dromara.system.domain.vo.SysLogininforVo;
 import org.dromara.system.mapper.SysLogininforMapper;
-import org.dromara.system.service.ISysClientService;
 import org.dromara.system.service.ISysLogininforService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
@@ -45,8 +41,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
 
     private final SysLogininforMapper baseMapper;
 
-    private final ISysClientService clientService;
-
     /**
      * 记录登录信息
      *
@@ -58,13 +52,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
         HttpServletRequest request = logininforEvent.getRequest();
         final UserAgent userAgent = UserAgentUtil.parse(request.getHeader("User-Agent"));
         final String ip = ServletUtils.getClientIP(request);
-        // 客户端信息
-        String clientId = request.getHeader(LoginHelper.CLIENT_KEY);
-        SysClientVo client = null;
-        if (StringUtils.isNotBlank(clientId)) {
-            client = clientService.queryByClientId(clientId);
-        }
-
         String address = AddressUtils.getRealAddressByIP(ip);
         StringBuilder s = new StringBuilder();
         s.append(getBlock(ip));
@@ -81,15 +68,12 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
         // 封装对象
         SysLogininforBo logininfor = new SysLogininforBo();
         logininfor.setUserName(logininforEvent.getUsername());
-        if (ObjectUtil.isNotNull(client)) {
-            logininfor.setClientKey(client.getClientKey());
-            logininfor.setDeviceType(client.getDeviceType());
-        }
         logininfor.setIpaddr(ip);
         logininfor.setLoginLocation(address);
         logininfor.setBrowser(browser);
         logininfor.setOs(os);
         logininfor.setMsg(logininforEvent.getMessage());
+        logininfor.setClientKey(AddressUtils.getClientType(request));//莫名其妙地出现获取不到request的问题
         // 日志状态
         if (StringUtils.equalsAny(logininforEvent.getStatus(), Constants.LOGIN_SUCCESS, Constants.LOGOUT, Constants.REGISTER)) {
             logininfor.setStatus(Constants.SUCCESS);

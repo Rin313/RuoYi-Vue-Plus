@@ -47,13 +47,6 @@ public class SysLogininforVo implements Serializable {
     private String clientKey;
 
     /**
-     * 设备类型
-     */
-    @ExcelProperty(value = "设备类型", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(dictType = "sys_device_type")
-    private String deviceType;
-
-    /**
      * 登录状态（0成功 1失败）
      */
     @ExcelProperty(value = "登录状态", converter = ExcelDictConvert.class)

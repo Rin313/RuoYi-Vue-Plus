@@ -49,8 +49,7 @@ public class UserActionListener implements SaTokenListener {
         dto.setTokenId(tokenValue);
         String username = (String) loginParameter.getExtra(LoginHelper.USER_NAME_KEY);
         dto.setUserName(username);
-        dto.setClientKey((String) loginParameter.getExtra(LoginHelper.CLIENT_KEY));
-        dto.setDeviceType(loginParameter.getDeviceType());
+        dto.setClientKey(AddressUtils.getClientType());
         if(loginParameter.getTimeout() == -1) {
             RedisUtils.setCacheObject(CacheConstants.ONLINE_TOKEN_KEY + tokenValue, dto);
         } else {
