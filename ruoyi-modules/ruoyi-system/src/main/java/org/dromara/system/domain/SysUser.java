@@ -1,20 +1,19 @@
 package org.dromara.system.domain;
 
+import org.dromara.common.core.constant.SystemConstants;
+import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.constant.SystemConstants;
-import org.dromara.common.mybatis.core.domain.BaseEntity;
-
 import java.util.Date;
 
 /**
- * 用户对象 sys_user
+ * 用户信息宽对象 sys_user
  *
  * @author Lion Li
+ * @date 2025-12-03
  */
-
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
@@ -38,27 +37,22 @@ public class SysUser extends BaseEntity {
     private String nickName;
 
     /**
-     * 用户类型（sys_user系统用户）
-     */
-    private String userType;
-
-    /**
-     * 用户邮箱
+     * 邮箱
      */
     private String email;
 
     /**
-     * 手机号码
+     * 手机
      */
     private String phonenumber;
 
     /**
-     * 用户性别
+     * 性别（0男 1女 2未知）
      */
     private String sex;
 
     /**
-     * 用户头像
+     * 头像
      */
     private Long avatar;
 
@@ -73,12 +67,12 @@ public class SysUser extends BaseEntity {
     private String password;
 
     /**
-     * 帐号状态（0正常 1停用）
+     * 状态(0正常 1停用)
      */
     private String status;
 
     /**
-     * 删除标志（0代表存在 1代表删除）
+     * 删除标志
      */
     @TableLogic
     private String delFlag;
@@ -98,6 +92,55 @@ public class SysUser extends BaseEntity {
      */
     private String remark;
 
+    /**
+     * 本人邀请码(6位)
+     */
+    private String inviteCode;
+
+    /**
+     * 邀请人
+     */
+    private Long parentId;
+
+    /**
+     * 现金余额
+     */
+    private Long balance;
+
+    /**
+     * 佣金余额
+     */
+    private Long commissionBalance;
+
+    /**
+     * 书币余额
+     */
+    private Long coinBalance;
+
+    /**
+     * 积分余额
+     */
+    private Long pointBalance;
+
+    /**
+     * 连续签到天数
+     */
+    private Long signinContinuousDays;
+
+    /**
+     * 上次签到时间
+     */
+    private Date lastSignin;
+
+    /**
+     * 总分享次数
+     */
+    private Long totalShareCount;
+
+    /**
+     * 上次分享时间
+     */
+    private Date lastShare;
 
     public SysUser(Long userId) {
         this.userId = userId;
@@ -106,5 +149,4 @@ public class SysUser extends BaseEntity {
     public boolean isSuperAdmin() {
         return SystemConstants.SUPER_ADMIN_ID.equals(this.userId);
     }
-
 }

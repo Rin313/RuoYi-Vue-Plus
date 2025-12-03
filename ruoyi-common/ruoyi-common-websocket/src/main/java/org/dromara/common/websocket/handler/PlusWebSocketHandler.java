@@ -34,7 +34,7 @@ public class PlusWebSocketHandler extends AbstractWebSocketHandler {
             return;
         }
         WebSocketSessionHolder.addSession(loginUser.getUserId(), session);
-        log.info("[connect] sessionId: {},userId:{},userType:{}", session.getId(), loginUser.getUserId(), loginUser.getUserType());
+        log.info("[connect] sessionId: {},userId:{}", session.getId(), loginUser.getUserId());
     }
 
     /**
@@ -106,7 +106,7 @@ public class PlusWebSocketHandler extends AbstractWebSocketHandler {
             return;
         }
         WebSocketSessionHolder.removeSession(loginUser.getUserId());
-        log.info("[disconnect] sessionId: {},userId:{},userType:{}", session.getId(), loginUser.getUserId(), loginUser.getUserType());
+        log.info("[disconnect] sessionId: {},userId:{}", session.getId(), loginUser.getUserId());
     }
 
     /**

@@ -4,7 +4,6 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.core.lang.Opt;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.lock.annotation.Lock4j;
 import lombok.RequiredArgsConstructor;
@@ -139,7 +138,6 @@ public class SysLoginService {
         loginUser.setUserId(userId);
         loginUser.setUsername(user.getUserName());
         loginUser.setNickname(user.getNickName());
-        loginUser.setUserType(user.getUserType());
         loginUser.setMenuPermission(permissionService.getMenuPermission(userId));
         loginUser.setRolePermission(permissionService.getRolePermission(userId));
         List<SysRoleVo> roles = roleService.selectRolesByUserId(userId);

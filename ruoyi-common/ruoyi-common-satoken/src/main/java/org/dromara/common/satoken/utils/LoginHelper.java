@@ -9,13 +9,11 @@ import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.enums.UserType;
 
 
 /**
  * 登录鉴权助手
  * <p>
- * user_type 为 用户类型 同一个用户表 可以有多种用户类型 例如 pc,app
  * deivce 为 设备类型 同一个用户类型 可以有 多种设备类型 例如 web,ios
  * 可以组成 用户类型与设备类型多对多的 权限灵活控制
  * <p>
@@ -105,14 +103,6 @@ public class LoginHelper {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    /**
-     * 获取用户类型
-     */
-    public static UserType getUserType() {
-        String loginType = StpUtil.getLoginIdAsString();
-        return UserType.getUserType(loginType);
     }
 
     /**

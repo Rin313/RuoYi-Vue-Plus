@@ -32,11 +32,6 @@ public class LoginUser implements Serializable {
     private String token;
 
     /**
-     * 用户类型
-     */
-    private String userType;
-
-    /**
      * 登录时间
      */
     private Long loginTime;
@@ -110,13 +105,10 @@ public class LoginUser implements Serializable {
      * 获取登录id
      */
     public String getLoginId() {
-        if (userType == null) {
-            throw new IllegalArgumentException("用户类型不能为空");
-        }
         if (userId == null) {
             throw new IllegalArgumentException("用户ID不能为空");
         }
-        return userType + ":" + userId;
+        return userId.toString();
     }
 
 }

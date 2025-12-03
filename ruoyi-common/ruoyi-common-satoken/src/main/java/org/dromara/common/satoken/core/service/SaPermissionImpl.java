@@ -4,7 +4,6 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.enums.UserType;
 import org.dromara.common.core.exception.ServiceException;
 import org.dromara.common.core.service.PermissionService;
 import org.dromara.common.core.utils.SpringUtils;
@@ -36,10 +35,6 @@ public class SaPermissionImpl implements StpInterface {
                 throw new ServiceException("PermissionService 实现类不存在");
             }
         }
-        UserType userType = UserType.getUserType(loginUser.getUserType());
-        if (userType == UserType.APP_USER) {
-            // 其他端 自行根据业务编写
-        }
         if (CollUtil.isNotEmpty(loginUser.getMenuPermission())) {
             // SYS_USER 默认返回权限
             return new ArrayList<>(loginUser.getMenuPermission());
@@ -62,10 +57,6 @@ public class SaPermissionImpl implements StpInterface {
             } else {
                 throw new ServiceException("PermissionService 实现类不存在");
             }
-        }
-        UserType userType = UserType.getUserType(loginUser.getUserType());
-        if (userType == UserType.APP_USER) {
-            // 其他端 自行根据业务编写
         }
         if (CollUtil.isNotEmpty(loginUser.getRolePermission())) {
             // SYS_USER 默认返回权限

@@ -42,11 +42,6 @@ public class SysUserVo implements Serializable {
     private String nickName;
 
     /**
-     * 用户类型（sys_user系统用户）
-     */
-    private String userType;
-
-    /**
      * 用户邮箱
      */
     @Sensitive(strategy = SensitiveStrategy.EMAIL, perms = "system:user:edit")
@@ -114,5 +109,44 @@ public class SysUserVo implements Serializable {
      * 数据权限 当前角色ID
      */
     private Long roleId;
+    /**
+     * 本人邀请码(6位)
+     */
+    private String inviteCode;
+
+    /**
+     * 邀请人
+     */
+    private Long parentId;
+
+    /**
+     * 现金余额
+     */
+    private Long balance;
+
+    /**
+     * 佣金余额
+     */
+    private Long commissionBalance;
+
+    /**
+     * 书币余额
+     */
+    private Long coinBalance;
+
+    /**
+     * 积分余额
+     */
+    private Long pointBalance;
+
+    /**
+     * 连续签到天数
+     */
+    private Long signinContinuousDays;
+
+    /**
+     * 上次签到时间
+     */
+    private Date lastSignin;
 
 }

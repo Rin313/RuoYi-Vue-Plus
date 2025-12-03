@@ -46,11 +46,6 @@ public class SysUserBo extends BaseEntity {
     private String nickName;
 
     /**
-     * 用户类型（sys_user系统用户）
-     */
-    private String userType;
-
-    /**
      * 用户邮箱
      */
     @Email(message = "邮箱格式不正确")
@@ -97,11 +92,11 @@ public class SysUserBo extends BaseEntity {
      * 用户ID
      */
     private String userIds;
-
     /**
-     * 排除不查询的用户(工作流用)
+     * 本人邀请码(6位)
      */
-    private String excludeUserIds;
+    private String inviteCode;
+
 
     public SysUserBo(Long userId) {
         this.userId = userId;

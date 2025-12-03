@@ -5,6 +5,8 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
@@ -91,9 +93,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             .between(params.get("beginTime") != null && params.get("endTime") != null,
                 SysUser::getCreateTime, params.get("beginTime"), params.get("endTime"))
             .orderByAsc(SysUser::getUserId);
-        if (StringUtils.isNotBlank(user.getExcludeUserIds())) {
-            wrapper.notIn(SysUser::getUserId, StringUtils.splitTo(user.getExcludeUserIds(), Convert::toLong));
-        }
         return wrapper;
     }
 
@@ -299,8 +298,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      */
     @Override
     public boolean registerUser(SysUserBo user) {
-        user.setCreateBy(0L);
-        user.setUpdateBy(0L);
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         return baseMapper.insert(sysUser) > 0;
     }
@@ -579,7 +576,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         }
         List<SysUserVo> list = baseMapper.selectVoList(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserId, SysUser::getUserName,
-                SysUser::getNickName, SysUser::getUserType, SysUser::getEmail,
+                SysUser::getNickName, SysUser::getEmail,
                 SysUser::getPhonenumber, SysUser::getSex, SysUser::getStatus,
                 SysUser::getCreateTime)
             .eq(SysUser::getStatus, SystemConstants.NORMAL)
@@ -643,5 +640,25 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         );
         return StreamUtils.toMap(list, SysUser::getUserId, SysUser::getNickName);
     }
-
+    @Override
+    public String getUniqueInviteCode() {
+        String code;
+        boolean isUnique = false;
+        int retryCount = 0;
+        while (!isUnique) {
+            if (retryCount > 100) {
+                throw new ServiceException("生成邀请码失败，请稍后重试");
+            }
+            // 生成6位验证码
+            code = RandomUtil.randomString("0123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 6);
+            Long count = baseMapper.selectCount(
+                new LambdaQueryWrapper<SysUser>().eq(SysUser::getInviteCode, code)
+            );
+            if (count == 0) {
+                return code;
+            }
+            retryCount++;
+        }
+        return null;
+    }
 }
