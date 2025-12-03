@@ -7,11 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.enums.UserStatus;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.excel.annotation.ExcelDictFormat;
-import org.dromara.common.excel.annotation.ExcelEnumFormat;
 import org.dromara.common.excel.convert.ExcelDictConvert;
 import org.dromara.common.excel.convert.ExcelEnumConvert;
 
@@ -45,7 +43,6 @@ public class ExportDemoVo implements Serializable {
      * 使用ExcelEnumFormat注解需要进行下拉选的部分
      */
     @ExcelProperty(value = "用户类型", index = 1, converter = ExcelEnumConvert.class)
-    @ExcelEnumFormat(enumClass = UserStatus.class, textField = "info")
     @NotEmpty(message = "用户类型不能为空", groups = AddGroup.class)
     private String userStatus;
 

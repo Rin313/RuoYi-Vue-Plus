@@ -3,6 +3,8 @@ package org.dromara.web.service;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.domain.model.RegisterBody;
@@ -40,32 +42,33 @@ public class SysRegisterService {
      * 注册
      */
     public void register(RegisterBody registerBody) {
-        String username = registerBody.getUsername();
+        String email = registerBody.getEmail();
         String password = registerBody.getPassword();
 
         boolean captchaEnabled = captchaProperties.getEnable();
-        // 验证码开关
         if (captchaEnabled) {
-            validateCaptcha(username, registerBody.getCode(), registerBody.getUuid());
+            validateCaptcha(email, registerBody.getCode(), registerBody.getUuid());
         }
         SysUserBo sysUser = new SysUserBo();
-        sysUser.setUserName(username);
-        sysUser.setNickName(username);
+        sysUser.setUserName(email);
+        sysUser.setNickName(email);
         sysUser.setPassword(BCrypt.hashpw(password));
         sysUser.setInviteCode(userService.getUniqueInviteCode());
-        if(registerBody.getInviteCode()!=null){
+        if(StringUtils.isNotEmpty(registerBody.getInviteCode())){
             SysUserVo parent=userService.selectUserByInviteCode(registerBody.getInviteCode());
+            if(ObjectUtils.isEmpty(parent))
+                throw new UserException("user.invitecode.unknown");
             sysUser.setParentId(parent.getUserId());
         }
-        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, sysUser.getUserName()));
+        boolean exist = userMapper.exists(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, sysUser.getEmail()));
         if (exist) {
-            throw new UserException("user.register.save.error", username);
+            throw new UserException("user.register.save.error", email);
         }
         boolean regFlag = userService.registerUser(sysUser);
         if (!regFlag) {
             throw new UserException("user.register.error");
         }
-        recordLogininfor(username, Constants.REGISTER, MessageUtils.message("user.register.success"));
+        recordLogininfor(email, Constants.REGISTER, MessageUtils.message("user.register.success"));
     }
 
     /**
