@@ -1,0 +1,135 @@
+package org.dromara.system.service.impl;
+
+import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.mybatis.core.page.PageQuery;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.dromara.system.domain.bo.TChapterBo;
+import org.dromara.system.domain.vo.TChapterVo;
+import org.dromara.system.domain.TChapter;
+import org.dromara.system.mapper.TChapterMapper;
+import org.dromara.system.service.ITChapterService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Collection;
+
+/**
+ * 小说章节宽Service业务层处理
+ *
+ * @author Lion Li
+ * @date 2025-12-04
+ */
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class TChapterServiceImpl implements ITChapterService {
+
+    private final TChapterMapper baseMapper;
+
+    /**
+     * 查询小说章节宽
+     *
+     * @param id 主键
+     * @return 小说章节宽
+     */
+    @Override
+    public TChapterVo queryById(Long id){
+        return baseMapper.selectVoById(id);
+    }
+
+    /**
+     * 分页查询小说章节宽列表
+     *
+     * @param bo        查询条件
+     * @param pageQuery 分页参数
+     * @return 小说章节宽分页列表
+     */
+    @Override
+    public TableDataInfo<TChapterVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
+        Page<TChapterVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        return TableDataInfo.build(result);
+    }
+
+    /**
+     * 查询符合条件的小说章节宽列表
+     *
+     * @param bo 查询条件
+     * @return 小说章节宽列表
+     */
+    @Override
+    public List<TChapterVo> queryList(TChapterBo bo) {
+        LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
+        return baseMapper.selectVoList(lqw);
+    }
+
+    private LambdaQueryWrapper<TChapter> buildQueryWrapper(TChapterBo bo) {
+        Map<String, Object> params = bo.getParams();
+        LambdaQueryWrapper<TChapter> lqw = Wrappers.lambdaQuery();
+        lqw.orderByAsc(TChapter::getId);
+        lqw.eq(bo.getNovelId() != null, TChapter::getNovelId, bo.getNovelId());
+        lqw.eq(StringUtils.isNotBlank(bo.getTitle()), TChapter::getTitle, bo.getTitle());
+        lqw.eq(StringUtils.isNotBlank(bo.getContent()), TChapter::getContent, bo.getContent());
+        lqw.eq(bo.getChapterIndex() != null, TChapter::getChapterIndex, bo.getChapterIndex());
+        return lqw;
+    }
+
+    /**
+     * 新增小说章节宽
+     *
+     * @param bo 小说章节宽
+     * @return 是否新增成功
+     */
+    @Override
+    public Boolean insertByBo(TChapterBo bo) {
+        TChapter add = MapstructUtils.convert(bo, TChapter.class);
+        validEntityBeforeSave(add);
+        boolean flag = baseMapper.insert(add) > 0;
+        if (flag) {
+            bo.setId(add.getId());
+        }
+        return flag;
+    }
+
+    /**
+     * 修改小说章节宽
+     *
+     * @param bo 小说章节宽
+     * @return 是否修改成功
+     */
+    @Override
+    public Boolean updateByBo(TChapterBo bo) {
+        TChapter update = MapstructUtils.convert(bo, TChapter.class);
+        validEntityBeforeSave(update);
+        return baseMapper.updateById(update) > 0;
+    }
+
+    /**
+     * 保存前的数据校验
+     */
+    private void validEntityBeforeSave(TChapter entity){
+        //TODO 做一些数据校验,如唯一约束
+    }
+
+    /**
+     * 校验并批量删除小说章节宽信息
+     *
+     * @param ids     待删除的主键集合
+     * @param isValid 是否进行有效性校验
+     * @return 是否删除成功
+     */
+    @Override
+    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+        if(isValid){
+            //TODO 做一些业务上的校验,判断是否需要校验
+        }
+        return baseMapper.deleteByIds(ids) > 0;
+    }
+}
