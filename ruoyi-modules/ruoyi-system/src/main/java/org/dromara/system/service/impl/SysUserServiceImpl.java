@@ -26,7 +26,6 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.SysUserRole;
-import org.dromara.system.domain.TNovel;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -38,7 +37,9 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 用户 业务层处理
@@ -171,6 +172,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             return user;
         }
         user.setRoles(roleMapper.selectRolesByUserId(user.getUserId()));
+        if(user.getSignRecord()==null)user.setSignRecord(new ArrayList<String>());
         return user;
     }
 
@@ -681,5 +683,102 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
                 .eq(SysUser::getUserId, LoginHelper.getUserId())
         );
         return rows > 0;
+    }
+
+    @Override
+    public boolean retroSign(LocalDate date) {
+        Long userId = LoginHelper.getUserId();
+        LocalDate today = LocalDate.now();
+        if (!date.isBefore(today)) {
+            throw new ServiceException("只能补签过去的日期");
+        }
+        SysUserVo userVo = selectUserById(userId);
+        List<String> signRecord = userVo.getSignRecord();
+        // 检查是否已签到
+        if (signRecord.contains(date)) {
+            throw new ServiceException("该日期已经签到过了");
+        }
+        // 添加补签记录
+        signRecord.add(date.toString());
+        SysUser user = new SysUser();
+        user.setUserId(userId);
+        user.setSignRecord(signRecord);
+        return baseMapper.updateById(user)>0;
+    }
+
+    @Override
+    public boolean sign() {
+        Long userId = LoginHelper.getUserId();
+        String today = LocalDate.now().toString();
+        SysUserVo userVo = selectUserById(userId);
+        List<String> signRecord = userVo.getSignRecord();
+        // 检查今天是否已签到
+        if (signRecord.contains(today)) {
+            throw new ServiceException("今天已经签到过了");
+        }
+        // 添加今天的签到记录
+        signRecord.add(today);
+        SysUser user = new SysUser();
+        user.setUserId(userId);
+        user.setSignRecord(signRecord);
+        return baseMapper.updateById(user)>0;
+    }
+    /**
+     * 是否已签到
+     */
+    @Override
+    public boolean hasSignedToday(Long userId) {
+        SysUserVo user = selectUserById(userId);
+        List<String> signRecord = user.getSignRecord();
+        if (signRecord == null || signRecord.isEmpty()) {
+            return false;
+        }
+        return signRecord.contains(LocalDate.now().toString());
+    }
+    /**
+     * 计算连续签到天数
+     */
+    @Override
+    public int getConsecutiveSignDays(Long userId) {
+        SysUserVo user = selectUserById(userId);
+        List<String> signRecord = user.getSignRecord();
+        if (signRecord == null || signRecord.isEmpty()) {
+            return 0;
+        }
+
+        // 将日期字符串转换为 LocalDate 并排序（降序，最近的日期在前）
+        List<LocalDate> sortedDates = signRecord.stream()
+            .map(dateStr -> LocalDate.parse(dateStr))
+            .sorted(Comparator.reverseOrder())
+            .collect(Collectors.toList());
+
+        LocalDate today = LocalDate.now();
+        LocalDate yesterday = today.minusDays(1);
+
+        // 确定起始日期：如果今天已签到从今天开始，否则从昨天开始
+        LocalDate startDate;
+        if (sortedDates.contains(today)) {
+            startDate = today;
+        } else if (sortedDates.contains(yesterday)) {
+            startDate = yesterday;
+        } else {
+            // 既没有今天也没有昨天的签到记录，连续天数为0
+            return 0;
+        }
+
+        int consecutiveDays = 0;
+        LocalDate expectedDate = startDate;
+
+        for (LocalDate signDate : sortedDates) {
+            if (signDate.equals(expectedDate)) {
+                consecutiveDays++;
+                expectedDate = expectedDate.minusDays(1);
+            } else if (signDate.isBefore(expectedDate)) {
+                // 日期不连续，跳出循环
+                break;
+            }
+        }
+
+        return consecutiveDays;
     }
 }

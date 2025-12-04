@@ -6,6 +6,7 @@ import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -223,4 +224,12 @@ public interface ISysUserService {
     SysUserVo selectUserByInviteCode(String inviteCode);
 
     boolean share();
+
+    boolean retroSign(LocalDate date);
+
+    boolean sign();
+
+    boolean hasSignedToday(Long userId);
+
+    int getConsecutiveSignDays(Long userId);
 }

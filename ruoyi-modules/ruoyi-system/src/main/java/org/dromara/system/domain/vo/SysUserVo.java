@@ -134,5 +134,9 @@ public class SysUserVo implements Serializable {
      * 积分余额
      */
     private Long pointBalance;
+    /**
+     * 签到记录
+     */
+    private List<String> signRecord;
 
 }

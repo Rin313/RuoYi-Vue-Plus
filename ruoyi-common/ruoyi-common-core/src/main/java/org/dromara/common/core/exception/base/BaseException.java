@@ -24,11 +24,6 @@ public class BaseException extends RuntimeException {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 所属模块
-     */
-    private String module;
-
-    /**
      * 错误码
      */
     private String code;
@@ -43,20 +38,12 @@ public class BaseException extends RuntimeException {
      */
     private String defaultMessage;
 
-    public BaseException(String module, String code, Object[] args) {
-        this(module, code, args, null);
-    }
-
-    public BaseException(String module, String defaultMessage) {
-        this(module, null, null, defaultMessage);
-    }
-
     public BaseException(String code, Object[] args) {
-        this(null, code, args, null);
+        this(code, args, null);
     }
 
     public BaseException(String defaultMessage) {
-        this(null, null, null, defaultMessage);
+        this(null, null, defaultMessage);
     }
 
     @Override

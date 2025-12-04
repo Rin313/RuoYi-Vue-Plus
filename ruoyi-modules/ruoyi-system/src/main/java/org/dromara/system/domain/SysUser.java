@@ -3,10 +3,13 @@ package org.dromara.system.domain;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
+import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
+
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户信息宽对象 sys_user
@@ -17,7 +20,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_user")
+@TableName(value="sys_user",autoResultMap=true)
 public class SysUser extends BaseEntity {
 
     /**
@@ -123,13 +126,14 @@ public class SysUser extends BaseEntity {
     private Long pointBalance;
 
     /**
-     * 总分享次数
+     * 邀请码分享次数
      */
     private Long totalShareCount;
-
-    public SysUser(Long userId) {
-        this.userId = userId;
-    }
+    /**
+     * 签到记录
+     */
+     @TableField(typeHandler = JacksonTypeHandler.class)
+    private List<String> signRecord;
 
     public boolean isSuperAdmin() {
         return SystemConstants.SUPER_ADMIN_ID.equals(this.userId);

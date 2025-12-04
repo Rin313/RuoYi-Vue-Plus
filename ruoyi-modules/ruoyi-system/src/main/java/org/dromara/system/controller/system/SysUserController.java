@@ -1,5 +1,6 @@
 package org.dromara.system.controller.system;
 
+import cn.dev33.satoken.annotation.SaCheckLogin;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.util.ArrayUtil;
@@ -34,6 +35,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +53,30 @@ public class SysUserController extends BaseController {
     private final ISysUserService userService;
     private final ISysRoleService roleService;
     /**
+     * 签到
+     */
+    @PostMapping("/sign")
+    public R<Void> sign() {
+        return userService.sign() ? R.ok() : R.fail();
+    }
+
+    /**
+     * 补签
+     *
+     * @param date 补签日期，格式：yyyy-MM-dd
+     */
+    @PostMapping("/retroSign")
+    public R<Void> retroSign(@RequestParam LocalDate date) {
+        return userService.retroSign(date) ? R.ok() : R.fail();
+    }
+    /**
      * 记录用户分享
      * 
      */
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/share")
     public R<Void> share() {
-        boolean result = userService.share();
-        return result ? R.ok() : R.fail("浏览量更新失败");
+        return userService.share() ? R.ok() : R.fail("浏览量更新失败");
     }
     /**
      * 获取用户列表

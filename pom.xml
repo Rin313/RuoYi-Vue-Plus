@@ -43,7 +43,6 @@
         <anyline.version>8.7.2-20250603</anyline.version>
 
         <!-- 插件版本 -->
-        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <!-- 打包默认跳过测试 -->
         <skipTests>true</skipTests>
