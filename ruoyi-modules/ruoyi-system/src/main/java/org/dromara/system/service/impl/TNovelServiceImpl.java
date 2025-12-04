@@ -255,7 +255,7 @@ public class TNovelServiceImpl implements ITNovelService {
         // 使用 setSql 实现原子性更新，避免并发导致的数据不一致
         int rows = baseMapper.update(null,
             new LambdaUpdateWrapper<TNovel>()
-                .setSql("view_count = IFNULL(view_count, 0) + 1")
+                .setSql("view_count = view_count + 1")
                 .eq(TNovel::getId, id)
         );
         return rows > 0;

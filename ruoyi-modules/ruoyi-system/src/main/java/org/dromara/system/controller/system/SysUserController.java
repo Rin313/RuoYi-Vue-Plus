@@ -1,6 +1,7 @@
 package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.digest.BCrypt;
@@ -19,6 +20,8 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
+import org.dromara.common.ratelimiter.annotation.RateLimiter;
+import org.dromara.common.ratelimiter.enums.LimitType;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysRoleBo;
@@ -47,7 +50,16 @@ public class SysUserController extends BaseController {
 
     private final ISysUserService userService;
     private final ISysRoleService roleService;
-
+    /**
+     * 记录用户分享
+     * 
+     */
+    @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
+    @PostMapping("/share")
+    public R<Void> share() {
+        boolean result = userService.share();
+        return result ? R.ok() : R.fail("浏览量更新失败");
+    }
     /**
      * 获取用户列表
      */

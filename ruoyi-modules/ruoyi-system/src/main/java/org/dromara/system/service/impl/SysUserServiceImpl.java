@@ -26,6 +26,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.SysUserRole;
+import org.dromara.system.domain.TNovel;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -670,5 +671,15 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             retryCount++;
         }
         return null;
+    }
+
+    @Override
+    public boolean share() {
+        int rows = baseMapper.update(null,
+            new LambdaUpdateWrapper<SysUser>()
+                .setSql("total_share_count = total_share_count + 1")
+                .eq(SysUser::getUserId, LoginHelper.getUserId())
+        );
+        return rows > 0;
     }
 }

@@ -221,4 +221,6 @@ public interface ISysUserService {
      * @return 用户对象信息
      */
     SysUserVo selectUserByInviteCode(String inviteCode);
+
+    boolean share();
 }

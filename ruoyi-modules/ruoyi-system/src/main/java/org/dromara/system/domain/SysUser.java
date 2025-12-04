@@ -127,11 +127,6 @@ public class SysUser extends BaseEntity {
      */
     private Long totalShareCount;
 
-    /**
-     * 上次分享时间
-     */
-    private Date lastShare;
-
     public SysUser(Long userId) {
         this.userId = userId;
     }
