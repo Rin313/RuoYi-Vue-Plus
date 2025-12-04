@@ -23,15 +23,9 @@ public class LoginBody implements Serializable {
      */
     @NotBlank(message = "{auth.grant.type.not.blank}")
     private String grantType;
-
     /**
-     * 验证码
+     * 邀请码
      */
-    private String code;
-
-    /**
-     * 唯一标识
-     */
-    private String uuid;
+    private String InviteCode;
 
 }

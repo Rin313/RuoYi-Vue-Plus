@@ -662,8 +662,8 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             if (retryCount > 100) {
                 throw new BizException("生成邀请码失败，请稍后重试");
             }
-            // 生成6位验证码
-            code = RandomUtil.randomString("0123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 6);
+            // 生成6位字母数字验证码
+            code = RandomUtil.randomString(6);
             Long count = baseMapper.selectCount(
                 new LambdaQueryWrapper<SysUser>().eq(SysUser::getInviteCode, code)
             );
