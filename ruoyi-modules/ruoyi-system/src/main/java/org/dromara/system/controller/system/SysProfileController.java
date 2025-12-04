@@ -19,12 +19,8 @@ import org.dromara.system.domain.bo.SysUserProfileBo;
 import org.dromara.system.domain.vo.ProfileUserVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.service.ISysUserService;
-import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
 
 /**
  * 个人信息 业务处理
@@ -38,19 +34,6 @@ import java.util.Arrays;
 public class SysProfileController extends BaseController {
 
     private final ISysUserService userService;
-
-    /**
-     * 个人信息
-     */
-    @GetMapping
-    public R<ProfileVo> profile() {
-        SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
-        String roleGroup = userService.selectUserRoleGroup(user.getUserId());
-        // 单独做一个vo专门给个人中心用 避免数据被脱敏
-        ProfileUserVo profileUser = BeanUtil.toBean(user, ProfileUserVo.class);
-        ProfileVo profileVo = new ProfileVo(profileUser, roleGroup);
-        return R.ok(profileVo);
-    }
 
     /**
      * 修改用户信息
@@ -99,29 +82,29 @@ public class SysProfileController extends BaseController {
         return R.fail("修改密码异常，请联系管理员");
     }
 
-    /**
-     * 头像上传
-     *
-     * @param avatarfile 用户头像
-     */
-    @RepeatSubmit
-    @Log(title = "用户头像", businessType = BusinessType.UPDATE)
-    @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public R<AvatarVo> avatar(@RequestPart("avatarfile") MultipartFile avatarfile) {
-        if (!avatarfile.isEmpty()) {
-            String extension = FileUtil.extName(avatarfile.getOriginalFilename());
-            if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
-                return R.fail("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
-            }
-            // SysOssVo oss = ossService.upload(avatarfile);
-            // String avatar = oss.getUrl();
-            // boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(LoginHelper.getUserId(), oss.getOssId()));
-            // if (updateSuccess) {
-            //     return R.ok(new AvatarVo(avatar));
-            // }
-        }
-        return R.fail("上传图片异常，请联系管理员");
-    }
+    // /**
+    //  * 头像上传
+    //  *
+    //  * @param avatarfile 用户头像
+    //  */
+    // @RepeatSubmit
+    // @Log(title = "用户头像", businessType = BusinessType.UPDATE)
+    // @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    // public R<AvatarVo> avatar(@RequestPart("avatarfile") MultipartFile avatarfile) {
+    //     if (!avatarfile.isEmpty()) {
+    //         String extension = FileUtil.extName(avatarfile.getOriginalFilename());
+    //         if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
+    //             return R.fail("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
+    //         }
+    //         // SysOssVo oss = ossService.upload(avatarfile);
+    //         // String avatar = oss.getUrl();
+    //         // boolean updateSuccess = DataPermissionHelper.ignore(() -> userService.updateUserAvatar(LoginHelper.getUserId(), oss.getOssId()));
+    //         // if (updateSuccess) {
+    //         //     return R.ok(new AvatarVo(avatar));
+    //         // }
+    //     }
+    //     return R.fail("上传图片异常，请联系管理员");
+    // }
 
     /**
      * 用户头像信息

@@ -78,6 +78,10 @@
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-sse</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.dromara</groupId>
+            <artifactId>ruoyi-common-ratelimiter</artifactId>
+        </dependency>
 
     </dependencies>
 
