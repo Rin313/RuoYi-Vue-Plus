@@ -123,16 +123,6 @@ public class SysUser extends BaseEntity {
     private Long pointBalance;
 
     /**
-     * 连续签到天数
-     */
-    private Long signinContinuousDays;
-
-    /**
-     * 上次签到时间
-     */
-    private Date lastSignin;
-
-    /**
      * 总分享次数
      */
     private Long totalShareCount;

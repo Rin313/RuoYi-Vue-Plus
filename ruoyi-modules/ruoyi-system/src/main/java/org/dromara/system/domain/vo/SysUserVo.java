@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
-import org.dromara.common.sensitive.annotation.Sensitive;
-import org.dromara.common.sensitive.core.SensitiveStrategy;
 import org.dromara.system.domain.SysUser;
 
 import java.io.Serial;
@@ -44,13 +42,11 @@ public class SysUserVo implements Serializable {
     /**
      * 用户邮箱
      */
-    @Sensitive(strategy = SensitiveStrategy.EMAIL, perms = "system:user:edit")
     private String email;
 
     /**
      * 手机号码
      */
-    @Sensitive(strategy = SensitiveStrategy.PHONE, perms = "system:user:edit")
     private String phonenumber;
 
     /**
@@ -138,15 +134,5 @@ public class SysUserVo implements Serializable {
      * 积分余额
      */
     private Long pointBalance;
-
-    /**
-     * 连续签到天数
-     */
-    private Long signinContinuousDays;
-
-    /**
-     * 上次签到时间
-     */
-    private Date lastSignin;
 
 }

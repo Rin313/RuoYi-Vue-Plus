@@ -92,14 +92,4 @@ public class ProfileUserVo implements Serializable {
      */
     private Long pointBalance;
 
-    /**
-     * 连续签到天数
-     */
-    private Long signinContinuousDays;
-
-    /**
-     * 上次签到时间
-     */
-    private Date lastSignin;
-
 }

@@ -94,7 +94,7 @@ public class TestDemoServiceImpl implements ITestDemoService {
      * @param entity 实体类数据
      */
     private void validEntityBeforeSave(TestDemo entity) {
-        //TODO 做一些数据校验,如唯一约束
+        //做一些数据校验,如唯一约束
     }
 
     @Override
