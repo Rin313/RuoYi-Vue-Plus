@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -263,7 +263,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     @Override
     public void checkUserAllowed(Long userId) {
         if (ObjectUtil.isNotNull(userId) && LoginHelper.isSuperAdmin(userId)) {
-            throw new ServiceException("不允许操作超级管理员用户");
+            throw new BizException("不允许操作超级管理员用户");
         }
     }
 
@@ -281,7 +281,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
             return;
         }
         if (baseMapper.countUserById(userId) == 0) {
-            throw new ServiceException("没有权限访问用户数据！");
+            throw new BizException("没有权限访问用户数据！");
         }
     }
 
@@ -331,7 +331,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 防止错误更新后导致的数据误删除
         int flag = baseMapper.updateById(sysUser);
         if (flag < 1) {
-            throw new ServiceException("修改用户{}信息失败", user.getUserName());
+            throw new BizException("修改用户{}信息失败", user.getUserName());
         }
         return flag;
     }
@@ -442,7 +442,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
 
         // 校验是否有权限访问这些角色（含数据权限控制）
         if (roleMapper.selectRoleCount(roleList) != roleList.size()) {
-            throw new ServiceException("没有权限访问角色的数据");
+            throw new BizException("没有权限访问角色的数据");
         }
 
         // 是否清除原有绑定
@@ -475,7 +475,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteById(userId);
         if (flag < 1) {
-            throw new ServiceException("删除用户失败!");
+            throw new BizException("删除用户失败!");
         }
         return flag;
     }
@@ -499,7 +499,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         // 防止更新失败导致的数据删除
         int flag = baseMapper.deleteByIds(ids);
         if (flag < 1) {
-            throw new ServiceException("删除用户失败!");
+            throw new BizException("删除用户失败!");
         }
         return flag;
     }
@@ -660,7 +660,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         int retryCount = 0;
         while (!isUnique) {
             if (retryCount > 100) {
-                throw new ServiceException("生成邀请码失败，请稍后重试");
+                throw new BizException("生成邀请码失败，请稍后重试");
             }
             // 生成6位验证码
             code = RandomUtil.randomString("0123456789ABCDEFGHJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz", 6);
@@ -690,13 +690,13 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         Long userId = LoginHelper.getUserId();
         LocalDate today = LocalDate.now();
         if (!date.isBefore(today)) {
-            throw new ServiceException("只能补签过去的日期");
+            throw new BizException("只能补签过去的日期");
         }
         SysUserVo userVo = selectUserById(userId);
         List<String> signRecord = userVo.getSignRecord();
         // 检查是否已签到
         if (signRecord.contains(date)) {
-            throw new ServiceException("该日期已经签到过了");
+            throw new BizException("该日期已经签到过了");
         }
         // 添加补签记录
         signRecord.add(date.toString());
@@ -714,7 +714,7 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         List<String> signRecord = userVo.getSignRecord();
         // 检查今天是否已签到
         if (signRecord.contains(today)) {
-            throw new ServiceException("今天已经签到过了");
+            throw new BizException("今天已经签到过了");
         }
         // 添加今天的签到记录
         signRecord.add(today);

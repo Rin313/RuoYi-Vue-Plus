@@ -3,7 +3,7 @@ package org.dromara.common.core.utils.ip;
 import cn.hutool.core.io.resource.NoResourceException;
 import cn.hutool.core.io.resource.ResourceUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.lionsoul.ip2region.xdb.Searcher;
 
@@ -28,9 +28,9 @@ public class RegionUtils {
             SEARCHER = Searcher.newWithBuffer(ResourceUtil.readBytes(IP_XDB_FILENAME));
             log.info("RegionUtils初始化成功，加载IP地址库数据成功！");
         } catch (NoResourceException e) {
-            throw new ServiceException("RegionUtils初始化失败，原因：IP地址库数据不存在！");
+            throw new BizException("RegionUtils初始化失败，原因：IP地址库数据不存在！");
         } catch (Exception e) {
-            throw new ServiceException("RegionUtils初始化失败，原因：" + e.getMessage());
+            throw new BizException("RegionUtils初始化失败，原因：" + e.getMessage());
         }
     }
 

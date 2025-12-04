@@ -11,7 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.domain.R;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.reflect.ReflectUtils;
@@ -102,7 +102,7 @@ public class CaptchaController {
             MailUtils.sendText(email, "登录验证码", "您本次验证码为：" + code + "，有效性为" + Constants.CAPTCHA_EXPIRATION + "分钟，请尽快填写。");
         } catch (Exception e) {
             log.error("验证码短信发送异常 => {}", e.getMessage());
-            throw new ServiceException(e.getMessage());
+            throw new BizException(e.getMessage());
         }
     }
 

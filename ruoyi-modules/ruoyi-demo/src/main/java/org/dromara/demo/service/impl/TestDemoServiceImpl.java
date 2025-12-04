@@ -4,7 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -103,7 +103,7 @@ public class TestDemoServiceImpl implements ITestDemoService {
             // 做一些业务上的校验,判断是否需要校验
             List<TestDemo> list = baseMapper.selectByIds(ids);
             if (list.size() != ids.size()) {
-                throw new ServiceException("您没有删除权限!");
+                throw new BizException("您没有删除权限!");
             }
         }
         return baseMapper.deleteByIds(ids) > 0;

@@ -14,7 +14,7 @@ import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.domain.dto.RoleDTO;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.enums.LoginType;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.log.event.LogininforEvent;
@@ -74,7 +74,7 @@ public class SysLoginService {
         bo.setNickName(authUserData.getNickname());
         List<SysSocialVo> checkList = sysSocialService.selectByAuthId(authId);
         if (CollUtil.isNotEmpty(checkList)) {
-            throw new ServiceException("此三方账号已经被绑定!");
+            throw new BizException("此三方账号已经被绑定!");
         }
         // 查询是否已经绑定用户
         SysSocialBo params = new SysSocialBo();
@@ -89,7 +89,7 @@ public class SysLoginService {
             bo.setId(list.get(0).getId());
             sysSocialService.updateByBo(bo);
             // 如果要绑定的平台账号已经被绑定过了 是否抛异常自行决断
-            // throw new ServiceException("此平台账号已经被绑定!");
+            // throw new BizException("此平台账号已经被绑定!");
         }
     }
 

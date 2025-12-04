@@ -1,7 +1,7 @@
 package org.dromara.web.service;
 
 
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.web.domain.vo.LoginVo;
 
@@ -25,7 +25,7 @@ public interface IAuthStrategy {
         // 授权类型和客户端id
         String beanName = grantType + BASE_NAME;
         if (!SpringUtils.containsBean(beanName)) {
-            throw new ServiceException("授权类型不正确!");
+            throw new BizException("授权类型不正确!");
         }
         IAuthStrategy instance = SpringUtils.getBean(beanName);
         return instance.login(body);

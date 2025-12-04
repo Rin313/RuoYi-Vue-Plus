@@ -11,7 +11,7 @@ import me.zhyd.oauth.model.AuthUser;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SocialLoginBody;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.core.utils.ip.AddressUtils;
@@ -59,13 +59,13 @@ public class SocialAuthStrategy implements IAuthStrategy {
                 loginBody.getSource(), loginBody.getSocialCode(),
                 loginBody.getSocialState(), socialProperties);
         if (!response.ok()) {
-            throw new ServiceException(response.getMsg());
+            throw new BizException(response.getMsg());
         }
         AuthUser authUserData = response.getData();
 
         List<SysSocialVo> list = sysSocialService.selectByAuthId(authUserData.getSource() + authUserData.getUuid());
         if (CollUtil.isEmpty(list)) {
-            throw new ServiceException("你还没有绑定第三方账号，绑定后才可以登录！");
+            throw new BizException("你还没有绑定第三方账号，绑定后才可以登录！");
         }
         SysSocialVo social = list.get(0);
 

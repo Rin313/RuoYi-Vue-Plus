@@ -9,7 +9,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.ConfigService;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.ObjectUtils;
@@ -129,7 +129,7 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
         if (row > 0) {
             return config.getConfigValue();
         }
-        throw new ServiceException("操作失败");
+        throw new BizException("操作失败");
     }
 
     /**
@@ -157,7 +157,7 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
         if (row > 0) {
             return config.getConfigValue();
         }
-        throw new ServiceException("操作失败");
+        throw new BizException("操作失败");
     }
 
     /**
@@ -170,7 +170,7 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
         List<SysConfig> list = baseMapper.selectByIds(configIds);
         list.forEach(config -> {
             if (StringUtils.equals(SystemConstants.YES, config.getConfigType())) {
-                throw new ServiceException("内置参数【{}】不能删除", config.getConfigKey());
+                throw new BizException("内置参数【{}】不能删除", config.getConfigKey());
             }
             CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
         });

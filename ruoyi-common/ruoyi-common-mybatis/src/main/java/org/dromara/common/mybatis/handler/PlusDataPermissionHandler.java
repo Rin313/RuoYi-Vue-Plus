@@ -11,7 +11,7 @@ import net.sf.jsqlparser.expression.operators.relational.ParenthesedExpressionLi
 import net.sf.jsqlparser.parser.CCJSqlParserUtil;
 import org.dromara.common.core.domain.dto.RoleDTO;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -83,7 +83,7 @@ public class PlusDataPermissionHandler {
                 return parenthesis;
             }
         } catch (JSQLParserException e) {
-            throw new ServiceException("数据权限解析异常 => " + e.getMessage());
+            throw new BizException("数据权限解析异常 => " + e.getMessage());
         } finally {
             DataPermissionHelper.removePermission();
         }
@@ -95,7 +95,7 @@ public class PlusDataPermissionHandler {
      * @param dataPermission 数据权限注解
      * @param isSelect       标志当前操作是否为查询操作，查询操作和更新或删除操作在处理过滤条件时会有不同的处理方式
      * @return 构建的数据过滤条件的 SQL 语句
-     * @throws ServiceException 如果角色的数据范围异常或者 key 与 value 的长度不匹配，则抛出 ServiceException 异常
+     * @throws BizException 如果角色的数据范围异常或者 key 与 value 的长度不匹配，则抛出 BizException 异常
      */
     private String buildDataFilter(DataPermission dataPermission, boolean isSelect) {
         // 更新或删除需满足所有条件
@@ -115,7 +115,7 @@ public class PlusDataPermissionHandler {
         Map<DataColumn, Boolean> ignoreMap = new HashMap<>();
         for (DataColumn dataColumn : dataPermission.value()) {
             if (dataColumn.key().length != dataColumn.value().length) {
-                throw new ServiceException("角色数据范围异常 => key与value长度不匹配");
+                throw new BizException("角色数据范围异常 => key与value长度不匹配");
             }
             // 包含权限标识符 这直接跳过
             if (StringUtils.isNotBlank(dataColumn.permission()) &&
@@ -136,7 +136,7 @@ public class PlusDataPermissionHandler {
             // 获取角色权限泛型
             DataScopeType type = DataScopeType.findCode(role.getDataScope());
             if (ObjectUtil.isNull(type)) {
-                throw new ServiceException("角色数据范围异常 => " + role.getDataScope());
+                throw new BizException("角色数据范围异常 => " + role.getDataScope());
             }
             // 全部数据权限直接返回
             if (type == DataScopeType.ALL) {

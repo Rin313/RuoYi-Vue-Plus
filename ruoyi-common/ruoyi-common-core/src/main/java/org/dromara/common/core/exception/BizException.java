@@ -17,7 +17,7 @@ import java.io.Serial;
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @AllArgsConstructor
-public final class ServiceException extends RuntimeException {
+public final class BizException extends RuntimeException {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -37,16 +37,16 @@ public final class ServiceException extends RuntimeException {
      */
     private String detailMessage;
 
-    public ServiceException(String message) {
+    public BizException(String message) {
         this.message = message;
     }
 
-    public ServiceException(String message, Integer code) {
+    public BizException(String message, Integer code) {
         this.message = message;
         this.code = code;
     }
 
-    public ServiceException(String message, Object... args) {
+    public BizException(String message, Object... args) {
         this.message = StrFormatter.format(message, args);
     }
 
@@ -55,12 +55,12 @@ public final class ServiceException extends RuntimeException {
         return message;
     }
 
-    public ServiceException setMessage(String message) {
+    public BizException setMessage(String message) {
         this.message = message;
         return this;
     }
 
-    public ServiceException setDetailMessage(String detailMessage) {
+    public BizException setDetailMessage(String detailMessage) {
         this.detailMessage = detailMessage;
         return this;
     }

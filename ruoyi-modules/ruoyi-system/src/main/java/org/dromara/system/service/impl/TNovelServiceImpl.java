@@ -1,6 +1,6 @@
 package org.dromara.system.service.impl;
 
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -71,12 +71,12 @@ public class TNovelServiceImpl implements ITNovelService {
     @Transactional(rollbackFor = Exception.class)
     public void importTxtNovel(MultipartFile file, TNovelSubmitBo tNovelSubmitBo) {
         if (file == null || file.isEmpty()) {
-            throw new ServiceException("上传文件不能为空");
+            throw new BizException("上传文件不能为空");
         }
         String fileName = file.getOriginalFilename();
         // 获取小说标题（去掉.txt后缀）
         if(StringUtils.isEmpty(fileName))
-            throw new ServiceException("未知标题");
+            throw new BizException("未知标题");
         TNovel novel = new TNovel();
         BeanUtil.copyProperties(tNovelSubmitBo, novel);
         novel.setTitle(fileName.substring(0, fileName.lastIndexOf(".")));
@@ -139,11 +139,11 @@ public class TNovelServiceImpl implements ITNovelService {
             if (!chapters.isEmpty()) {
                 tChapterMapper.insertBatch(chapters);
             } else {
-                throw new ServiceException("未解析到有效内容，请检查文件编码是否为UTF-8，或章节标题是否符合'第x章 '格式");
+                throw new BizException("未解析到有效内容，请检查文件编码是否为UTF-8，或章节标题是否符合'第x章 '格式");
             }
 
         } catch (IOException e) {
-            throw new ServiceException("读取文件失败: " + e.getMessage());
+            throw new BizException("读取文件失败: " + e.getMessage());
         }
     }
 

@@ -2,7 +2,7 @@ package org.dromara.common.core.utils;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.dromara.common.core.enums.FormatsType;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 
 import java.lang.management.ManagementFactory;
 import java.text.ParseException;
@@ -277,7 +277,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     public static void validateDateRange(Date startDate, Date endDate, int maxValue, TimeUnit unit) {
         // 校验结束日期不能早于开始日期
         if (endDate.before(startDate)) {
-            throw new ServiceException("结束日期不能早于开始日期");
+            throw new BizException("结束日期不能早于开始日期");
         }
 
         // 计算时间跨度
@@ -293,7 +293,7 @@ public class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
         // 校验时间跨度不超过最大限制
         if (diff > maxValue) {
-            throw new ServiceException("最大时间跨度为 {} {}", maxValue, unit.toString().toLowerCase());
+            throw new BizException("最大时间跨度为 {} {}", maxValue, unit.toString().toLowerCase());
         }
     }
 

@@ -20,7 +20,7 @@ import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.dromara.common.core.constant.Constants;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -275,7 +275,7 @@ public class GenTableServiceImpl implements IGenTableService {
                 }
             }
         } catch (Exception e) {
-            throw new ServiceException("导入失败：" + e.getMessage());
+            throw new BizException("导入失败：" + e.getMessage());
         }
     }
 
@@ -386,7 +386,7 @@ public class GenTableServiceImpl implements IGenTableService {
                     String path = getGenPath(table, template);
                     FileUtils.writeUtf8String(sw.toString(), path);
                 } catch (Exception e) {
-                    throw new ServiceException("渲染模板失败，表名：" + table.getTableName());
+                    throw new BizException("渲染模板失败，表名：" + table.getTableName());
                 }
             }
         }
@@ -406,7 +406,7 @@ public class GenTableServiceImpl implements IGenTableService {
 
         List<GenTableColumn> dbTableColumns = SpringUtils.getAopProxy(this).selectDbTableColumnsByName(table.getTableName(), table.getDataName());
         if (CollUtil.isEmpty(dbTableColumns)) {
-            throw new ServiceException("同步数据失败，原表结构不存在");
+            throw new BizException("同步数据失败，原表结构不存在");
         }
         List<String> dbTableColumnNames = StreamUtils.toList(dbTableColumns, GenTableColumn::getColumnName);
 
@@ -509,11 +509,11 @@ public class GenTableServiceImpl implements IGenTableService {
             String options = JsonUtils.toJsonString(genTable.getParams());
             Dict paramsObj = JsonUtils.parseMap(options);
             if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_CODE))) {
-                throw new ServiceException("树编码字段不能为空");
+                throw new BizException("树编码字段不能为空");
             } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))) {
-                throw new ServiceException("树父编码字段不能为空");
+                throw new BizException("树父编码字段不能为空");
             } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_NAME))) {
-                throw new ServiceException("树名称字段不能为空");
+                throw new BizException("树名称字段不能为空");
             }
         }
     }

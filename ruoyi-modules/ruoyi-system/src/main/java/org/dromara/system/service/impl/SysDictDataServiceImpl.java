@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheNames;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.page.PageQuery;
@@ -121,7 +121,7 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
         if (row > 0) {
             return baseMapper.selectDictDataByType(data.getDictType());
         }
-        throw new ServiceException("操作失败");
+        throw new BizException("操作失败");
     }
 
     /**
@@ -138,7 +138,7 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
         if (row > 0) {
             return baseMapper.selectDictDataByType(data.getDictType());
         }
-        throw new ServiceException("操作失败");
+        throw new BizException("操作失败");
     }
 
     /**

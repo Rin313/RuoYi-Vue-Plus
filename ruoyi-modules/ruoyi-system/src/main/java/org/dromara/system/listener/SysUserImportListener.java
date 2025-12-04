@@ -9,7 +9,7 @@ import cn.idev.excel.event.AnalysisEventListener;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
@@ -106,7 +106,7 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo
             public String getAnalysis() {
                 if (failureNum > 0) {
                     failureMsg.insert(0, "很抱歉，导入失败！共 " + failureNum + " 条数据格式不正确，错误如下：");
-                    throw new ServiceException(failureMsg.toString());
+                    throw new BizException(failureMsg.toString());
                 } else {
                     successMsg.insert(0, "恭喜您，数据已全部导入成功！共 " + successNum + " 条，数据如下：");
                 }

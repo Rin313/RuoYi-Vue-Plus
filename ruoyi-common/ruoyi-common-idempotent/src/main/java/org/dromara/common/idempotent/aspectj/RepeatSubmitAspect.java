@@ -13,7 +13,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.domain.R;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -44,7 +44,7 @@ public class RepeatSubmitAspect {
         long interval = repeatSubmit.timeUnit().toMillis(repeatSubmit.interval());
 
         if (interval < 1000) {
-            throw new ServiceException("重复提交间隔时间不能小于'1'秒");
+            throw new BizException("重复提交间隔时间不能小于'1'秒");
         }
         HttpServletRequest request = ServletUtils.getRequest();
         String nowParams = argsArrayToString(point.getArgs());
@@ -65,7 +65,7 @@ public class RepeatSubmitAspect {
             if (StringUtils.startsWith(message, "{") && StringUtils.endsWith(message, "}")) {
                 message = MessageUtils.message(StringUtils.substring(message, 1, message.length() - 1));
             }
-            throw new ServiceException(message);
+            throw new BizException(message);
         }
     }
 

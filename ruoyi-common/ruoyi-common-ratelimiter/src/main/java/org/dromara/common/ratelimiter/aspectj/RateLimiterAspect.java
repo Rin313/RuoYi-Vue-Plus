@@ -6,7 +6,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.dromara.common.core.constant.GlobalConstants;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.ServletUtils;
 import org.dromara.common.core.utils.SpringUtils;
@@ -67,11 +67,11 @@ public class RateLimiterAspect {
                 if (StringUtils.startsWith(message, "{") && StringUtils.endsWith(message, "}")) {
                     message = MessageUtils.message(StringUtils.substring(message, 1, message.length() - 1));
                 }
-                throw new ServiceException(message);
+                throw new BizException(message);
             }
             log.info("限制令牌 => {}, 剩余令牌 => {}, 缓存key => '{}'", count, number, combineKey);
         } catch (Exception e) {
-            if (e instanceof ServiceException) {
+            if (e instanceof BizException) {
                 throw e;
             } else {
                 throw new RuntimeException("服务器限流异常，请稍候再试", e);

@@ -4,7 +4,7 @@ import cn.dev33.satoken.stp.StpInterface;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.PermissionService;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -32,7 +32,7 @@ public class SaPermissionImpl implements StpInterface {
                 List<String> list = StringUtils.splitList(loginId.toString(), ":");
                 return new ArrayList<>(permissionService.getMenuPermission(Long.parseLong(list.get(1))));
             } else {
-                throw new ServiceException("PermissionService 实现类不存在");
+                throw new BizException("PermissionService 实现类不存在");
             }
         }
         if (CollUtil.isNotEmpty(loginUser.getMenuPermission())) {
@@ -55,7 +55,7 @@ public class SaPermissionImpl implements StpInterface {
                 List<String> list = StringUtils.splitList(loginId.toString(), ":");
                 return new ArrayList<>(permissionService.getRolePermission(Long.parseLong(list.get(1))));
             } else {
-                throw new ServiceException("PermissionService 实现类不存在");
+                throw new BizException("PermissionService 实现类不存在");
             }
         }
         if (CollUtil.isNotEmpty(loginUser.getRolePermission())) {

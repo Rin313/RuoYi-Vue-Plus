@@ -4,7 +4,7 @@ import cn.hutool.core.convert.Convert;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.exception.ServiceException;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.mybatis.enums.DataBaseType;
 
@@ -33,7 +33,7 @@ public class DataBaseHelper {
      * 最后调用 DataBaseType.find 方法将数据库名称转换为对应的枚举类型
      *
      * @return 当前数据库对应的 DataBaseType 枚举，找不到时默认返回 MY_SQL
-     * @throws ServiceException 当获取数据库连接或元数据出现异常时抛出业务异常
+     * @throws BizException 当获取数据库连接或元数据出现异常时抛出业务异常
      */
     public static DataBaseType getDataBaseType() {
         DataSource dataSource = DS.determineDataSource();
@@ -42,7 +42,7 @@ public class DataBaseHelper {
             String databaseProductName = metaData.getDatabaseProductName();
             return DataBaseType.find(databaseProductName);
         } catch (SQLException e) {
-            throw new ServiceException(e.getMessage());
+            throw new BizException(e.getMessage());
         }
     }
 
