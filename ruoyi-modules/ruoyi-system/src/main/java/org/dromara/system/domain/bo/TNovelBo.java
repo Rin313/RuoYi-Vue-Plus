@@ -38,11 +38,6 @@ public class TNovelBo extends BaseEntity {
     private String author;
 
     /**
-     * 封面
-     */
-    private String url;
-
-    /**
      * 小说简介
      */
     private String intro;
@@ -56,11 +51,6 @@ public class TNovelBo extends BaseEntity {
      * 0-正常 1-停用
      */
     private String status;
-
-    /**
-     * 浏览量
-     */
-    private Long viewCount;
 
 
 }

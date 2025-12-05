@@ -42,13 +42,13 @@ public interface ITNovelService {
      */
     List<TNovelVo> queryList(TNovelBo bo);
 
-    /**
-     * 新增小说宽
-     *
-     * @param bo 小说宽
-     * @return 是否新增成功
-     */
-    Boolean insertByBo(TNovelBo bo);
+    // /**
+    //  * 新增小说宽
+    //  *
+    //  * @param bo 小说宽
+    //  * @return 是否新增成功
+    //  */
+    // Boolean insertByBo(TNovelBo bo);
 
     /**
      * 修改小说宽

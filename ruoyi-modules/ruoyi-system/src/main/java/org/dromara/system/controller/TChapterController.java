@@ -17,6 +17,7 @@ import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.excel.utils.ExcelUtil;
+import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.bo.TChapterBo;
 import org.dromara.system.service.ITChapterService;
@@ -37,27 +38,27 @@ public class TChapterController extends BaseController {
     private final ITChapterService tChapterService;
 
     /**
-     * 查询小说章节宽列表
+     * 查询小说章节列表
      */
     @SaCheckPermission("system:chapter:list")
     @GetMapping("/list")
-    public TableDataInfo<TChapterVo> list(TChapterBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TChapterListVo> list(TChapterBo bo, PageQuery pageQuery) {
         return tChapterService.queryPageList(bo, pageQuery);
     }
 
     /**
-     * 导出小说章节宽列表
+     * 导出小说章节列表
      */
     @SaCheckPermission("system:chapter:export")
     @Log(title = "小说章节宽", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(TChapterBo bo, HttpServletResponse response) {
-        List<TChapterVo> list = tChapterService.queryList(bo);
-        ExcelUtil.exportExcel(list, "小说章节宽", TChapterVo.class, response);
+        List<TChapterListVo> list = tChapterService.queryList(bo);
+        ExcelUtil.exportExcel(list, "小说章节宽", TChapterListVo.class, response);
     }
 
     /**
-     * 获取小说章节宽详细信息
+     * 获取小说章节详细信息
      *
      * @param id 主键
      */
@@ -69,7 +70,7 @@ public class TChapterController extends BaseController {
     }
 
     /**
-     * 新增小说章节宽
+     * 新增小说章节
      */
     @SaCheckPermission("system:chapter:add")
     @Log(title = "小说章节宽", businessType = BusinessType.INSERT)
@@ -80,7 +81,7 @@ public class TChapterController extends BaseController {
     }
 
     /**
-     * 修改小说章节宽
+     * 修改小说章节
      */
     @SaCheckPermission("system:chapter:edit")
     @Log(title = "小说章节宽", businessType = BusinessType.UPDATE)
@@ -91,7 +92,7 @@ public class TChapterController extends BaseController {
     }
 
     /**
-     * 删除小说章节宽
+     * 删除小说章节
      *
      * @param ids 主键串
      */

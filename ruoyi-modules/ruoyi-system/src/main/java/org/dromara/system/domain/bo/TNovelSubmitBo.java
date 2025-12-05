@@ -1,7 +1,10 @@
 package org.dromara.system.domain.bo;
 
+import org.dromara.common.core.validate.AddGroup;
+import org.dromara.common.core.validate.EditGroup;
 import org.dromara.system.domain.TNovel;
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -13,6 +16,11 @@ import lombok.Data;
 @Data
 @AutoMapper(target = TNovel.class, reverseConvertGenerate = false)
 public class TNovelSubmitBo {
+    /**
+     * 标题
+     */
+    @NotBlank(message = "标题不能为空", groups = { AddGroup.class, EditGroup.class })
+    private String title;
 
     /**
      * 作者名称

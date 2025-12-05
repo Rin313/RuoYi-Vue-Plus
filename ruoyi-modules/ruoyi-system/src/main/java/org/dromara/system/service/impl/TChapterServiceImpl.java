@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.dromara.system.domain.bo.TChapterBo;
+import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.TChapter;
 import org.dromara.system.mapper.TChapterMapper;
@@ -41,31 +42,31 @@ public class TChapterServiceImpl implements ITChapterService {
      */
     @Override
     public TChapterVo queryById(Long id){
-        return baseMapper.selectVoById(id);
+        return baseMapper.selectVoById(id, TChapterVo.class);
     }
 
     /**
-     * 分页查询小说章节宽列表
+     * 分页查询小说章节列表
      *
      * @param bo        查询条件
      * @param pageQuery 分页参数
      * @return 小说章节宽分页列表
      */
     @Override
-    public TableDataInfo<TChapterVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TChapterListVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
-        Page<TChapterVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
+        Page<TChapterListVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
     }
 
     /**
-     * 查询符合条件的小说章节宽列表
+     * 查询符合条件的小说章节列表
      *
      * @param bo 查询条件
      * @return 小说章节宽列表
      */
     @Override
-    public List<TChapterVo> queryList(TChapterBo bo) {
+    public List<TChapterListVo> queryList(TChapterBo bo) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
     }
@@ -73,11 +74,8 @@ public class TChapterServiceImpl implements ITChapterService {
     private LambdaQueryWrapper<TChapter> buildQueryWrapper(TChapterBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TChapter> lqw = Wrappers.lambdaQuery();
-        lqw.orderByAsc(TChapter::getId);
+        lqw.orderByAsc(TChapter::getChapterIndex);
         lqw.eq(bo.getNovelId() != null, TChapter::getNovelId, bo.getNovelId());
-        lqw.eq(StringUtils.isNotBlank(bo.getTitle()), TChapter::getTitle, bo.getTitle());
-        lqw.eq(StringUtils.isNotBlank(bo.getContent()), TChapter::getContent, bo.getContent());
-        lqw.eq(bo.getChapterIndex() != null, TChapter::getChapterIndex, bo.getChapterIndex());
         return lqw;
     }
 

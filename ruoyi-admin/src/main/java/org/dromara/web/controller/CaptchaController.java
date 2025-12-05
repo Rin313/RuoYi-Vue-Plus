@@ -57,7 +57,7 @@ public class CaptchaController {
      * @param phonenumber 用户手机号
      */
     @RateLimiter(key = "#phonenumber", time = 60, count = 1)
-    @GetMapping("/resource/sms/code")
+    @GetMapping("/auth/smscode")
     public R<Void> smsCode(@NotBlank(message = "{user.phonenumber.not.blank}") String phonenumber) {
         String key = GlobalConstants.CAPTCHA_CODE_KEY + phonenumber;
         String code = RandomUtil.randomNumbers(4);
@@ -80,7 +80,7 @@ public class CaptchaController {
      *
      * @param email 邮箱
      */
-    @GetMapping("/resource/email/code")
+    @GetMapping("/auth/emailcode")
     public R<Void> emailCode(@NotBlank(message = "{user.email.not.blank}") String email) {
         if (!mailProperties.getEnabled()) {
             return R.fail("当前系统没有开启邮箱功能！");

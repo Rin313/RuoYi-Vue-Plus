@@ -25,12 +25,13 @@ import org.dromara.system.domain.vo.TNovelVo;
 import org.dromara.system.domain.bo.TNovelBo;
 import org.dromara.system.domain.bo.TNovelSubmitBo;
 import org.dromara.system.service.ITNovelService;
+import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
 import org.dromara.common.ratelimiter.enums.LimitType;
 
 /**
- * 小说宽
+ * 小说
  *
  * @author Lion Li
  * @date 2025-12-04
@@ -51,15 +52,8 @@ public class TNovelController extends BaseController {
      * @return 结果
      */
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public R<Void> importTxt(@RequestPart("file") MultipartFile file,
-                             @ModelAttribute TNovelSubmitBo tNovelSubmitBo) {
-        if (file == null || file.isEmpty()) {
-            return R.fail("文件不能为空");
-        }
-        String originalFilename = file.getOriginalFilename();
-        if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt")) {
-            return R.fail("仅支持txt格式文件");
-        }
+    public R<Void> importTxt(@RequestPart(required=false) MultipartFile file,
+                             @Validated(AddGroup.class) @ParameterObject @ModelAttribute TNovelSubmitBo tNovelSubmitBo) {
         tNovelService.importTxtNovel(file, tNovelSubmitBo);
         return R.ok("导入成功");
     }
@@ -77,7 +71,7 @@ public class TNovelController extends BaseController {
     }
 
     /**
-     * 查询小说宽列表
+     * 查询小说列表
      */
     @SaCheckPermission("system:novel:list")
     @GetMapping("/list")
@@ -86,18 +80,18 @@ public class TNovelController extends BaseController {
     }
 
     /**
-     * 导出小说宽列表
+     * 导出小说列表
      */
     @SaCheckPermission("system:novel:export")
-    @Log(title = "小说宽", businessType = BusinessType.EXPORT)
+    @Log(title = "小说", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(TNovelBo bo, HttpServletResponse response) {
         List<TNovelVo> list = tNovelService.queryList(bo);
-        ExcelUtil.exportExcel(list, "小说宽", TNovelVo.class, response);
+        ExcelUtil.exportExcel(list, "小说", TNovelVo.class, response);
     }
 
     /**
-     * 获取小说宽详细信息
+     * 获取小说详细信息
      *
      * @param id 主键
      */
@@ -108,22 +102,22 @@ public class TNovelController extends BaseController {
         return R.ok(tNovelService.queryById(id));
     }
 
-    /**
-     * 新增小说宽
-     */
-    @SaCheckPermission("system:novel:add")
-    @Log(title = "小说宽", businessType = BusinessType.INSERT)
-    @RepeatSubmit()
-    @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TNovelBo bo) {
-        return toAjax(tNovelService.insertByBo(bo));
-    }
+    // /**
+    //  * 新增小说
+    //  */
+    // @SaCheckPermission("system:novel:add")
+    // @Log(title = "小说", businessType = BusinessType.INSERT)
+    // @RepeatSubmit()
+    // @PostMapping()
+    // public R<Void> add(@Validated(AddGroup.class) @RequestBody TNovelBo bo) {
+    //     return toAjax(tNovelService.insertByBo(bo));
+    // }
 
     /**
-     * 修改小说宽
+     * 修改小说
      */
     @SaCheckPermission("system:novel:edit")
-    @Log(title = "小说宽", businessType = BusinessType.UPDATE)
+    @Log(title = "小说", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public R<Void> edit(@Validated(EditGroup.class) @RequestBody TNovelBo bo) {
@@ -131,12 +125,12 @@ public class TNovelController extends BaseController {
     }
 
     /**
-     * 删除小说宽
+     * 删除小说
      *
      * @param ids 主键串
      */
     @SaCheckPermission("system:novel:remove")
-    @Log(title = "小说宽", businessType = BusinessType.DELETE)
+    @Log(title = "小说", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public R<Void> remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {

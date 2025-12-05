@@ -1,5 +1,6 @@
 package org.dromara.system.service.impl;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -7,7 +8,6 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.ReUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -70,85 +70,75 @@ public class TNovelServiceImpl implements ITNovelService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void importTxtNovel(MultipartFile file, TNovelSubmitBo tNovelSubmitBo) {
-        if (file == null || file.isEmpty()) {
-            throw new BizException("上传文件不能为空");
-        }
-        String fileName = file.getOriginalFilename();
-        // 获取小说标题（去掉.txt后缀）
-        if(StringUtils.isEmpty(fileName))
-            throw new BizException("未知标题");
-        TNovel novel = new TNovel();
-        BeanUtil.copyProperties(tNovelSubmitBo, novel);
-        novel.setTitle(fileName.substring(0, fileName.lastIndexOf(".")));
-        baseMapper.insert(novel);
-        Long novelId = novel.getId();
-        // 2. 读取章节内容
-        List<TChapter> chapters = new ArrayList<>();
-        // 强制使用 UTF-8 编码读取
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
-            String line;
-            StringBuilder currentContent = new StringBuilder();
-            // 初始标题：如果第一行不是"第X章"，则前面的内容归为"序言"
-            String currentTitle = "序言"; 
-            long chapterIndex = 0L;
-            
-            boolean firstChapterFound = false;
+        TNovel novel = MapstructUtils.convert(tNovelSubmitBo, TNovel.class);
+        validEntityBeforeSave(novel);
+        if (!(baseMapper.insert(novel) > 0))
+            throw new BizException("添加失败");
+        if (ObjectUtils.isNotEmpty(file)) {
+            String originalFilename = file.getOriginalFilename();
+            if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt"))
+                throw new BizException("仅支持txt格式文件");
+            Long novelId = novel.getId();
+            List<TChapter> chapters = new ArrayList<>();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+                String line;
+                StringBuilder currentContent = new StringBuilder();
+                String currentTitle = null; // 初始无标题
+                long chapterIndex = 0L;
+                boolean firstChapterFound = false;
 
-            while ((line = reader.readLine()) != null) {
-                // 判断是否是新章节标题
-                if (ReUtil.isMatch(CHAPTER_PATTERN, line)) {
-                    // 遇到新章节标题，保存上一章的内容
-                    if (currentContent.length() > 0) {
-                        // 如果是第一章之前的内容（且不为空），保存为"序言"章节
-                        // 如果是第一章之后，正常保存
-                        TChapter chapter = new TChapter();
-                        chapter.setNovelId(novelId);
-                        chapter.setTitle(currentTitle);
-                        chapter.setContent(currentContent.toString());
-                        // 设置排序索引
-                        chapter.setChapterIndex(chapterIndex++);
-                        chapters.add(chapter);
-                        
-                        // 清空缓冲区
-                        currentContent.setLength(0);
+                while ((line = reader.readLine()) != null) {
+                    if (ReUtil.isMatch(CHAPTER_PATTERN, line)) {
+                        // 遇到章节标题
+                        if (firstChapterFound) {
+                            // 如果已经是第一个章节之后，保存上一章
+                            TChapter chapter = new TChapter();
+                            chapter.setNovelId(novelId);
+                            chapter.setTitle(currentTitle);
+                            chapter.setContent(currentContent.toString());
+                            chapter.setChapterIndex(chapterIndex++);
+                            chapters.add(chapter);
+                        } else {
+                            // 第一次遇到章节标题，标记为已找到第一章
+                            firstChapterFound = true;
+                        }
+
+                        // 更新当前章节标题
+                        currentTitle = line.trim();
+                        currentContent.setLength(0); // 清空内容缓冲区
+                    } else {
+                        // 非标题行
+                        if (firstChapterFound) {
+                            // 只有在第一章之后才追加内容
+                            currentContent.append(line).append("\n");
+                        }
+                        // 如果还没找到第一章，直接丢弃此行（即抛弃序言）
                     }
-
-                    // 更新当前标题 (去掉首尾空格)
-                    currentTitle = line.trim();
-                    firstChapterFound = true;
-                } else {
-                    // 不是标题，追加内容，补回换行符
-                    currentContent.append(line).append("\n");
                 }
-            }
-
-            // 3. 循环结束后，保存最后一章（缓存中的内容）
-            if (currentContent.length() > 0) {
-                // 如果全文都没有匹配到正则，说明格式不对，或者是一篇短文
-                // 此时将其作为"序言"或者"正文"保存
-                if (!firstChapterFound) {
-                    currentTitle = "正文";
+                // 循环结束后，处理最后一章（仅当至少有一个章节被识别）
+                if (firstChapterFound && currentContent.length() > 0) {
+                    TChapter chapter = new TChapter();
+                    chapter.setNovelId(novelId);
+                    chapter.setTitle(currentTitle);
+                    chapter.setContent(currentContent.toString());
+                    chapter.setChapterIndex(chapterIndex);
+                    chapters.add(chapter);
                 }
-                TChapter chapter = new TChapter();
-                chapter.setNovelId(novelId);
-                chapter.setTitle(currentTitle);
-                chapter.setContent(currentContent.toString());
-                chapter.setChapterIndex(chapterIndex);
-                chapters.add(chapter);
-            }
-            if (!chapters.isEmpty()) {
+                // 如果没有任何有效章节，抛出异常（因为序言不再被接受）
+                if (chapters.isEmpty()) {
+                    throw new BizException("未解析到有效章节，请确保文件包含符合'第x章'格式的章节标题");
+                }
                 tChapterMapper.insertBatch(chapters);
-            } else {
-                throw new BizException("未解析到有效内容，请检查文件编码是否为UTF-8，或章节标题是否符合'第x章 '格式");
-            }
 
-        } catch (IOException e) {
-            throw new BizException("读取文件失败: " + e.getMessage());
+            } catch (IOException e) {
+                throw new BizException("读取文件失败: " + e.getMessage());
+            }
         }
     }
 
     /**
-     * 查询小说宽
+     * 查询小说
      *
      * @param id 主键
      * @return 小说宽
@@ -159,7 +149,7 @@ public class TNovelServiceImpl implements ITNovelService {
     }
 
     /**
-     * 分页查询小说宽列表
+     * 分页查询小说列表
      *
      * @param bo        查询条件
      * @param pageQuery 分页参数
@@ -176,7 +166,7 @@ public class TNovelServiceImpl implements ITNovelService {
      * 查询符合条件的小说宽列表
      *
      * @param bo 查询条件
-     * @return 小说宽列表
+     * @return 小说列表
      */
     @Override
     public List<TNovelVo> queryList(TNovelBo bo) {
@@ -188,32 +178,32 @@ public class TNovelServiceImpl implements ITNovelService {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TNovel> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(TNovel::getId);
-        lqw.eq(StringUtils.isNotBlank(bo.getTitle()), TNovel::getTitle, bo.getTitle());
-        lqw.eq(StringUtils.isNotBlank(bo.getAuthor()), TNovel::getAuthor, bo.getAuthor());
-        lqw.eq(StringUtils.isNotBlank(bo.getUrl()), TNovel::getUrl, bo.getUrl());
-        lqw.eq(StringUtils.isNotBlank(bo.getIntro()), TNovel::getIntro, bo.getIntro());
+        lqw.like(StringUtils.isNotBlank(bo.getTitle()), TNovel::getTitle, bo.getTitle());
+        lqw.like(StringUtils.isNotBlank(bo.getAuthor()), TNovel::getAuthor, bo.getAuthor());
+        lqw.like(StringUtils.isNotBlank(bo.getIntro()), TNovel::getIntro, bo.getIntro());
         lqw.eq(StringUtils.isNotBlank(bo.getCategory()), TNovel::getCategory, bo.getCategory());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TNovel::getStatus, bo.getStatus());
-        lqw.eq(bo.getViewCount() != null, TNovel::getViewCount, bo.getViewCount());
+        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
+                TNovel::getCreateTime, params.get("beginTime"), params.get("endTime"));
         return lqw;
     }
 
-    /**
-     * 新增小说宽
-     *
-     * @param bo 小说宽
-     * @return 是否新增成功
-     */
-    @Override
-    public Boolean insertByBo(TNovelBo bo) {
-        TNovel add = MapstructUtils.convert(bo, TNovel.class);
-        validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
-    }
+    // /**
+    //  * 新增小说
+    //  *
+    //  * @param bo 小说
+    //  * @return 是否新增成功
+    //  */
+    // @Override
+    // public Boolean insertByBo(TNovelBo bo) {
+    //     TNovel add = MapstructUtils.convert(bo, TNovel.class);
+    //     validEntityBeforeSave(add);
+    //     boolean flag = baseMapper.insert(add) > 0;
+    //     if (flag) {
+    //         bo.setId(add.getId());
+    //     }
+    //     return flag;
+    // }
 
     /**
      * 修改小说宽

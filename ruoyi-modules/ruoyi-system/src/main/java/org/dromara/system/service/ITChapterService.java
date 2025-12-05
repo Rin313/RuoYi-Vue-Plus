@@ -1,5 +1,6 @@
 package org.dromara.system.service;
 
+import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.bo.TChapterBo;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -17,10 +18,10 @@ import java.util.List;
 public interface ITChapterService {
 
     /**
-     * 查询小说章节宽
+     * 查询小说章节
      *
      * @param id 主键
-     * @return 小说章节宽
+     * @return 小说章节
      */
     TChapterVo queryById(Long id);
 
@@ -31,7 +32,7 @@ public interface ITChapterService {
      * @param pageQuery 分页参数
      * @return 小说章节宽分页列表
      */
-    TableDataInfo<TChapterVo> queryPageList(TChapterBo bo, PageQuery pageQuery);
+    TableDataInfo<TChapterListVo> queryPageList(TChapterBo bo, PageQuery pageQuery);
 
     /**
      * 查询符合条件的小说章节宽列表
@@ -39,7 +40,7 @@ public interface ITChapterService {
      * @param bo 查询条件
      * @return 小说章节宽列表
      */
-    List<TChapterVo> queryList(TChapterBo bo);
+    List<TChapterListVo> queryList(TChapterBo bo);
 
     /**
      * 新增小说章节宽

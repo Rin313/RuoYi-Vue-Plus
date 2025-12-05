@@ -23,7 +23,7 @@ import java.util.Date;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = TChapter.class)
-public class TChapterVo implements Serializable {
+public class TChapterListVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -45,12 +45,6 @@ public class TChapterVo implements Serializable {
      */
     @ExcelProperty(value = "标题")
     private String title;
-
-    /**
-     * 内容
-     */
-    @ExcelProperty(value = "内容")
-    private String content;
 
     /**
      * 章节序号
