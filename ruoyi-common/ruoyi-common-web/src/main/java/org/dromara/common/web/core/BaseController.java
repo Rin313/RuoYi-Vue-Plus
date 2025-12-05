@@ -1,6 +1,5 @@
 package org.dromara.common.web.core;
 
-import org.dromara.common.core.domain.R;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 

@@ -1,7 +1,6 @@
 package org.dromara.common.mybatis.core.page;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import lombok.Data;
 import lombok.NoArgsConstructor;

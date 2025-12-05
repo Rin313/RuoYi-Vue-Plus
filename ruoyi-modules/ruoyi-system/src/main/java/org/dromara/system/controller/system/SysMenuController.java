@@ -6,7 +6,6 @@ import cn.dev33.satoken.annotation.SaMode;
 import cn.hutool.core.lang.tree.Tree;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
-import org.dromara.common.core.domain.R;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;

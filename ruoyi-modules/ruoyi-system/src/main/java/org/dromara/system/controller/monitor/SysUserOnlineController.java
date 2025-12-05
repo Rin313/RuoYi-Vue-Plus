@@ -6,7 +6,6 @@ import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheConstants;
-import org.dromara.common.core.domain.R;
 import org.dromara.common.core.domain.dto.UserOnlineDTO;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;

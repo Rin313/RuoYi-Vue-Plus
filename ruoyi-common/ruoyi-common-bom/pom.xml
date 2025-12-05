@@ -22,13 +22,6 @@
                 <version>1.0.0</version>
             </dependency>
 
-            <!-- 接口模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-doc</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
             <!-- excel -->
             <dependency>
                 <groupId>org.dromara</groupId>

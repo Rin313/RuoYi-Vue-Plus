@@ -1,7 +1,6 @@
 package org.dromara.demo.controller;
 
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.core.domain.R;
 import org.dromara.common.redis.utils.RedisUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

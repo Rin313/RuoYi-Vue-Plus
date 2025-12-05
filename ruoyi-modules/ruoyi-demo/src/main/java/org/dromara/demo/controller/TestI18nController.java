@@ -3,7 +3,6 @@ package org.dromara.demo.controller;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import org.dromara.common.core.domain.R;
 import org.dromara.common.core.utils.MessageUtils;
 import org.hibernate.validator.constraints.Range;
 import org.springframework.validation.annotation.Validated;
