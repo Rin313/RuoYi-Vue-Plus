@@ -26,8 +26,7 @@ public class WebSocketController {
      * @param dto 发送内容
      */
     @GetMapping("/send")
-    public R<Void> send(WebSocketMessageDto dto) throws InterruptedException {
+    public void send(WebSocketMessageDto dto) throws InterruptedException {
         WebSocketUtils.publishMessage(dto);
-        return R.ok("操作成功");
     }
 }

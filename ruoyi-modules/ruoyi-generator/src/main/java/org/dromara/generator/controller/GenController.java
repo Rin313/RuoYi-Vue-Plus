@@ -55,7 +55,7 @@ public class GenController extends BaseController {
     @RepeatSubmit()
     @SaCheckPermission("tool:gen:query")
     @GetMapping(value = "/{tableId}")
-    public R<Map<String, Object>> getInfo(@PathVariable Long tableId) {
+    public Map<String, Object> getInfo(@PathVariable Long tableId) {
         GenTable table = genTableService.selectGenTableById(tableId);
         List<GenTable> tables = genTableService.selectGenTableAll();
         List<GenTableColumn> list = genTableService.selectGenTableColumnListByTableId(tableId);
@@ -63,7 +63,7 @@ public class GenController extends BaseController {
         map.put("info", table);
         map.put("rows", list);
         map.put("tables", tables);
-        return R.ok(map);
+        return map;
     }
 
     /**
@@ -98,12 +98,11 @@ public class GenController extends BaseController {
     @Lock4j(keys = {"#dataName"}, acquireTimeout = 10000)
     @RepeatSubmit()
     @PostMapping("/importTable")
-    public R<Void> importTableSave(String tables, String dataName) {
+    public void importTableSave(String tables, String dataName) {
         String[] tableNames = Convert.toStrArray(tables);
         // 查询表信息
         List<GenTable> tableList = genTableService.selectDbTableListByNames(tableNames, dataName);
         genTableService.importGenTable(tableList, dataName);
-        return R.ok();
     }
 
     /**
@@ -113,10 +112,9 @@ public class GenController extends BaseController {
     @Log(title = "代码生成", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public R<Void> editSave(@Validated @RequestBody GenTable genTable) {
+    public void editSave(@Validated @RequestBody GenTable genTable) {
         genTableService.validateEdit(genTable);
         genTableService.updateGenTable(genTable);
-        return R.ok();
     }
 
     /**
@@ -127,9 +125,8 @@ public class GenController extends BaseController {
     @SaCheckPermission("tool:gen:remove")
     @Log(title = "代码生成", businessType = BusinessType.DELETE)
     @DeleteMapping("/{tableIds}")
-    public R<Void> remove(@PathVariable Long[] tableIds) {
+    public void remove(@PathVariable Long[] tableIds) {
         genTableService.deleteGenTableByIds(tableIds);
-        return R.ok();
     }
 
     /**
@@ -139,9 +136,9 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:preview")
     @GetMapping("/preview/{tableId}")
-    public R<Map<String, String>> preview(@PathVariable("tableId") Long tableId) throws IOException {
+    public Map<String, String> preview(@PathVariable("tableId") Long tableId) throws IOException {
         Map<String, String> dataMap = genTableService.previewCode(tableId);
-        return R.ok(dataMap);
+        return dataMap;
     }
 
     /**
@@ -165,9 +162,8 @@ public class GenController extends BaseController {
     @SaCheckPermission("tool:gen:code")
     @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/genCode/{tableId}")
-    public R<Void> genCode(@PathVariable("tableId") Long tableId) {
+    public void genCode(@PathVariable("tableId") Long tableId) {
         genTableService.generatorCode(tableId);
-        return R.ok();
     }
 
     /**
@@ -179,9 +175,8 @@ public class GenController extends BaseController {
     @Log(title = "代码生成", businessType = BusinessType.UPDATE)
     @Lock4j(keys = {"#tableId"}, acquireTimeout = 5000)
     @GetMapping("/synchDb/{tableId}")
-    public R<Void> synchDb(@PathVariable("tableId") Long tableId) {
+    public void synchDb(@PathVariable("tableId") Long tableId) {
         genTableService.synchDb(tableId);
-        return R.ok();
     }
 
     /**
@@ -216,7 +211,7 @@ public class GenController extends BaseController {
      */
     @SaCheckPermission("tool:gen:list")
     @GetMapping(value = "/getDataNames")
-    public R<Object> getCurrentDataSourceNameList() {
-        return R.ok(DataBaseHelper.getDataSourceNameList());
+    public List<String> getCurrentDataSourceNameList() {
+        return DataBaseHelper.getDataSourceNameList();
     }
 }

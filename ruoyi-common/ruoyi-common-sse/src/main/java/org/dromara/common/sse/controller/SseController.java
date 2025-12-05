@@ -43,11 +43,10 @@ public class SseController implements DisposableBean {
      */
     @SaIgnore
     @GetMapping(value = "${sse.path}/close")
-    public R<Void> close() {
+    public void close() {
         String tokenValue = StpUtil.getTokenValue();
         Long userId = LoginHelper.getUserId();
         sseEmitterManager.disconnect(userId, tokenValue);
-        return R.ok();
     }
 
     // 以下为demo仅供参考 禁止使用 请在业务逻辑中使用工具发送而不是用接口发送

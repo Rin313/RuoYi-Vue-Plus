@@ -17,6 +17,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
@@ -51,11 +52,13 @@ public class TNovelController extends BaseController {
      * @param tNovelSubmitBo 附加信息（可选）
      * @return 结果
      */
+    @SaCheckPermission("system:novel:add")
+    @Log(title = "小说", businessType = BusinessType.INSERT)
+    @RepeatSubmit()
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public R<Void> importTxt(@RequestPart(required=false) MultipartFile file,
+    public void importTxt(@RequestPart(required=false) MultipartFile file,
                              @Validated(AddGroup.class) @ParameterObject @ModelAttribute TNovelSubmitBo tNovelSubmitBo) {
         tNovelService.importTxtNovel(file, tNovelSubmitBo);
-        return R.ok("导入成功");
     }
     /**
      * 增加小说浏览量
@@ -65,9 +68,9 @@ public class TNovelController extends BaseController {
     @SaIgnore
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/view/{id}")
-    public R<Void> addViewCount(@PathVariable("id") Long id) {
+    public void addViewCount(@PathVariable("id") Long id) {
         boolean result = tNovelService.addViewCount(id);
-        return result ? R.ok() : R.fail("浏览量更新失败");
+        if(!result)throw new BizException();
     }
 
     /**
@@ -97,9 +100,9 @@ public class TNovelController extends BaseController {
      */
     @SaCheckPermission("system:novel:query")
     @GetMapping("/{id}")
-    public R<TNovelVo> getInfo(@NotNull(message = "主键不能为空")
+    public TNovelVo getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(tNovelService.queryById(id));
+        return tNovelService.queryById(id);
     }
 
     // /**
@@ -120,8 +123,8 @@ public class TNovelController extends BaseController {
     @Log(title = "小说", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TNovelBo bo) {
-        return toAjax(tNovelService.updateByBo(bo));
+    public void edit(@Validated(EditGroup.class) @RequestBody TNovelBo bo) {
+        toAjax(tNovelService.updateByBo(bo));
     }
 
     /**
@@ -132,8 +135,8 @@ public class TNovelController extends BaseController {
     @SaCheckPermission("system:novel:remove")
     @Log(title = "小说", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+    public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(tNovelService.deleteWithValidByIds(List.of(ids), true));
+        toAjax(tNovelService.deleteWithValidByIds(List.of(ids), true));
     }
 }

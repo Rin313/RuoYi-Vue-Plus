@@ -13,6 +13,7 @@ import me.zhyd.oauth.utils.AuthStateUtils;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.domain.model.LoginBody;
 import org.dromara.common.core.domain.model.SocialLoginBody;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -59,7 +60,7 @@ public class AuthController {
      * @return 结果
      */
     @PostMapping("/login")
-    public R<LoginVo> login(@RequestBody String body) {
+    public LoginVo login(@RequestBody String body) {
         LoginBody loginBody = JsonUtils.parseObject(body, LoginBody.class);
         ValidatorUtils.validate(loginBody);
         String grantType = loginBody.getGrantType();
@@ -72,7 +73,7 @@ public class AuthController {
             dto.setUserIds(List.of(userId));
             SseMessageUtils.publishMessage(dto);
         }, 5, TimeUnit.SECONDS);
-        return R.ok(loginVo);
+        return loginVo;
     }
 
     /**
@@ -82,17 +83,16 @@ public class AuthController {
      * @return 结果
      */
     @GetMapping("/binding/{source}")
-    public R<String> authBinding(@PathVariable("source") String source, @RequestParam String domain) {
+    public String authBinding(@PathVariable("source") String source, @RequestParam String domain) {
         SocialLoginConfigProperties obj = socialProperties.getType().get(source);
-        if (ObjectUtil.isNull(obj)) {
-            return R.fail(source + "平台账号暂不支持");
-        }
+        if (ObjectUtil.isNull(obj))
+            throw new BizException(source + "平台账号暂不支持");
         AuthRequest authRequest = SocialUtils.getAuthRequest(source, socialProperties);
         Map<String, String> map = new HashMap<>();
         map.put("domain", domain);
         map.put("state", AuthStateUtils.createState());
         String authorizeUrl = authRequest.authorize(Base64.encode(JsonUtils.toJsonString(map), StandardCharsets.UTF_8));
-        return R.ok("操作成功", authorizeUrl);
+        return authorizeUrl;
     }
 
     /**
@@ -102,7 +102,7 @@ public class AuthController {
      * @return 结果
      */
     @PostMapping("/social/callback")
-    public R<Void> socialCallback(@RequestBody SocialLoginBody loginBody) {
+    public void socialCallback(@RequestBody SocialLoginBody loginBody) {
         // 校验token
         StpUtil.checkLogin();
         // 获取第三方登录信息
@@ -111,11 +111,9 @@ public class AuthController {
             loginBody.getSocialState(), socialProperties);
         AuthUser authUserData = response.getData();
         // 判断授权响应是否成功
-        if (!response.ok()) {
-            return R.fail(response.getMsg());
-        }
+        if (!response.ok())
+            throw new BizException(response.getMsg());
         loginService.socialRegister(authUserData);
-        return R.ok();
     }
 
 
@@ -125,11 +123,11 @@ public class AuthController {
      * @param socialId socialId
      */
     @DeleteMapping(value = "/unlock/{socialId}")
-    public R<Void> unlockSocial(@PathVariable Long socialId) {
+    public void unlockSocial(@PathVariable Long socialId) {
         // 校验token
         StpUtil.checkLogin();
         Boolean rows = socialUserService.deleteWithValidById(socialId);
-        return rows ? R.ok() : R.fail("取消授权失败");
+        if(!rows)throw new BizException("取消授权失败");
     }
 
 
@@ -137,9 +135,8 @@ public class AuthController {
      * 退出登录
      */
     @PostMapping("/logout")
-    public R<Void> logout() {
+    public void logout() {
         loginService.logout();
-        return R.ok("退出成功");
     }
 }
 //场景一：前端只有登录，利用邮箱验证码或者手机验证码，当用户不存在时创建

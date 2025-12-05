@@ -64,9 +64,9 @@ public class TChapterController extends BaseController {
      */
     @SaCheckPermission("system:chapter:query")
     @GetMapping("/{id}")
-    public R<TChapterVo> getInfo(@NotNull(message = "主键不能为空")
+    public TChapterVo getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return R.ok(tChapterService.queryById(id));
+        return tChapterService.queryById(id);
     }
 
     /**
@@ -76,8 +76,8 @@ public class TChapterController extends BaseController {
     @Log(title = "小说章节宽", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public R<Void> add(@Validated(AddGroup.class) @RequestBody TChapterBo bo) {
-        return toAjax(tChapterService.insertByBo(bo));
+    public void add(@Validated(AddGroup.class) @RequestBody TChapterBo bo) {
+        toAjax(tChapterService.insertByBo(bo));
     }
 
     /**
@@ -87,8 +87,8 @@ public class TChapterController extends BaseController {
     @Log(title = "小说章节宽", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public R<Void> edit(@Validated(EditGroup.class) @RequestBody TChapterBo bo) {
-        return toAjax(tChapterService.updateByBo(bo));
+    public void edit(@Validated(EditGroup.class) @RequestBody TChapterBo bo) {
+        toAjax(tChapterService.updateByBo(bo));
     }
 
     /**
@@ -99,8 +99,8 @@ public class TChapterController extends BaseController {
     @SaCheckPermission("system:chapter:remove")
     @Log(title = "小说章节宽", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
-    public R<Void> remove(@NotEmpty(message = "主键不能为空")
+    public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        return toAjax(tChapterService.deleteWithValidByIds(List.of(ids), true));
+        toAjax(tChapterService.deleteWithValidByIds(List.of(ids), true));
     }
 }

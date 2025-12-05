@@ -58,7 +58,7 @@ public class CaptchaController {
      */
     @RateLimiter(key = "#phonenumber", time = 60, count = 1)
     @GetMapping("/auth/smscode")
-    public R<Void> smsCode(@NotBlank(message = "{user.phonenumber.not.blank}") String phonenumber) {
+    public void smsCode(@NotBlank(message = "{user.phonenumber.not.blank}") String phonenumber) {
         String key = GlobalConstants.CAPTCHA_CODE_KEY + phonenumber;
         String code = RandomUtil.randomNumbers(4);
         RedisUtils.setCacheObject(key, code, Duration.ofMinutes(Constants.CAPTCHA_EXPIRATION));
@@ -70,9 +70,8 @@ public class CaptchaController {
         SmsResponse smsResponse = smsBlend.sendMessage(phonenumber, templateId, map);
         if (!smsResponse.isSuccess()) {
             log.error("验证码短信发送异常 => {}", smsResponse);
-            return R.fail(smsResponse.getData().toString());
+            throw new BizException(smsResponse.getData().toString());
         }
-        return R.ok();
     }
 
     /**
@@ -81,12 +80,10 @@ public class CaptchaController {
      * @param email 邮箱
      */
     @GetMapping("/auth/emailcode")
-    public R<Void> emailCode(@NotBlank(message = "{user.email.not.blank}") String email) {
-        if (!mailProperties.getEnabled()) {
-            return R.fail("当前系统没有开启邮箱功能！");
-        }
+    public void emailCode(@NotBlank(message = "{user.email.not.blank}") String email) {
+        if (!mailProperties.getEnabled())
+            throw new BizException("当前系统没有开启邮箱功能");
         SpringUtils.getAopProxy(this).emailCodeImpl(email);
-        return R.ok();
     }
 
     /**
@@ -110,14 +107,14 @@ public class CaptchaController {
      * 生成验证码
      */
     @GetMapping("/auth/code")
-    public R<CaptchaVo> getCode() {
+    public CaptchaVo getCode() {
         boolean captchaEnabled = captchaProperties.getEnable();
         if (!captchaEnabled) {
             CaptchaVo captchaVo = new CaptchaVo();
             captchaVo.setCaptchaEnabled(false);
-            return R.ok(captchaVo);
+            return captchaVo;
         }
-        return R.ok(SpringUtils.getAopProxy(this).getCodeImpl());
+        return SpringUtils.getAopProxy(this).getCodeImpl();
     }
 
     /**

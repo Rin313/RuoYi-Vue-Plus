@@ -33,18 +33,18 @@ public class RedisLockController {
      */
     @Lock4j(keys = {"#key"})
     @GetMapping("/testLock4j")
-    public R<String> testLock4j(String key, String value) {
+    public String testLock4j(String key, String value) {
         System.out.println("start:" + key + ",time:" + LocalTime.now());
         ThreadUtil.sleep(10000);
         System.out.println("end :" + key + ",time:" + LocalTime.now());
-        return R.ok("操作成功", value);
+        return value;
     }
 
     /**
      * 测试lock4j 工具
      */
     @GetMapping("/testLock4jLockTemplate")
-    public R<String> testLock4jLockTemplate(String key, String value) {
+    public String testLock4jLockTemplate(String key, String value) {
         final LockInfo lockInfo = lockTemplate.lock(key, 30000L, 5000L, RedissonLockExecutor.class);
         if (null == lockInfo) {
             throw new RuntimeException("业务处理中,请稍后再试");
@@ -58,7 +58,7 @@ public class RedisLockController {
             lockTemplate.releaseLock(lockInfo);
         }
         //结束
-        return R.ok("操作成功", value);
+        return value;
     }
 
 }

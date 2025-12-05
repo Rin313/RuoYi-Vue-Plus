@@ -7,6 +7,7 @@ import cn.hutool.core.lang.tree.Tree;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
@@ -42,9 +43,9 @@ public class SysMenuController extends BaseController {
      * @return 路由信息
      */
     @GetMapping("/getRouters")
-    public R<List<RouterVo>> getRouters() {
+    public List<RouterVo> getRouters() {
         List<SysMenu> menus = menuService.selectMenuTreeByUserId(LoginHelper.getUserId());
-        return R.ok(menuService.buildMenus(menus));
+        return menuService.buildMenus(menus);
     }
 
     /**
@@ -53,9 +54,9 @@ public class SysMenuController extends BaseController {
     @SaCheckRole(value = {SystemConstants.SUPER_ADMIN_ROLE_KEY}, mode = SaMode.OR)
     @SaCheckPermission("system:menu:list")
     @GetMapping("/list")
-    public R<List<SysMenuVo>> list(SysMenuBo menu) {
+    public List<SysMenuVo> list(SysMenuBo menu) {
         List<SysMenuVo> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
-        return R.ok(menus);
+        return menus;
     }
 
     /**
@@ -66,8 +67,8 @@ public class SysMenuController extends BaseController {
     @SaCheckRole(value = {SystemConstants.SUPER_ADMIN_ROLE_KEY}, mode = SaMode.OR)
     @SaCheckPermission("system:menu:query")
     @GetMapping(value = "/{menuId}")
-    public R<SysMenuVo> getInfo(@PathVariable Long menuId) {
-        return R.ok(menuService.selectMenuById(menuId));
+    public SysMenuVo getInfo(@PathVariable Long menuId) {
+        return menuService.selectMenuById(menuId);
     }
 
     /**
@@ -75,9 +76,9 @@ public class SysMenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:query")
     @GetMapping("/treeselect")
-    public R<List<Tree<Long>>> treeselect(SysMenuBo menu) {
+    public List<Tree<Long>> treeselect(SysMenuBo menu) {
         List<SysMenuVo> menus = menuService.selectMenuList(menu, LoginHelper.getUserId());
-        return R.ok(menuService.buildMenuTreeSelect(menus));
+        return menuService.buildMenuTreeSelect(menus);
     }
 
     /**
@@ -87,12 +88,12 @@ public class SysMenuController extends BaseController {
      */
     @SaCheckPermission("system:menu:query")
     @GetMapping(value = "/roleMenuTreeselect/{roleId}")
-    public R<MenuTreeSelectVo> roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
+    public MenuTreeSelectVo roleMenuTreeselect(@PathVariable("roleId") Long roleId) {
         List<SysMenuVo> menus = menuService.selectMenuList(LoginHelper.getUserId());
         MenuTreeSelectVo selectVo = new MenuTreeSelectVo(
             menuService.selectMenuListByRoleId(roleId),
             menuService.buildMenuTreeSelect(menus));
-        return R.ok(selectVo);
+        return selectVo;
     }
 
     /**
@@ -103,14 +104,14 @@ public class SysMenuController extends BaseController {
     @Log(title = "菜单管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysMenuBo menu) {
+    public void add(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {
         //     return R.fail("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         // } else 
             if (SystemConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
-            return R.fail("新增菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
+            throw new BizException("新增菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
-        return toAjax(menuService.insertMenu(menu));
+        toAjax(menuService.insertMenu(menu));
     }
 
     /**
@@ -121,16 +122,16 @@ public class SysMenuController extends BaseController {
     @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysMenuBo menu) {
+    public void edit(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {
         //     return R.fail("修改菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         // } else 
-            if (SystemConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
-            return R.fail("修改菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
+        if (SystemConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
+            throw new BizException("修改菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
         } else if (menu.getMenuId().equals(menu.getParentId())) {
-            return R.fail("修改菜单'" + menu.getMenuName() + "'失败，上级菜单不能选择自己");
+            throw new BizException("修改菜单'" + menu.getMenuName() + "'失败，上级菜单不能选择自己");
         }
-        return toAjax(menuService.updateMenu(menu));
+        toAjax(menuService.updateMenu(menu));
     }
 
     /**
@@ -142,14 +143,14 @@ public class SysMenuController extends BaseController {
     @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{menuId}")
-    public R<Void> remove(@PathVariable("menuId") Long menuId) {
+    public void remove(@PathVariable("menuId") Long menuId) {
         if (menuService.hasChildByMenuId(menuId)) {
-            return R.fail("存在子菜单,不允许删除");
+            throw new BizException("存在子菜单,不允许删除");
         }
         if (menuService.checkMenuExistRole(menuId)) {
-            return R.fail("菜单已分配,不允许删除");
+            throw new BizException("菜单已分配,不允许删除");
         }
-        return toAjax(menuService.deleteMenuById(menuId));
+        toAjax(menuService.deleteMenuById(menuId));
     }
 
     /**
@@ -170,13 +171,12 @@ public class SysMenuController extends BaseController {
     @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/cascade/{menuIds}")
-    public R<Void> remove(@PathVariable("menuIds") Long[] menuIds) {
+    public void remove(@PathVariable("menuIds") Long[] menuIds) {
         List<Long> menuIdList = List.of(menuIds);
         if (menuService.hasChildByMenuId(menuIdList)) {
-            return R.fail("存在子菜单,不允许删除");
+            throw new BizException("存在子菜单,不允许删除");
         }
         menuService.deleteMenuById(menuIdList);
-        return R.ok();
     }
 
 }

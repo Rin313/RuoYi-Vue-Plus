@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
@@ -60,8 +61,8 @@ public class SysConfigController extends BaseController {
      */
     @SaCheckPermission("system:config:query")
     @GetMapping(value = "/{configId}")
-    public R<SysConfigVo> getInfo(@PathVariable Long configId) {
-        return R.ok(configService.selectConfigById(configId));
+    public SysConfigVo getInfo(@PathVariable Long configId) {
+        return configService.selectConfigById(configId);
     }
 
     /**
@@ -70,8 +71,8 @@ public class SysConfigController extends BaseController {
      * @param configKey 参数Key
      */
     @GetMapping(value = "/configKey/{configKey}")
-    public R<String> getConfigKey(@PathVariable String configKey) {
-        return R.ok("操作成功", configService.selectConfigByKey(configKey));
+    public String getConfigKey(@PathVariable String configKey) {
+        return configService.selectConfigByKey(configKey);
     }
 
     /**
@@ -81,12 +82,11 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysConfigBo config) {
+    public void add(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
-            return R.fail("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new BizException("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
         configService.insertConfig(config);
-        return R.ok();
     }
 
     /**
@@ -96,12 +96,11 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysConfigBo config) {
+    public void edit(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
-            return R.fail("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new BizException("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
         configService.updateConfig(config);
-        return R.ok();
     }
 
     /**
@@ -111,9 +110,8 @@ public class SysConfigController extends BaseController {
     @Log(title = "参数管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/updateByKey")
-    public R<Void> updateByKey(@RequestBody SysConfigBo config) {
+    public void updateByKey(@RequestBody SysConfigBo config) {
         configService.updateConfig(config);
-        return R.ok();
     }
 
     /**
@@ -124,9 +122,8 @@ public class SysConfigController extends BaseController {
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{configIds}")
-    public R<Void> remove(@PathVariable Long[] configIds) {
+    public void remove(@PathVariable Long[] configIds) {
         configService.deleteConfigByIds(Arrays.asList(configIds));
-        return R.ok();
     }
 
     /**
@@ -135,8 +132,7 @@ public class SysConfigController extends BaseController {
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BusinessType.CLEAN)
     @DeleteMapping("/refreshCache")
-    public R<Void> refreshCache() {
+    public void refreshCache() {
         configService.resetConfigCache();
-        return R.ok();
     }
 }

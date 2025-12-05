@@ -5,6 +5,7 @@ import com.baomidou.lock.annotation.Lock4j;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
@@ -61,8 +62,8 @@ public class SysDictTypeController extends BaseController {
      */
     @SaCheckPermission("system:dict:query")
     @GetMapping(value = "/{dictId}")
-    public R<SysDictTypeVo> getInfo(@PathVariable Long dictId) {
-        return R.ok(dictTypeService.selectDictTypeById(dictId));
+    public SysDictTypeVo getInfo(@PathVariable Long dictId) {
+        return dictTypeService.selectDictTypeById(dictId);
     }
 
     /**
@@ -72,12 +73,11 @@ public class SysDictTypeController extends BaseController {
     @Log(title = "字典类型", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysDictTypeBo dict) {
+    public void add(@Validated @RequestBody SysDictTypeBo dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
-            return R.fail("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
+            throw new BizException("新增字典'" + dict.getDictName() + "'失败，字典类型已存在");
         }
         dictTypeService.insertDictType(dict);
-        return R.ok();
     }
 
     /**
@@ -87,12 +87,11 @@ public class SysDictTypeController extends BaseController {
     @Log(title = "字典类型", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysDictTypeBo dict) {
+    public void edit(@Validated @RequestBody SysDictTypeBo dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
-            return R.fail("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
+            throw new BizException("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
         }
         dictTypeService.updateDictType(dict);
-        return R.ok();
     }
 
     /**
@@ -103,9 +102,8 @@ public class SysDictTypeController extends BaseController {
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BusinessType.DELETE)
     @DeleteMapping("/{dictIds}")
-    public R<Void> remove(@PathVariable Long[] dictIds) {
+    public void remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(Arrays.asList(dictIds));
-        return R.ok();
     }
 
     /**
@@ -115,17 +113,16 @@ public class SysDictTypeController extends BaseController {
     @Log(title = "字典类型", businessType = BusinessType.CLEAN)
     @Lock4j
     @DeleteMapping("/refreshCache")
-    public R<Void> refreshCache() {
+    public void refreshCache() {
         dictTypeService.resetDictCache();
-        return R.ok();
     }
 
     /**
      * 获取字典选择框列表
      */
     @GetMapping("/optionselect")
-    public R<List<SysDictTypeVo>> optionselect() {
+    public List<SysDictTypeVo> optionselect() {
         List<SysDictTypeVo> dictTypes = dictTypeService.selectDictTypeAll();
-        return R.ok(dictTypes);
+        return dictTypes;
     }
 }

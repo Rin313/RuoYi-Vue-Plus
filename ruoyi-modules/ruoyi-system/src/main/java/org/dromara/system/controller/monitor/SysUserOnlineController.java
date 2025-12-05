@@ -84,12 +84,11 @@ public class SysUserOnlineController extends BaseController {
     @Log(title = "在线用户", businessType = BusinessType.FORCE)
     @RepeatSubmit()
     @DeleteMapping("/{tokenId}")
-    public R<Void> forceLogout(@PathVariable String tokenId) {
+    public void forceLogout(@PathVariable String tokenId) {
         try {
             StpUtil.kickoutByTokenValue(tokenId);
         } catch (NotLoginException ignored) {
         }
-        return R.ok();
     }
 
     /**
@@ -118,7 +117,7 @@ public class SysUserOnlineController extends BaseController {
     @Log(title = "在线设备", businessType = BusinessType.FORCE)
     @RepeatSubmit()
     @DeleteMapping("/myself/{tokenId}")
-    public R<Void> remove(@PathVariable("tokenId") String tokenId) {
+    public void remove(@PathVariable("tokenId") String tokenId) {
         try {
             // 获取指定账号 id 的 token 集合
             List<String> keys = StpUtil.getTokenValueListByLoginId(StpUtil.getLoginIdAsString());
@@ -128,7 +127,6 @@ public class SysUserOnlineController extends BaseController {
                 .ifPresent(key -> StpUtil.kickoutByTokenValue(tokenId));
         } catch (NotLoginException ignored) {
         }
-        return R.ok();
     }
 
 }

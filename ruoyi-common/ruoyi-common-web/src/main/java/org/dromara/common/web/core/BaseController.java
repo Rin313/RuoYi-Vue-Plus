@@ -1,6 +1,7 @@
 package org.dromara.common.web.core;
 
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 
 /**
@@ -16,8 +17,8 @@ public class BaseController {
      * @param rows 影响行数
      * @return 操作结果
      */
-    protected R<Void> toAjax(int rows) {
-        return rows > 0 ? R.ok() : R.fail();
+    protected void toAjax(int rows) {
+        if(rows<=0)throw new BizException();
     }
 
     /**
@@ -26,8 +27,8 @@ public class BaseController {
      * @param result 结果
      * @return 操作结果
      */
-    protected R<Void> toAjax(boolean result) {
-        return result ? R.ok() : R.fail();
+    protected void toAjax(boolean result) {
+        if(!result)throw new BizException();
     }
 
     /**

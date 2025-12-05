@@ -31,8 +31,8 @@ public class SysSocialController extends BaseController {
      * 查询社会化关系列表
      */
     @GetMapping("/list")
-    public R<List<SysSocialVo>> list() {
-        return R.ok(socialUserService.queryListByUserId(LoginHelper.getUserId()));
+    public List<SysSocialVo> list() {
+        return socialUserService.queryListByUserId(LoginHelper.getUserId());
     }
 
 }

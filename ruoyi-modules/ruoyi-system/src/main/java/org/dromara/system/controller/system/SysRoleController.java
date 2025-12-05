@@ -4,6 +4,7 @@ import cn.dev33.satoken.annotation.SaCheckPermission;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.domain.R;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
@@ -64,9 +65,9 @@ public class SysRoleController extends BaseController {
      */
     @SaCheckPermission("system:role:query")
     @GetMapping(value = "/{roleId}")
-    public R<SysRoleVo> getInfo(@PathVariable Long roleId) {
+    public SysRoleVo getInfo(@PathVariable Long roleId) {
         roleService.checkRoleDataScope(roleId);
-        return R.ok(roleService.selectRoleById(roleId));
+        return roleService.selectRoleById(roleId);
     }
 
     /**
@@ -76,14 +77,14 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping
-    public R<Void> add(@Validated @RequestBody SysRoleBo role) {
+    public void add(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         if (!roleService.checkRoleNameUnique(role)) {
-            return R.fail("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            throw new BizException("新增角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (!roleService.checkRoleKeyUnique(role)) {
-            return R.fail("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            throw new BizException("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-        return toAjax(roleService.insertRole(role));
+        toAjax(roleService.insertRole(role));
 
     }
 
@@ -94,20 +95,19 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public R<Void> edit(@Validated @RequestBody SysRoleBo role) {
+    public void edit(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
         if (!roleService.checkRoleNameUnique(role)) {
-            return R.fail("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
+            throw new BizException("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (!roleService.checkRoleKeyUnique(role)) {
-            return R.fail("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
+            throw new BizException("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
 
         if (roleService.updateRole(role) > 0) {
             roleService.cleanOnlineUserByRole(role.getRoleId());
-            return R.ok();
         }
-        return R.fail("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
+        throw new BizException("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
     }
 
     /**
@@ -117,10 +117,10 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/dataScope")
-    public R<Void> dataScope(@RequestBody SysRoleBo role) {
+    public void dataScope(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
-        return toAjax(roleService.authDataScope(role));
+        toAjax(roleService.authDataScope(role));
     }
 
     /**
@@ -130,10 +130,10 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
-    public R<Void> changeStatus(@RequestBody SysRoleBo role) {
+    public void changeStatus(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
-        return toAjax(roleService.updateRoleStatus(role.getRoleId(), role.getStatus()));
+        toAjax(roleService.updateRoleStatus(role.getRoleId(), role.getStatus()));
     }
 
     /**
@@ -144,8 +144,8 @@ public class SysRoleController extends BaseController {
     @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{roleIds}")
-    public R<Void> remove(@PathVariable Long[] roleIds) {
-        return toAjax(roleService.deleteRoleByIds(List.of(roleIds)));
+    public void remove(@PathVariable Long[] roleIds) {
+        toAjax(roleService.deleteRoleByIds(List.of(roleIds)));
     }
 
     /**
@@ -155,8 +155,8 @@ public class SysRoleController extends BaseController {
      */
     @SaCheckPermission("system:role:query")
     @GetMapping("/optionselect")
-    public R<List<SysRoleVo>> optionselect(@RequestParam(required = false) Long[] roleIds) {
-        return R.ok(roleService.selectRoleByIds(roleIds == null ? null : List.of(roleIds)));
+    public List<SysRoleVo> optionselect(@RequestParam(required = false) Long[] roleIds) {
+        return roleService.selectRoleByIds(roleIds == null ? null : List.of(roleIds));
     }
 
     /**
@@ -184,8 +184,8 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/cancel")
-    public R<Void> cancelAuthUser(@RequestBody SysUserRole userRole) {
-        return toAjax(roleService.deleteAuthUser(userRole));
+    public void cancelAuthUser(@RequestBody SysUserRole userRole) {
+        toAjax(roleService.deleteAuthUser(userRole));
     }
 
     /**
@@ -198,8 +198,8 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/cancelAll")
-    public R<Void> cancelAuthUserAll(Long roleId, Long[] userIds) {
-        return toAjax(roleService.deleteAuthUsers(roleId, userIds));
+    public void cancelAuthUserAll(Long roleId, Long[] userIds) {
+        toAjax(roleService.deleteAuthUsers(roleId, userIds));
     }
 
     /**
@@ -212,9 +212,9 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/selectAll")
-    public R<Void> selectAuthUserAll(Long roleId, Long[] userIds) {
+    public void selectAuthUserAll(Long roleId, Long[] userIds) {
         roleService.checkRoleDataScope(roleId);
-        return toAjax(roleService.insertAuthUsers(roleId, userIds));
+        toAjax(roleService.insertAuthUsers(roleId, userIds));
     }
 
 }

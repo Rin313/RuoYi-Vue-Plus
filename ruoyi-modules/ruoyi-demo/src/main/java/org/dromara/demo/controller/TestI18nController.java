@@ -31,8 +31,8 @@ public class TestI18nController {
      * @param code 国际化code
      */
     @GetMapping()
-    public R<Void> get(String code) {
-        return R.ok(MessageUtils.message(code));
+    public String get(String code) {
+        return MessageUtils.message(code);
     }
 
     /**
@@ -42,8 +42,8 @@ public class TestI18nController {
      * 测试使用 not.null
      */
     @GetMapping("/test1")
-    public R<Void> test1(@NotBlank(message = "{not.null}") String str) {
-        return R.ok(str);
+    public String test1(@NotBlank(message = "{not.null}") String str) {
+        return str;
     }
 
     /**
@@ -53,8 +53,8 @@ public class TestI18nController {
      * 测试使用 not.null
      */
     @GetMapping("/test2")
-    public R<TestI18nBo> test2(@Validated TestI18nBo bo) {
-        return R.ok(bo);
+    public TestI18nBo test2(@Validated TestI18nBo bo) {
+        return bo;
     }
 
     @Data
