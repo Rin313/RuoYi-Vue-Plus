@@ -15,7 +15,7 @@ import org.dromara.common.excel.core.ExcelResult;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
@@ -89,7 +89,7 @@ public class SysUserController {
     /**
      * 导出用户列表
      */
-    @Log(title = "用户管理", businessType = BusinessType.EXPORT)
+    @Log(title = "用户管理", businessType = BizType.EXPORT)
     @SaCheckPermission("system:user:export")
     @PostMapping("/export")
     public void export(SysUserBo user, HttpServletResponse response) {
@@ -103,7 +103,7 @@ public class SysUserController {
      * @param file          导入文件
      * @param updateSupport 是否更新已存在数据
      */
-    @Log(title = "用户管理", businessType = BusinessType.IMPORT)
+    @Log(title = "用户管理", businessType = BizType.IMPORT)
     @SaCheckPermission("system:user:import")
     @PostMapping(value = "/importData", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public String importData(@RequestPart("file") MultipartFile file, boolean updateSupport) throws Exception {
@@ -164,7 +164,7 @@ public class SysUserController {
      * 新增用户
      */
     @SaCheckPermission("system:user:add")
-    @Log(title = "用户管理", businessType = BusinessType.INSERT)
+    @Log(title = "用户管理", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysUserBo user) {
@@ -184,7 +184,7 @@ public class SysUserController {
      * 修改用户
      */
     @SaCheckPermission("system:user:edit")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysUserBo user) {
@@ -206,7 +206,7 @@ public class SysUserController {
      * @param userIds 角色ID串
      */
     @SaCheckPermission("system:user:remove")
-    @Log(title = "用户管理", businessType = BusinessType.DELETE)
+    @Log(title = "用户管理", businessType = BizType.DELETE)
     @DeleteMapping("/{userIds}")
     public void remove(@PathVariable Long[] userIds) {
         if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
@@ -230,7 +230,7 @@ public class SysUserController {
      * 重置密码
      */
     @SaCheckPermission("system:user:resetPwd")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/resetPwd")
     public void resetPwd(@RequestBody SysUserBo user) {
@@ -244,7 +244,7 @@ public class SysUserController {
      * 状态修改
      */
     @SaCheckPermission("system:user:edit")
-    @Log(title = "用户管理", businessType = BusinessType.UPDATE)
+    @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
     public void changeStatus(@RequestBody SysUserBo user) {
@@ -277,7 +277,7 @@ public class SysUserController {
      * @param roleIds 角色ID串
      */
     @SaCheckPermission("system:user:edit")
-    @Log(title = "用户管理", businessType = BusinessType.GRANT)
+    @Log(title = "用户管理", businessType = BizType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authRole")
     public void insertAuthRole(Long userId, Long[] roleIds) {

@@ -10,7 +10,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import org.dromara.system.domain.SysMenu;
@@ -100,7 +100,7 @@ public class SysMenuController {
      */
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:add")
-    @Log(title = "菜单管理", businessType = BusinessType.INSERT)
+    @Log(title = "菜单管理", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysMenuBo menu) {
@@ -118,7 +118,7 @@ public class SysMenuController {
      */
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:edit")
-    @Log(title = "菜单管理", businessType = BusinessType.UPDATE)
+    @Log(title = "菜单管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysMenuBo menu) {
@@ -140,7 +140,7 @@ public class SysMenuController {
      */
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:remove")
-    @Log(title = "菜单管理", businessType = BusinessType.DELETE)
+    @Log(title = "菜单管理", businessType = BizType.DELETE)
     @DeleteMapping("/{menuId}")
     public void remove(@PathVariable("menuId") Long menuId) {
         if (menuService.hasChildByMenuId(menuId)) {
@@ -168,7 +168,7 @@ public class SysMenuController {
      */
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:remove")
-    @Log(title = "菜单管理", businessType = BusinessType.DELETE)
+    @Log(title = "菜单管理", businessType = BizType.DELETE)
     @DeleteMapping("/cascade/{menuIds}")
     public void remove(@PathVariable("menuIds") Long[] menuIds) {
         List<Long> menuIdList = List.of(menuIds);

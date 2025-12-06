@@ -5,7 +5,7 @@ package org.dromara.common.log.enums;
  *
  * @author ruoyi
  */
-public enum BusinessType {
+public enum BizType {
     /**
      * 其它
      */

@@ -10,7 +10,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 import org.dromara.system.domain.bo.SysDictTypeBo;
@@ -47,7 +47,7 @@ public class SysDictTypeController {
     /**
      * 导出字典类型列表
      */
-    @Log(title = "字典类型", businessType = BusinessType.EXPORT)
+    @Log(title = "字典类型", businessType = BizType.EXPORT)
     @SaCheckPermission("system:dict:export")
     @PostMapping("/export")
     public void export(SysDictTypeBo dictType, HttpServletResponse response) {
@@ -70,7 +70,7 @@ public class SysDictTypeController {
      * 新增字典类型
      */
     @SaCheckPermission("system:dict:add")
-    @Log(title = "字典类型", businessType = BusinessType.INSERT)
+    @Log(title = "字典类型", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysDictTypeBo dict) {
@@ -84,7 +84,7 @@ public class SysDictTypeController {
      * 修改字典类型
      */
     @SaCheckPermission("system:dict:edit")
-    @Log(title = "字典类型", businessType = BusinessType.UPDATE)
+    @Log(title = "字典类型", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysDictTypeBo dict) {
@@ -100,7 +100,7 @@ public class SysDictTypeController {
      * @param dictIds 字典ID串
      */
     @SaCheckPermission("system:dict:remove")
-    @Log(title = "字典类型", businessType = BusinessType.DELETE)
+    @Log(title = "字典类型", businessType = BizType.DELETE)
     @DeleteMapping("/{dictIds}")
     public void remove(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(Arrays.asList(dictIds));
@@ -110,7 +110,7 @@ public class SysDictTypeController {
      * 刷新字典缓存
      */
     @SaCheckPermission("system:dict:remove")
-    @Log(title = "字典类型", businessType = BusinessType.CLEAN)
+    @Log(title = "字典类型", businessType = BizType.CLEAN)
     @Lock4j
     @DeleteMapping("/refreshCache")
     public void refreshCache() {

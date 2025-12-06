@@ -7,7 +7,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 import org.dromara.system.domain.SysUserRole;
@@ -50,7 +50,7 @@ public class SysRoleController {
     /**
      * 导出角色信息列表
      */
-    @Log(title = "角色管理", businessType = BusinessType.EXPORT)
+    @Log(title = "角色管理", businessType = BizType.EXPORT)
     @SaCheckPermission("system:role:export")
     @PostMapping("/export")
     public void export(SysRoleBo role, HttpServletResponse response) {
@@ -74,7 +74,7 @@ public class SysRoleController {
      * 新增角色
      */
     @SaCheckPermission("system:role:add")
-    @Log(title = "角色管理", businessType = BusinessType.INSERT)
+    @Log(title = "角色管理", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysRoleBo role) {
@@ -92,7 +92,7 @@ public class SysRoleController {
      * 修改保存角色
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @Log(title = "角色管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysRoleBo role) {
@@ -114,7 +114,7 @@ public class SysRoleController {
      * 修改保存数据权限
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @Log(title = "角色管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/dataScope")
     public void dataScope(@RequestBody SysRoleBo role) {
@@ -127,7 +127,7 @@ public class SysRoleController {
      * 状态修改
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.UPDATE)
+    @Log(title = "角色管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/changeStatus")
     public void changeStatus(@RequestBody SysRoleBo role) {
@@ -142,7 +142,7 @@ public class SysRoleController {
      * @param roleIds 角色ID串
      */
     @SaCheckPermission("system:role:remove")
-    @Log(title = "角色管理", businessType = BusinessType.DELETE)
+    @Log(title = "角色管理", businessType = BizType.DELETE)
     @DeleteMapping("/{roleIds}")
     public void remove(@PathVariable Long[] roleIds) {
         roleService.deleteRoleByIds(List.of(roleIds));
@@ -181,7 +181,7 @@ public class SysRoleController {
      * 取消授权用户
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
+    @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/cancel")
     public void cancelAuthUser(@RequestBody SysUserRole userRole) {
@@ -195,7 +195,7 @@ public class SysRoleController {
      * @param userIds 用户ID串
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
+    @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/cancelAll")
     public void cancelAuthUserAll(Long roleId, Long[] userIds) {
@@ -209,7 +209,7 @@ public class SysRoleController {
      * @param userIds 用户ID串
      */
     @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BusinessType.GRANT)
+    @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authUser/selectAll")
     public void selectAuthUserAll(Long roleId, Long[] userIds) {

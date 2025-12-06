@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 import org.dromara.system.domain.bo.SysOperLogBo;
@@ -44,7 +44,7 @@ public class SysOperlogController {
     /**
      * 导出操作日志记录列表
      */
-    @Log(title = "操作日志", businessType = BusinessType.EXPORT)
+    @Log(title = "操作日志", businessType = BizType.EXPORT)
     @SaCheckPermission("monitor:operlog:export")
     @PostMapping("/export")
     public void export(SysOperLogBo operLog, HttpServletResponse response) {
@@ -56,7 +56,7 @@ public class SysOperlogController {
      * 批量删除操作日志记录
      * @param operIds 日志ids
      */
-    @Log(title = "操作日志", businessType = BusinessType.DELETE)
+    @Log(title = "操作日志", businessType = BizType.DELETE)
     @SaCheckPermission("monitor:operlog:remove")
     @DeleteMapping("/{operIds}")
     public void remove(@PathVariable Long[] operIds) {
@@ -66,7 +66,7 @@ public class SysOperlogController {
     /**
      * 清理操作日志记录
      */
-    @Log(title = "操作日志", businessType = BusinessType.CLEAN)
+    @Log(title = "操作日志", businessType = BizType.CLEAN)
     @SaCheckPermission("monitor:operlog:remove")
     @Lock4j
     @DeleteMapping("/clean")

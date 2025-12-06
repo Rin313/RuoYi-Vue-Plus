@@ -8,7 +8,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 import org.dromara.system.domain.bo.SysDictDataBo;
@@ -50,7 +50,7 @@ public class SysDictDataController {
     /**
      * 导出字典数据列表
      */
-    @Log(title = "字典数据", businessType = BusinessType.EXPORT)
+    @Log(title = "字典数据", businessType = BizType.EXPORT)
     @SaCheckPermission("system:dict:export")
     @PostMapping("/export")
     public void export(SysDictDataBo dictData, HttpServletResponse response) {
@@ -87,7 +87,7 @@ public class SysDictDataController {
      * 新增字典类型
      */
     @SaCheckPermission("system:dict:add")
-    @Log(title = "字典数据", businessType = BusinessType.INSERT)
+    @Log(title = "字典数据", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysDictDataBo dict) {
@@ -101,7 +101,7 @@ public class SysDictDataController {
      * 修改保存字典类型
      */
     @SaCheckPermission("system:dict:edit")
-    @Log(title = "字典数据", businessType = BusinessType.UPDATE)
+    @Log(title = "字典数据", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysDictDataBo dict) {
@@ -117,7 +117,7 @@ public class SysDictDataController {
      * @param dictCodes 字典code串
      */
     @SaCheckPermission("system:dict:remove")
-    @Log(title = "字典类型", businessType = BusinessType.DELETE)
+    @Log(title = "字典类型", businessType = BizType.DELETE)
     @DeleteMapping("/{dictCodes}")
     public void remove(@PathVariable Long[] dictCodes) {
         dictDataService.deleteDictDataByIds(Arrays.asList(dictCodes));

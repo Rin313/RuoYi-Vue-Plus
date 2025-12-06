@@ -14,7 +14,7 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.ChapterListVo;
 import org.dromara.system.domain.vo.ChapterVo;
 import org.dromara.system.domain.bo.ChapterInsertBo;
@@ -73,7 +73,7 @@ public class ChapterController {
      * 新增小说章节
      */
     @SaCheckPermission("system:chapter:add")
-    @Log(title = "小说章节", businessType = BusinessType.INSERT)
+    @Log(title = "小说章节", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping()
     public void add(@Validated(AddGroup.class) @RequestBody ChapterInsertBo bo) {
@@ -84,7 +84,7 @@ public class ChapterController {
      * 修改小说章节
      */
     @SaCheckPermission("system:chapter:edit")
-    @Log(title = "小说章节", businessType = BusinessType.UPDATE)
+    @Log(title = "小说章节", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody ChapterUpdateBo bo) {
@@ -97,7 +97,7 @@ public class ChapterController {
      * @param ids 主键串
      */
     @SaCheckPermission("system:chapter:remove")
-    @Log(title = "小说章节", businessType = BusinessType.DELETE)
+    @Log(title = "小说章节", businessType = BizType.DELETE)
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {

@@ -7,7 +7,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 
@@ -37,7 +37,7 @@ public class SysProfileController {
      * 修改用户信息
      */
     @RepeatSubmit
-    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @Log(title = "个人信息", businessType = BizType.UPDATE)
     @PutMapping
     public void updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
         SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
@@ -58,7 +58,7 @@ public class SysProfileController {
      * @param bo 新旧密码
      */
     @RepeatSubmit
-    @Log(title = "个人信息", businessType = BusinessType.UPDATE)
+    @Log(title = "个人信息", businessType = BizType.UPDATE)
     @PutMapping("/updatePwd")
     public void updatePwd(@Validated @RequestBody SysUserPasswordBo bo) {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());

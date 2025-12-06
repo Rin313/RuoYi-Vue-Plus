@@ -18,7 +18,7 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.NovelVo;
 import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.bo.NovelQueryBo;
@@ -50,7 +50,7 @@ public class NovelController {
      * @param tNovelSubmitBo 附加信息
      */
     @SaCheckPermission("system:novel:add")
-    @Log(title = "小说", businessType = BusinessType.INSERT)
+    @Log(title = "小说", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void importTxt(@RequestPart(required=false) MultipartFile file,
@@ -104,7 +104,7 @@ public class NovelController {
      * 修改小说
      */
     @SaCheckPermission("system:novel:edit")
-    @Log(title = "小说", businessType = BusinessType.UPDATE)
+    @Log(title = "小说", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
@@ -117,7 +117,7 @@ public class NovelController {
      * @param ids 主键串
      */
     @SaCheckPermission("system:novel:remove")
-    @Log(title = "小说", businessType = BusinessType.DELETE)
+    @Log(title = "小说", businessType = BizType.DELETE)
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {

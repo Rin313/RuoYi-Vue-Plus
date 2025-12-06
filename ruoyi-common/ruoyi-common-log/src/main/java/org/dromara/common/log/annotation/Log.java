@@ -1,6 +1,6 @@
 package org.dromara.common.log.annotation;
 
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.log.enums.OperatorType;
 
 import java.lang.annotation.*;
@@ -22,7 +22,7 @@ public @interface Log {
     /**
      * 功能
      */
-    BusinessType businessType() default BusinessType.OTHER;
+    BizType businessType() default BizType.OTHER;
 
     /**
      * 操作人类别

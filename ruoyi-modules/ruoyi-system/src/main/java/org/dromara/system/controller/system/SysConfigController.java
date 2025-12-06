@@ -7,7 +7,7 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 import org.dromara.system.domain.bo.SysConfigBo;
@@ -46,7 +46,7 @@ public class SysConfigController {
     /**
      * 导出参数配置列表
      */
-    @Log(title = "参数管理", businessType = BusinessType.EXPORT)
+    @Log(title = "参数管理", businessType = BizType.EXPORT)
     @SaCheckPermission("system:config:export")
     @PostMapping("/export")
     public void export(SysConfigBo config, HttpServletResponse response) {
@@ -79,7 +79,7 @@ public class SysConfigController {
      * 新增参数配置
      */
     @SaCheckPermission("system:config:add")
-    @Log(title = "参数管理", businessType = BusinessType.INSERT)
+    @Log(title = "参数管理", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysConfigBo config) {
@@ -93,7 +93,7 @@ public class SysConfigController {
      * 修改参数配置
      */
     @SaCheckPermission("system:config:edit")
-    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
+    @Log(title = "参数管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysConfigBo config) {
@@ -107,7 +107,7 @@ public class SysConfigController {
      * 根据参数键名修改参数配置
      */
     @SaCheckPermission("system:config:edit")
-    @Log(title = "参数管理", businessType = BusinessType.UPDATE)
+    @Log(title = "参数管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping("/updateByKey")
     public void updateByKey(@RequestBody SysConfigBo config) {
@@ -120,7 +120,7 @@ public class SysConfigController {
      * @param configIds 参数ID串
      */
     @SaCheckPermission("system:config:remove")
-    @Log(title = "参数管理", businessType = BusinessType.DELETE)
+    @Log(title = "参数管理", businessType = BizType.DELETE)
     @DeleteMapping("/{configIds}")
     public void remove(@PathVariable Long[] configIds) {
         configService.deleteConfigByIds(Arrays.asList(configIds));
@@ -130,7 +130,7 @@ public class SysConfigController {
      * 刷新参数缓存
      */
     @SaCheckPermission("system:config:remove")
-    @Log(title = "参数管理", businessType = BusinessType.CLEAN)
+    @Log(title = "参数管理", businessType = BizType.CLEAN)
     @DeleteMapping("/refreshCache")
     public void refreshCache() {
         configService.resetConfigCache();

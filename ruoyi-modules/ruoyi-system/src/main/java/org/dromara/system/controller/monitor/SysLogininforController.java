@@ -10,7 +10,7 @@ import org.dromara.common.core.constant.CacheConstants;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.redis.utils.RedisUtils;
 
@@ -47,7 +47,7 @@ public class SysLogininforController {
     /**
      * 导出系统访问记录列表
      */
-    @Log(title = "登录日志", businessType = BusinessType.EXPORT)
+    @Log(title = "登录日志", businessType = BizType.EXPORT)
     @SaCheckPermission("monitor:logininfor:export")
     @PostMapping("/export")
     public void export(SysLogininforBo logininfor, HttpServletResponse response) {
@@ -60,7 +60,7 @@ public class SysLogininforController {
      * @param infoIds 日志ids
      */
     @SaCheckPermission("monitor:logininfor:remove")
-    @Log(title = "登录日志", businessType = BusinessType.DELETE)
+    @Log(title = "登录日志", businessType = BizType.DELETE)
     @DeleteMapping("/{infoIds}")
     public void remove(@PathVariable Long[] infoIds) {
         logininforService.deleteLogininforByIds(infoIds);
@@ -70,7 +70,7 @@ public class SysLogininforController {
      * 清理系统访问记录
      */
     @SaCheckPermission("monitor:logininfor:remove")
-    @Log(title = "登录日志", businessType = BusinessType.CLEAN)
+    @Log(title = "登录日志", businessType = BizType.CLEAN)
     @Lock4j
     @DeleteMapping("/clean")
     public void clean() {
@@ -78,7 +78,7 @@ public class SysLogininforController {
     }
 
     @SaCheckPermission("monitor:logininfor:unlock")
-    @Log(title = "账户解锁", businessType = BusinessType.OTHER)
+    @Log(title = "账户解锁", businessType = BizType.OTHER)
     @RepeatSubmit()
     @GetMapping("/unlock/{userName}")
     public void unlock(@PathVariable("userName") String userName) {

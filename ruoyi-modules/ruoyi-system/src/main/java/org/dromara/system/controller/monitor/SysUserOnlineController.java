@@ -11,7 +11,7 @@ import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.PageUtils;
 import org.dromara.common.redis.utils.RedisUtils;
 
@@ -82,7 +82,7 @@ public class SysUserOnlineController {
      * @param tokenId token值
      */
     @SaCheckPermission("monitor:online:forceLogout")
-    @Log(title = "在线用户", businessType = BusinessType.FORCE)
+    @Log(title = "在线用户", businessType = BizType.FORCE)
     @RepeatSubmit()
     @DeleteMapping("/{tokenId}")
     public void forceLogout(@PathVariable String tokenId) {
@@ -115,7 +115,7 @@ public class SysUserOnlineController {
      *
      * @param tokenId token值
      */
-    @Log(title = "在线设备", businessType = BusinessType.FORCE)
+    @Log(title = "在线设备", businessType = BizType.FORCE)
     @RepeatSubmit()
     @DeleteMapping("/myself/{tokenId}")
     public void remove(@PathVariable("tokenId") String tokenId) {

@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.log.enums.BusinessType;
+import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.sse.utils.SseMessageUtils;
 
@@ -55,7 +55,7 @@ public class SysNoticeController {
      * 新增通知公告
      */
     @SaCheckPermission("system:notice:add")
-    @Log(title = "通知公告", businessType = BusinessType.INSERT)
+    @Log(title = "通知公告", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysNoticeBo notice) {
@@ -68,7 +68,7 @@ public class SysNoticeController {
      * 修改通知公告
      */
     @SaCheckPermission("system:notice:edit")
-    @Log(title = "通知公告", businessType = BusinessType.UPDATE)
+    @Log(title = "通知公告", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysNoticeBo notice) {
@@ -81,7 +81,7 @@ public class SysNoticeController {
      * @param noticeIds 公告ID串
      */
     @SaCheckPermission("system:notice:remove")
-    @Log(title = "通知公告", businessType = BusinessType.DELETE)
+    @Log(title = "通知公告", businessType = BizType.DELETE)
     @DeleteMapping("/{noticeIds}")
     public void remove(@PathVariable Long[] noticeIds) {
         noticeService.deleteNoticeByIds(noticeIds);
