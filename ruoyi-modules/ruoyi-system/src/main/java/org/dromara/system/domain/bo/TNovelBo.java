@@ -10,7 +10,7 @@ import lombok.EqualsAndHashCode;
 import jakarta.validation.constraints.*;
 
 /**
- * 小说宽业务对象 t_novel
+ * 小说业务对象 t_novel
  *
  * @author Lion Li
  * @date 2025-12-04

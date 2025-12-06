@@ -5,7 +5,7 @@ import lombok.Data;
 import java.io.Serial;
 
 /**
- * 小说章节宽对象 t_chapter
+ * 小说章节对象 t_chapter
  *
  * @author Lion Li
  * @date 2025-12-04

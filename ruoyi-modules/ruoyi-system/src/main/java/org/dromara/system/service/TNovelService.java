@@ -37,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 /**
- * 小说宽Service业务层处理
+ * 小说Service业务层处理
  *
  * @author Lion Li
  * @date 2025-12-04
@@ -138,7 +138,7 @@ public class TNovelService {
      * 查询小说
      *
      * @param id 主键
-     * @return 小说宽
+     * @return 小说
      */
     public TNovelVo queryById(Long id){
         return baseMapper.selectVoById(id);
@@ -149,7 +149,7 @@ public class TNovelService {
      *
      * @param bo        查询条件
      * @param pageQuery 分页参数
-     * @return 小说宽分页列表
+     * @return 小说分页列表
      */
     public TableDataInfo<TNovelVo> queryPageList(TNovelBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
@@ -158,7 +158,7 @@ public class TNovelService {
     }
 
     /**
-     * 查询符合条件的小说宽列表
+     * 查询符合条件的小说列表
      *
      * @param bo 查询条件
      * @return 小说列表
@@ -183,9 +183,9 @@ public class TNovelService {
     }
 
     /**
-     * 修改小说宽
+     * 修改小说
      *
-     * @param bo 小说宽
+     * @param bo 小说
      * @return 是否修改成功
      */
     public void updateByBo(TNovelBo bo) {
@@ -202,7 +202,7 @@ public class TNovelService {
     }
 
     /**
-     * 校验并批量删除小说宽信息
+     * 校验并批量删除小说信息
      *
      * @param ids     待删除的主键集合
      * @param isValid 是否进行有效性校验

@@ -49,11 +49,11 @@ public class TChapterController {
      * 导出小说章节列表
      */
     @SaCheckPermission("system:chapter:export")
-    @Log(title = "小说章节宽", businessType = BusinessType.EXPORT)
+    @Log(title = "小说章节", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(TChapterBo bo, HttpServletResponse response) {
         List<TChapterListVo> list = tChapterService.queryList(bo);
-        ExcelUtil.exportExcel(list, "小说章节宽", TChapterListVo.class, response);
+        ExcelUtil.exportExcel(list, "小说章节", TChapterListVo.class, response);
     }
 
     /**
@@ -72,7 +72,7 @@ public class TChapterController {
      * 新增小说章节
      */
     @SaCheckPermission("system:chapter:add")
-    @Log(title = "小说章节宽", businessType = BusinessType.INSERT)
+    @Log(title = "小说章节", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
     public void add(@Validated(AddGroup.class) @RequestBody TChapterBo bo) {
@@ -83,7 +83,7 @@ public class TChapterController {
      * 修改小说章节
      */
     @SaCheckPermission("system:chapter:edit")
-    @Log(title = "小说章节宽", businessType = BusinessType.UPDATE)
+    @Log(title = "小说章节", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody TChapterBo bo) {
@@ -96,7 +96,7 @@ public class TChapterController {
      * @param ids 主键串
      */
     @SaCheckPermission("system:chapter:remove")
-    @Log(title = "小说章节宽", businessType = BusinessType.DELETE)
+    @Log(title = "小说章节", businessType = BusinessType.DELETE)
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {

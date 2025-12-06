@@ -5,7 +5,7 @@ import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 
 /**
- * 小说章节宽Mapper接口
+ * 小说章节Mapper接口
  *
  * @author Lion Li
  * @date 2025-12-04

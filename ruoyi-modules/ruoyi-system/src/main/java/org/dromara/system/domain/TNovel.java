@@ -8,7 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 
 /**
- * 小说宽对象 t_novel
+ * 小说对象 t_novel
  *
  * @author Lion Li
  * @date 2025-12-04

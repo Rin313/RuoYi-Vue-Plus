@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.Collection;
 
 /**
- * 小说章节宽Service业务层处理
+ * 小说章节Service业务层处理
  *
  * @author Lion Li
  * @date 2025-12-04
@@ -33,10 +33,10 @@ public class TChapterService {
     private final TChapterMapper baseMapper;
 
     /**
-     * 查询小说章节宽
+     * 查询小说章节
      *
      * @param id 主键
-     * @return 小说章节宽
+     * @return 小说章节
      */
     public TChapterVo queryById(Long id){
         return baseMapper.selectVoById(id, TChapterVo.class);
@@ -47,7 +47,7 @@ public class TChapterService {
      *
      * @param bo        查询条件
      * @param pageQuery 分页参数
-     * @return 小说章节宽分页列表
+     * @return 小说章节分页列表
      */
     public TableDataInfo<TChapterListVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
@@ -59,7 +59,7 @@ public class TChapterService {
      * 查询符合条件的小说章节列表
      *
      * @param bo 查询条件
-     * @return 小说章节宽列表
+     * @return 小说章节列表
      */
     public List<TChapterListVo> queryList(TChapterBo bo) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
@@ -75,9 +75,9 @@ public class TChapterService {
     }
 
     /**
-     * 新增小说章节宽
+     * 新增小说章节
      *
-     * @param bo 小说章节宽
+     * @param bo 小说章节
      * @return 是否新增成功
      */
     public void insertByBo(TChapterBo bo) {
@@ -87,9 +87,9 @@ public class TChapterService {
     }
 
     /**
-     * 修改小说章节宽
+     * 修改小说章节
      *
-     * @param bo 小说章节宽
+     * @param bo 小说章节
      * @return 是否修改成功
      */
     public void updateByBo(TChapterBo bo) {
@@ -106,7 +106,7 @@ public class TChapterService {
     }
 
     /**
-     * 校验并批量删除小说章节宽信息
+     * 校验并批量删除小说章节信息
      *
      * @param ids     待删除的主键集合
      * @param isValid 是否进行有效性校验

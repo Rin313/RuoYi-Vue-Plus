@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 
 /**
- * 小说宽视图对象 t_novel
+ * 小说视图对象 t_novel
  *
  * @author Lion Li
  * @date 2025-12-04
