@@ -19,7 +19,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.dromara.system.domain.bo.NovelQueryBo;
 import org.dromara.system.domain.bo.NovelUpdateBo;
+import org.dromara.system.domain.bo.NovelVisitorQueryBo;
 import org.dromara.system.domain.bo.NovelInsertBo;
+import org.dromara.system.domain.vo.NovelVisitorVo;
 import org.dromara.system.domain.vo.NovelVo;
 import org.dromara.system.domain.Chapter;
 import org.dromara.system.domain.Novel;
@@ -35,12 +37,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 
-/**
- * 小说Service业务层处理
- *
- * @author Lion Li
- * @date 2025-12-04
- */
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -58,13 +54,6 @@ public class NovelService {
      * \s : 必须包含空格（对应要求：包含"章 "）
      */
     private static final Pattern CHAPTER_PATTERN = Pattern.compile("^\\s*第[0-9一二三四五六七八九十百千万]+章\\s.*");
-
-    /**
-     * 导入TXT小说
-     *
-     * @param file     文件
-     * @param tNovelSubmitBo 附加信息（可选）
-     */
     @Transactional(rollbackFor = Exception.class)
     public void importTxtNovel(MultipartFile file, NovelInsertBo tNovelSubmitBo) {
         Novel novel = MapstructUtils.convert(tNovelSubmitBo, Novel.class);
@@ -131,41 +120,10 @@ public class NovelService {
             }
         }
     }
-
-    /**
-     * 查询小说
-     *
-     * @param id 主键
-     * @return 小说
-     */
-    public NovelVo queryById(Long id){
+    public NovelVo selectById(Long id){
         return baseMapper.selectVoById(id);
     }
-
-    /**
-     * 分页查询小说列表
-     *
-     * @param bo        查询条件
-     * @param pageQuery 分页参数
-     * @return 小说分页列表
-     */
-    public IPage<NovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<Novel> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoPage(pageQuery.build(), lqw);
-    }
-
-    // /**
-    //  * 查询符合条件的小说列表
-    //  *
-    //  * @param bo 查询条件
-    //  * @return 小说列表
-    //  */
-    // public List<NovelVo> queryList(NovelQueryBo bo) {
-    //     LambdaQueryWrapper<Novel> lqw = buildQueryWrapper(bo);
-    //     return baseMapper.selectVoList(lqw);
-    // }
-
-    private LambdaQueryWrapper<Novel> buildQueryWrapper(NovelQueryBo bo) {
+    public IPage<NovelVo> selectPage(NovelQueryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Novel> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getTitle()), Novel::getTitle, bo.getTitle());
         lqw.like(StringUtils.isNotBlank(bo.getAuthor()), Novel::getAuthor, bo.getAuthor());
@@ -174,30 +132,26 @@ public class NovelService {
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), Novel::getStatus, bo.getStatus());
         lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), Novel::getCreateTime,bo.getBeginTime());
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), Novel::getCreateTime,bo.getEndTime());
-        return lqw;
+        return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
-    /**
-     * 修改小说
-     *
-     * @param bo 小说
-     * @return 是否修改成功
-     */
-    public void updateByBo(NovelUpdateBo bo) {
-        Novel update = MapstructUtils.convert(bo, Novel.class);
-        baseMapper.updateById(update);
+    public IPage<NovelVisitorVo> selectPageForVisitor(NovelVisitorQueryBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<Novel> lqw = Wrappers.lambdaQuery();
+        lqw.like(StringUtils.isNotBlank(bo.getTitle()), Novel::getTitle, bo.getTitle());
+        lqw.like(StringUtils.isNotBlank(bo.getAuthor()), Novel::getAuthor, bo.getAuthor());
+        lqw.like(StringUtils.isNotBlank(bo.getIntro()), Novel::getIntro, bo.getIntro());
+        lqw.eq(StringUtils.isNotBlank(bo.getCategory()), Novel::getCategory, bo.getCategory());
+        lqw.eq(Novel::getStatus, "0");
+        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), Novel::getCreateTime,bo.getBeginTime());
+        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), Novel::getCreateTime,bo.getEndTime());
+        return baseMapper.selectVoPage(pageQuery.build(), lqw , NovelVisitorVo.class);
     }
 
-    /**
-     * 校验并批量删除小说信息
-     *
-     * @param ids     待删除的主键集合
-     * @param isValid 是否进行有效性校验
-     * @return 是否删除成功
-     */
-    public void deleteWithValidByIds(Collection<Long> ids) {
+    public void updateByBo(NovelUpdateBo bo) {
+        baseMapper.updateById(MapstructUtils.convert(bo, Novel.class));
+    }
+    public void deleteByIds(Collection<Long> ids) {
         baseMapper.deleteByIds(ids);
     }
-
     public void addViewCount(Long id) {
         // 使用 setSql 实现原子性更新，避免并发导致的数据不一致
         baseMapper.update(null,

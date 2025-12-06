@@ -112,7 +112,7 @@ public class GenController {
      */
     @SaCheckPermission("tool:gen:remove")
     @DeleteMapping("/{tableIds}")
-    public void remove(@PathVariable Long[] tableIds) {
+    public void delete(@PathVariable Long[] tableIds) {
         genTableService.deleteGenTableByIds(tableIds);
     }
 

@@ -71,7 +71,7 @@ public class SysNoticeController {
     @Log(title = "通知公告", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysNoticeBo notice) {
+    public void update(@Validated @RequestBody SysNoticeBo notice) {
         noticeService.updateNotice(notice);
     }
 
@@ -83,7 +83,7 @@ public class SysNoticeController {
     @SaCheckPermission("system:notice:remove")
     @Log(title = "通知公告", businessType = BizType.DELETE)
     @DeleteMapping("/{noticeIds}")
-    public void remove(@PathVariable Long[] noticeIds) {
+    public void delete(@PathVariable Long[] noticeIds) {
         noticeService.deleteNoticeByIds(noticeIds);
     }
 }

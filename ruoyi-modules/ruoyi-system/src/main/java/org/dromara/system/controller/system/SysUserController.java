@@ -187,7 +187,7 @@ public class SysUserController {
     @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysUserBo user) {
+    public void update(@Validated @RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
         userService.checkUserDataScope(user.getUserId());
         if (!userService.checkUserNameUnique(user)) {
@@ -208,7 +208,7 @@ public class SysUserController {
     @SaCheckPermission("system:user:remove")
     @Log(title = "用户管理", businessType = BizType.DELETE)
     @DeleteMapping("/{userIds}")
-    public void remove(@PathVariable Long[] userIds) {
+    public void delete(@PathVariable Long[] userIds) {
         if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
             throw new BizException("当前用户不能删除");
         }

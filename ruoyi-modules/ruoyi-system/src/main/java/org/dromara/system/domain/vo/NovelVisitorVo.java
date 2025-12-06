@@ -13,7 +13,7 @@ import java.io.Serializable;
 @Data
 @ExcelIgnoreUnannotated
 @AutoMapper(target = Novel.class)
-public class NovelVo implements Serializable {
+public class NovelVisitorVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -53,12 +53,6 @@ public class NovelVo implements Serializable {
      */
     @ExcelProperty(value = "分类")
     private String category;
-
-    /**
-     * 0-正常 1-停用
-     */
-    @ExcelProperty(value = "0-正常 1-停用")
-    private String status;
 
     /**
      * 浏览量

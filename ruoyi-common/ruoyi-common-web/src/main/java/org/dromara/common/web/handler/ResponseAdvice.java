@@ -1,10 +1,7 @@
 package org.dromara.common.web.handler;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.dromara.common.core.domain.R;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.dromara.common.json.utils.JsonUtils;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -15,9 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 @RestControllerAdvice(basePackages="org.dromara") // 指定扫描范围
 public class ResponseAdvice implements ResponseBodyAdvice<Object> {
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Override
     public boolean supports(MethodParameter returnType, Class<? extends HttpMessageConverter<?>> converterType) {
@@ -37,11 +31,7 @@ public class ResponseAdvice implements ResponseBodyAdvice<Object> {
         if (body instanceof R)
             return body;
         if (body instanceof String) {
-            try {
-                return objectMapper.writeValueAsString(R.ok(body));
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException(e);
-            }
+            return JsonUtils.toJsonString(R.ok(body));
         }
         if (body == null) {
             return R.ok();

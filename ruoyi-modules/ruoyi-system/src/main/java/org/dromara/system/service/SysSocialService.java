@@ -29,7 +29,7 @@ public class SysSocialService {
     /**
      * 查询社会化关系
      */
-    public SysSocialVo queryById(String id) {
+    public SysSocialVo selectById(String id) {
         return baseMapper.selectVoById(id);
     }
 

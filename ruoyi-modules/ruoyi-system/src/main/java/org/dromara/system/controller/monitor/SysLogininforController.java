@@ -62,7 +62,7 @@ public class SysLogininforController {
     @SaCheckPermission("monitor:logininfor:remove")
     @Log(title = "登录日志", businessType = BizType.DELETE)
     @DeleteMapping("/{infoIds}")
-    public void remove(@PathVariable Long[] infoIds) {
+    public void delete(@PathVariable Long[] infoIds) {
         logininforService.deleteLogininforByIds(infoIds);
     }
 

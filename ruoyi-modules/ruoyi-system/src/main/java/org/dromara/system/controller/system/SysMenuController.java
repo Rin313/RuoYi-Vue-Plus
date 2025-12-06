@@ -121,7 +121,7 @@ public class SysMenuController {
     @Log(title = "菜单管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysMenuBo menu) {
+    public void update(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {
         //     return R.fail("修改菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
         // } else 
@@ -142,7 +142,7 @@ public class SysMenuController {
     @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BizType.DELETE)
     @DeleteMapping("/{menuId}")
-    public void remove(@PathVariable("menuId") Long menuId) {
+    public void delete(@PathVariable("menuId") Long menuId) {
         if (menuService.hasChildByMenuId(menuId)) {
             throw new BizException("存在子菜单,不允许删除");
         }
@@ -170,7 +170,7 @@ public class SysMenuController {
     @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BizType.DELETE)
     @DeleteMapping("/cascade/{menuIds}")
-    public void remove(@PathVariable("menuIds") Long[] menuIds) {
+    public void delete(@PathVariable("menuIds") Long[] menuIds) {
         List<Long> menuIdList = List.of(menuIds);
         if (menuService.hasChildByMenuId(menuIdList)) {
             throw new BizException("存在子菜单,不允许删除");

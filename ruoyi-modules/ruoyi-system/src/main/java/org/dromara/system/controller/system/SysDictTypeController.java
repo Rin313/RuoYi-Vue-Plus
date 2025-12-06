@@ -87,7 +87,7 @@ public class SysDictTypeController {
     @Log(title = "字典类型", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysDictTypeBo dict) {
+    public void update(@Validated @RequestBody SysDictTypeBo dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
             throw new BizException("修改字典'" + dict.getDictName() + "'失败，字典类型已存在");
         }
@@ -102,7 +102,7 @@ public class SysDictTypeController {
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BizType.DELETE)
     @DeleteMapping("/{dictIds}")
-    public void remove(@PathVariable Long[] dictIds) {
+    public void delete(@PathVariable Long[] dictIds) {
         dictTypeService.deleteDictTypeByIds(Arrays.asList(dictIds));
     }
 

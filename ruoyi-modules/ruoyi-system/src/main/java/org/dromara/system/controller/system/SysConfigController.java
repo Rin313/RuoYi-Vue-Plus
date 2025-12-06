@@ -96,7 +96,7 @@ public class SysConfigController {
     @Log(title = "参数管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysConfigBo config) {
+    public void update(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
             throw new BizException("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
         }
@@ -122,7 +122,7 @@ public class SysConfigController {
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BizType.DELETE)
     @DeleteMapping("/{configIds}")
-    public void remove(@PathVariable Long[] configIds) {
+    public void delete(@PathVariable Long[] configIds) {
         configService.deleteConfigByIds(Arrays.asList(configIds));
     }
 

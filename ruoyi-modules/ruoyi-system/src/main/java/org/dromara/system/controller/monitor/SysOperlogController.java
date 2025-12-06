@@ -59,7 +59,7 @@ public class SysOperlogController {
     @Log(title = "操作日志", businessType = BizType.DELETE)
     @SaCheckPermission("monitor:operlog:remove")
     @DeleteMapping("/{operIds}")
-    public void remove(@PathVariable Long[] operIds) {
+    public void delete(@PathVariable Long[] operIds) {
         operLogService.deleteOperLogByIds(operIds);
     }
 

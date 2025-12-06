@@ -19,22 +19,18 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BizType;
+import org.dromara.system.domain.vo.NovelVisitorVo;
 import org.dromara.system.domain.vo.NovelVo;
 import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.bo.NovelQueryBo;
 import org.dromara.system.domain.bo.NovelUpdateBo;
+import org.dromara.system.domain.bo.NovelVisitorQueryBo;
 import org.dromara.system.service.NovelService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
 import org.dromara.common.ratelimiter.enums.LimitType;
 
-/**
- * 小说
- *
- * @author Lion Li
- * @date 2025-12-04
- */
 @Validated
 @RequiredArgsConstructor
 @RestController
@@ -68,46 +64,27 @@ public class NovelController {
         novelService.addViewCount(id);
     }
 
-    /**
-     * 查询小说列表
-     */
     @SaCheckPermission("system:novel:list")
     @GetMapping("/list")
     public IPage<NovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
-        return novelService.queryPageList(bo, pageQuery);
+        return novelService.selectPage(bo, pageQuery);
+    }
+    @SaIgnore
+    @GetMapping("/list/visitor")
+    public IPage<NovelVisitorVo> listForVisitor(NovelVisitorQueryBo bo, PageQuery pageQuery) {
+        return novelService.selectPageForVisitor(bo, pageQuery);
     }
 
-    // /**
-    //  * 导出小说列表
-    //  */
-    // @SaCheckPermission("system:novel:export")
-    // @Log(title = "小说", businessType = BusinessType.EXPORT)
-    // @PostMapping("/export")
-    // public void export(TNovelBo bo, HttpServletResponse response) {
-    //     List<TNovelVo> list = tNovelService.queryList(bo);
-    //     ExcelUtil.exportExcel(list, "小说", TNovelVo.class, response);
-    // }
-
-    /**
-     * 获取小说详细信息
-     *
-     * @param id 主键
-     */
     @SaCheckPermission("system:novel:query")
     @GetMapping("/{id}")
-    public NovelVo getInfo(@NotNull(message = "主键不能为空")
-                                     @PathVariable Long id) {
-        return novelService.queryById(id);
+    public NovelVo getInfo(@NotNull(message = "主键不能为空") @PathVariable Long id) {
+        return novelService.selectById(id);
     }
-
-    /**
-     * 修改小说
-     */
     @SaCheckPermission("system:novel:edit")
     @Log(title = "小说", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public void edit(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
+    public void update(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
         novelService.updateByBo(bo);
     }
 
@@ -119,8 +96,8 @@ public class NovelController {
     @SaCheckPermission("system:novel:remove")
     @Log(title = "小说", businessType = BizType.DELETE)
     @DeleteMapping("/{ids}")
-    public void remove(@NotEmpty(message = "主键不能为空")
+    public void delete(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        novelService.deleteWithValidByIds(List.of(ids));
+        novelService.deleteByIds(List.of(ids));
     }
 }

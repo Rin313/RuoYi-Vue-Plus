@@ -95,7 +95,7 @@ public class SysRoleController {
     @Log(title = "角色管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PutMapping
-    public void edit(@Validated @RequestBody SysRoleBo role) {
+    public void update(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
         if (!roleService.checkRoleNameUnique(role)) {
@@ -144,7 +144,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BizType.DELETE)
     @DeleteMapping("/{roleIds}")
-    public void remove(@PathVariable Long[] roleIds) {
+    public void delete(@PathVariable Long[] roleIds) {
         roleService.deleteRoleByIds(List.of(roleIds));
     }
 
