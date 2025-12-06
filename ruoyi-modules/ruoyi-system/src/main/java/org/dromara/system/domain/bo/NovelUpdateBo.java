@@ -15,7 +15,7 @@ import lombok.Data;
  */
 @Data
 @AutoMapper(target = TNovel.class, reverseConvertGenerate = false)
-public class TNovelSubmitBo {
+public class NovelUpdateBo {
     /**
      * 标题
      */
@@ -41,6 +41,10 @@ public class TNovelSubmitBo {
      * 分类
      */
     private String category;
+    /**
+     * 0-正常 1-停用
+     */
+    private String status;
 
 
 }

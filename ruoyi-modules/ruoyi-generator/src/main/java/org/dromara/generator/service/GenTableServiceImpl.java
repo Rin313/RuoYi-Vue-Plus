@@ -26,7 +26,7 @@ import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.file.FileUtils;
 import org.dromara.common.json.utils.JsonUtils;
-import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.generator.constant.GenConstants;
 import org.dromara.generator.domain.GenTable;

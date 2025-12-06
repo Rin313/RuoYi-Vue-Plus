@@ -4,8 +4,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
+import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.mybatis.core.page.PageQuery;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import cn.hutool.core.util.ReUtil;
@@ -18,8 +19,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.dromara.system.domain.bo.TNovelBo;
-import org.dromara.system.domain.bo.TNovelSubmitBo;
+import org.dromara.system.domain.bo.NovelQueryBo;
+import org.dromara.system.domain.bo.NovelUpdateBo;
+import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.vo.TNovelVo;
 import org.dromara.system.domain.TChapter;
 import org.dromara.system.domain.TNovel;
@@ -67,7 +69,7 @@ public class TNovelService {
      * @param tNovelSubmitBo 附加信息（可选）
      */
     @Transactional(rollbackFor = Exception.class)
-    public void importTxtNovel(MultipartFile file, TNovelSubmitBo tNovelSubmitBo) {
+    public void importTxtNovel(MultipartFile file, NovelInsertBo tNovelSubmitBo) {
         TNovel novel = MapstructUtils.convert(tNovelSubmitBo, TNovel.class);
         validEntityBeforeSave(novel);
         baseMapper.insert(novel);
@@ -151,7 +153,7 @@ public class TNovelService {
      * @param pageQuery 分页参数
      * @return 小说分页列表
      */
-    public TableDataInfo<TNovelVo> queryPageList(TNovelBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TNovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
         Page<TNovelVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
@@ -163,32 +165,29 @@ public class TNovelService {
      * @param bo 查询条件
      * @return 小说列表
      */
-    public List<TNovelVo> queryList(TNovelBo bo) {
+    public List<TNovelVo> queryList(NovelQueryBo bo) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
     }
 
-    private LambdaQueryWrapper<TNovel> buildQueryWrapper(TNovelBo bo) {
-        Map<String, Object> params = bo.getParams();
+    private LambdaQueryWrapper<TNovel> buildQueryWrapper(NovelQueryBo bo) {
         LambdaQueryWrapper<TNovel> lqw = Wrappers.lambdaQuery();
-        lqw.orderByAsc(TNovel::getId);
         lqw.like(StringUtils.isNotBlank(bo.getTitle()), TNovel::getTitle, bo.getTitle());
         lqw.like(StringUtils.isNotBlank(bo.getAuthor()), TNovel::getAuthor, bo.getAuthor());
         lqw.like(StringUtils.isNotBlank(bo.getIntro()), TNovel::getIntro, bo.getIntro());
         lqw.eq(StringUtils.isNotBlank(bo.getCategory()), TNovel::getCategory, bo.getCategory());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TNovel::getStatus, bo.getStatus());
-        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
-                TNovel::getCreateTime, params.get("beginTime"), params.get("endTime"));
+        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), TNovel::getCreateTime,bo.getBeginTime());
+        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), TNovel::getCreateTime,bo.getEndTime());
         return lqw;
     }
-
     /**
      * 修改小说
      *
      * @param bo 小说
      * @return 是否修改成功
      */
-    public void updateByBo(TNovelBo bo) {
+    public void updateByBo(NovelUpdateBo bo) {
         TNovel update = MapstructUtils.convert(bo, TNovel.class);
         validEntityBeforeSave(update);
         baseMapper.updateById(update);

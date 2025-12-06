@@ -1,6 +1,6 @@
 package org.dromara.demo.service;
 
-import org.dromara.common.mybatis.core.page.PageQuery;
+import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.demo.domain.TestDemo;
 import org.dromara.demo.domain.bo.TestDemoBo;

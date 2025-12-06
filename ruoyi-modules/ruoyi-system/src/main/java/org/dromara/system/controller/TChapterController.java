@@ -10,16 +10,15 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-
-import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
-import org.dromara.system.domain.bo.TChapterBo;
+import org.dromara.system.domain.bo.ChapterBo;
 import org.dromara.system.service.TChapterService;
+import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
@@ -41,20 +40,20 @@ public class TChapterController {
      */
     @SaCheckPermission("system:chapter:list")
     @GetMapping("/list")
-    public TableDataInfo<TChapterListVo> list(TChapterBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TChapterListVo> list(ChapterBo bo, PageQuery pageQuery) {
         return tChapterService.queryPageList(bo, pageQuery);
     }
 
-    /**
-     * 导出小说章节列表
-     */
-    @SaCheckPermission("system:chapter:export")
-    @Log(title = "小说章节", businessType = BusinessType.EXPORT)
-    @PostMapping("/export")
-    public void export(TChapterBo bo, HttpServletResponse response) {
-        List<TChapterListVo> list = tChapterService.queryList(bo);
-        ExcelUtil.exportExcel(list, "小说章节", TChapterListVo.class, response);
-    }
+    // /**
+    //  * 导出小说章节列表
+    //  */
+    // @SaCheckPermission("system:chapter:export")
+    // @Log(title = "小说章节", businessType = BusinessType.EXPORT)
+    // @PostMapping("/export")
+    // public void export(TChapterBo bo, HttpServletResponse response) {
+    //     List<TChapterListVo> list = tChapterService.queryList(bo);
+    //     ExcelUtil.exportExcel(list, "小说章节", TChapterListVo.class, response);
+    // }
 
     /**
      * 获取小说章节详细信息
@@ -75,7 +74,7 @@ public class TChapterController {
     @Log(title = "小说章节", businessType = BusinessType.INSERT)
     @RepeatSubmit()
     @PostMapping()
-    public void add(@Validated(AddGroup.class) @RequestBody TChapterBo bo) {
+    public void add(@Validated(AddGroup.class) @RequestBody ChapterBo bo) {
         tChapterService.insertByBo(bo);
     }
 
@@ -86,7 +85,7 @@ public class TChapterController {
     @Log(title = "小说章节", businessType = BusinessType.UPDATE)
     @RepeatSubmit()
     @PutMapping()
-    public void edit(@Validated(EditGroup.class) @RequestBody TChapterBo bo) {
+    public void edit(@Validated(EditGroup.class) @RequestBody ChapterBo bo) {
         tChapterService.updateByBo(bo);
     }
 

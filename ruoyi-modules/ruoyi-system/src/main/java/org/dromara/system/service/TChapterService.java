@@ -1,15 +1,16 @@
 package org.dromara.system.service;
 
 import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.mybatis.core.page.PageQuery;
+
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.dromara.system.domain.bo.TChapterBo;
+import org.dromara.system.domain.bo.ChapterBo;
 import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.TChapter;
@@ -49,7 +50,7 @@ public class TChapterService {
      * @param pageQuery 分页参数
      * @return 小说章节分页列表
      */
-    public TableDataInfo<TChapterListVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
+    public TableDataInfo<TChapterListVo> queryPageList(ChapterBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
         Page<TChapterListVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
         return TableDataInfo.build(result);
@@ -61,12 +62,12 @@ public class TChapterService {
      * @param bo 查询条件
      * @return 小说章节列表
      */
-    public List<TChapterListVo> queryList(TChapterBo bo) {
+    public List<TChapterListVo> queryList(ChapterBo bo) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
     }
 
-    private LambdaQueryWrapper<TChapter> buildQueryWrapper(TChapterBo bo) {
+    private LambdaQueryWrapper<TChapter> buildQueryWrapper(ChapterBo bo) {
         Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TChapter> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(TChapter::getChapterIndex);
@@ -80,7 +81,7 @@ public class TChapterService {
      * @param bo 小说章节
      * @return 是否新增成功
      */
-    public void insertByBo(TChapterBo bo) {
+    public void insertByBo(ChapterBo bo) {
         TChapter add = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(add);
         baseMapper.insert(add);
@@ -92,7 +93,7 @@ public class TChapterService {
      * @param bo 小说章节
      * @return 是否修改成功
      */
-    public void updateByBo(TChapterBo bo) {
+    public void updateByBo(ChapterBo bo) {
         TChapter update = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(update);
         baseMapper.updateById(update);

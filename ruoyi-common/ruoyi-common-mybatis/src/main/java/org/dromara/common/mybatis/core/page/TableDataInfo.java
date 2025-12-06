@@ -22,11 +22,6 @@ public class TableDataInfo<T> implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 总记录数
-     */
-    private long total;
-
-    /**
      * 列表数据
      */
     private List<T> rows;
@@ -39,7 +34,6 @@ public class TableDataInfo<T> implements Serializable {
      */
     public TableDataInfo(List<T> list, long total) {
         this.rows = list;
-        this.total = total;
     }
 
     /**
@@ -48,7 +42,6 @@ public class TableDataInfo<T> implements Serializable {
     public static <T> TableDataInfo<T> build(IPage<T> page) {
         TableDataInfo<T> rspData = new TableDataInfo<>();
         rspData.setRows(page.getRecords());
-        rspData.setTotal(page.getTotal());
         return rspData;
     }
 
@@ -58,7 +51,6 @@ public class TableDataInfo<T> implements Serializable {
     public static <T> TableDataInfo<T> build(List<T> list) {
         TableDataInfo<T> rspData = new TableDataInfo<>();
         rspData.setRows(list);
-        rspData.setTotal(list.size());
         return rspData;
     }
 

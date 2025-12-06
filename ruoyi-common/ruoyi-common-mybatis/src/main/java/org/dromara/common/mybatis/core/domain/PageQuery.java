@@ -1,4 +1,4 @@
-package org.dromara.common.mybatis.core.page;
+package org.dromara.common.mybatis.core.domain;
 
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.ObjectUtil;
