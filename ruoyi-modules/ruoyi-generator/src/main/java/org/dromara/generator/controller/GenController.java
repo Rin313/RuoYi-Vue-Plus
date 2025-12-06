@@ -12,7 +12,7 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.mybatis.helper.DataBaseHelper;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.generator.domain.GenTable;
 import org.dromara.generator.domain.GenTableColumn;
 import org.dromara.generator.service.IGenTableService;
@@ -33,7 +33,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/tool/gen")
-public class GenController extends BaseController {
+public class GenController {
 
     private final IGenTableService genTableService;
 

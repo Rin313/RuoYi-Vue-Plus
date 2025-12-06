@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
@@ -23,7 +23,7 @@ import org.dromara.system.service.TChapterService;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
- * 小说章节宽
+ * 小说章节
  *
  * @author Lion Li
  * @date 2025-12-04
@@ -32,7 +32,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/chapter")
-public class TChapterController extends BaseController {
+public class TChapterController {
 
     private final TChapterService tChapterService;
 
@@ -76,7 +76,7 @@ public class TChapterController extends BaseController {
     @RepeatSubmit()
     @PostMapping()
     public void add(@Validated(AddGroup.class) @RequestBody TChapterBo bo) {
-        toAjax(tChapterService.insertByBo(bo));
+        tChapterService.insertByBo(bo);
     }
 
     /**
@@ -87,7 +87,7 @@ public class TChapterController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody TChapterBo bo) {
-        toAjax(tChapterService.updateByBo(bo));
+        tChapterService.updateByBo(bo);
     }
 
     /**
@@ -100,6 +100,6 @@ public class TChapterController extends BaseController {
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        toAjax(tChapterService.deleteWithValidByIds(List.of(ids), true));
+        tChapterService.deleteWithValidByIds(List.of(ids), true);
     }
 }

@@ -14,7 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.validate.AddGroup;
@@ -40,7 +40,7 @@ import org.dromara.common.ratelimiter.enums.LimitType;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/novel")
-public class TNovelController extends BaseController {
+public class TNovelController {
 
     private final TNovelService tNovelService;
     
@@ -104,17 +104,6 @@ public class TNovelController extends BaseController {
         return tNovelService.queryById(id);
     }
 
-    // /**
-    //  * 新增小说
-    //  */
-    // @SaCheckPermission("system:novel:add")
-    // @Log(title = "小说", businessType = BusinessType.INSERT)
-    // @RepeatSubmit()
-    // @PostMapping()
-    // public R<Void> add(@Validated(AddGroup.class) @RequestBody TNovelBo bo) {
-    //     return toAjax(tNovelService.insertByBo(bo));
-    // }
-
     /**
      * 修改小说
      */
@@ -123,7 +112,7 @@ public class TNovelController extends BaseController {
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody TNovelBo bo) {
-        toAjax(tNovelService.updateByBo(bo));
+        tNovelService.updateByBo(bo);
     }
 
     /**
@@ -136,6 +125,6 @@ public class TNovelController extends BaseController {
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        toAjax(tNovelService.deleteWithValidByIds(List.of(ids), true));
+        tNovelService.deleteWithValidByIds(List.of(ids), true);
     }
 }

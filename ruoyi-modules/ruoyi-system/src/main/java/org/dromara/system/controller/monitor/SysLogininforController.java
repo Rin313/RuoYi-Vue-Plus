@@ -12,7 +12,7 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.RedisUtils;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.bo.SysLogininforBo;
 import org.dromara.system.domain.vo.SysLogininforVo;
 import org.dromara.system.service.SysLogininforService;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/monitor/logininfor")
-public class SysLogininforController extends BaseController {
+public class SysLogininforController {
 
     private final SysLogininforService logininforService;
 
@@ -62,7 +62,7 @@ public class SysLogininforController extends BaseController {
     @Log(title = "登录日志", businessType = BusinessType.DELETE)
     @DeleteMapping("/{infoIds}")
     public void remove(@PathVariable Long[] infoIds) {
-        toAjax(logininforService.deleteLogininforByIds(infoIds));
+        logininforService.deleteLogininforByIds(infoIds);
     }
 
     /**

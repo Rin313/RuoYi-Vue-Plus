@@ -14,7 +14,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.RedisUtils;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.SysUserOnline;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/monitor/online")
-public class SysUserOnlineController extends BaseController {
+public class SysUserOnlineController {
 
     /**
      * 获取在线用户监控列表

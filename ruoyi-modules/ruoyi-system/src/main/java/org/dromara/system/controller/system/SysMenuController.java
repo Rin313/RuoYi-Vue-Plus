@@ -12,7 +12,7 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.SysMenu;
 import org.dromara.system.domain.bo.SysMenuBo;
 import org.dromara.system.domain.vo.RouterVo;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/menu")
-public class SysMenuController extends BaseController {
+public class SysMenuController {
 
     private final SysMenuService menuService;
 
@@ -110,7 +110,7 @@ public class SysMenuController extends BaseController {
             if (SystemConstants.YES_FRAME.equals(menu.getIsFrame()) && !StringUtils.ishttp(menu.getPath())) {
             throw new BizException("新增菜单'" + menu.getMenuName() + "'失败，地址必须以http(s)://开头");
         }
-        toAjax(menuService.insertMenu(menu));
+        menuService.insertMenu(menu);
     }
 
     /**
@@ -130,7 +130,7 @@ public class SysMenuController extends BaseController {
         } else if (menu.getMenuId().equals(menu.getParentId())) {
             throw new BizException("修改菜单'" + menu.getMenuName() + "'失败，上级菜单不能选择自己");
         }
-        toAjax(menuService.updateMenu(menu));
+        menuService.updateMenu(menu);
     }
 
     /**
@@ -149,7 +149,7 @@ public class SysMenuController extends BaseController {
         if (menuService.checkMenuExistRole(menuId)) {
             throw new BizException("菜单已分配,不允许删除");
         }
-        toAjax(menuService.deleteMenuById(menuId));
+        menuService.deleteMenuById(menuId);
     }
 
     /**

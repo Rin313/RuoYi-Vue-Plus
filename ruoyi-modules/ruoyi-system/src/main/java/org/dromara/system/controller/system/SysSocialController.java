@@ -2,7 +2,7 @@ package org.dromara.system.controller.system;
 
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.vo.SysSocialVo;
 import org.dromara.system.service.SysSocialService;
 import org.springframework.validation.annotation.Validated;
@@ -22,7 +22,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/social")
-public class SysSocialController extends BaseController {
+public class SysSocialController {
 
     private final SysSocialService socialUserService;
 

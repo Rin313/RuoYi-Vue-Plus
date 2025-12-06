@@ -10,7 +10,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.bo.SysConfigBo;
 import org.dromara.system.domain.vo.SysConfigVo;
 import org.dromara.system.service.SysConfigService;
@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/config")
-public class SysConfigController extends BaseController {
+public class SysConfigController {
 
     private final SysConfigService configService;
 

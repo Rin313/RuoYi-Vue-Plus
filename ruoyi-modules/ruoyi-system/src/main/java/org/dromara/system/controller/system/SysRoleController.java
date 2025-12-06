@@ -10,7 +10,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.SysUserRole;
 import org.dromara.system.domain.bo.SysRoleBo;
 import org.dromara.system.domain.bo.SysUserBo;
@@ -32,7 +32,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/role")
-public class SysRoleController extends BaseController {
+public class SysRoleController {
 
     private final SysRoleService roleService;
     private final SysUserService userService;
@@ -83,7 +83,7 @@ public class SysRoleController extends BaseController {
         } else if (!roleService.checkRoleKeyUnique(role)) {
             throw new BizException("新增角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-        toAjax(roleService.insertRole(role));
+        roleService.insertRole(role);
 
     }
 
@@ -119,7 +119,7 @@ public class SysRoleController extends BaseController {
     public void dataScope(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
-        toAjax(roleService.authDataScope(role));
+        roleService.authDataScope(role);
     }
 
     /**
@@ -132,7 +132,7 @@ public class SysRoleController extends BaseController {
     public void changeStatus(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         roleService.checkRoleDataScope(role.getRoleId());
-        toAjax(roleService.updateRoleStatus(role.getRoleId(), role.getStatus()));
+        roleService.updateRoleStatus(role.getRoleId(), role.getStatus());
     }
 
     /**
@@ -144,7 +144,7 @@ public class SysRoleController extends BaseController {
     @Log(title = "角色管理", businessType = BusinessType.DELETE)
     @DeleteMapping("/{roleIds}")
     public void remove(@PathVariable Long[] roleIds) {
-        toAjax(roleService.deleteRoleByIds(List.of(roleIds)));
+        roleService.deleteRoleByIds(List.of(roleIds));
     }
 
     /**
@@ -184,7 +184,7 @@ public class SysRoleController extends BaseController {
     @RepeatSubmit()
     @PutMapping("/authUser/cancel")
     public void cancelAuthUser(@RequestBody SysUserRole userRole) {
-        toAjax(roleService.deleteAuthUser(userRole));
+        roleService.deleteAuthUser(userRole);
     }
 
     /**
@@ -198,7 +198,7 @@ public class SysRoleController extends BaseController {
     @RepeatSubmit()
     @PutMapping("/authUser/cancelAll")
     public void cancelAuthUserAll(Long roleId, Long[] userIds) {
-        toAjax(roleService.deleteAuthUsers(roleId, userIds));
+        roleService.deleteAuthUsers(roleId, userIds);
     }
 
     /**
@@ -213,7 +213,7 @@ public class SysRoleController extends BaseController {
     @PutMapping("/authUser/selectAll")
     public void selectAuthUserAll(Long roleId, Long[] userIds) {
         roleService.checkRoleDataScope(roleId);
-        toAjax(roleService.insertAuthUsers(roleId, userIds));
+        roleService.insertAuthUsers(roleId, userIds);
     }
 
 }

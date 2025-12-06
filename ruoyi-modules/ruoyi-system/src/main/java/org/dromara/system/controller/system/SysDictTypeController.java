@@ -11,7 +11,7 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.bo.SysDictTypeBo;
 import org.dromara.system.domain.vo.SysDictTypeVo;
 import org.dromara.system.service.SysDictTypeService;
@@ -30,7 +30,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/dict/type")
-public class SysDictTypeController extends BaseController {
+public class SysDictTypeController {
 
     private final SysDictTypeService dictTypeService;
 

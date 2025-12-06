@@ -22,7 +22,7 @@ import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
 import org.dromara.common.ratelimiter.enums.LimitType;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.bo.SysRoleBo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.*;
@@ -46,7 +46,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/user")
-public class SysUserController extends BaseController {
+public class SysUserController {
 
     private final SysUserService userService;
     private final SysRoleService roleService;
@@ -176,7 +176,7 @@ public class SysUserController extends BaseController {
         }
         user.setPassword(BCrypt.hashpw(user.getPassword()));
         user.setInviteCode(userService.getUniqueInviteCode());
-        toAjax(userService.insertUser(user));
+        userService.insertUser(user);
     }
 
     /**
@@ -196,7 +196,7 @@ public class SysUserController extends BaseController {
         } else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
             throw new BizException("修改用户'" + user.getUserName() + "'失败，邮箱账号已存在");
         }
-        toAjax(userService.updateUser(user));
+        userService.updateUser(user);
     }
 
     /**
@@ -211,7 +211,7 @@ public class SysUserController extends BaseController {
         if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
             throw new BizException("当前用户不能删除");
         }
-        toAjax(userService.deleteUserByIds(userIds));
+        userService.deleteUserByIds(userIds);
     }
 
     /**
@@ -236,7 +236,7 @@ public class SysUserController extends BaseController {
         userService.checkUserAllowed(user.getUserId());
         userService.checkUserDataScope(user.getUserId());
         user.setPassword(BCrypt.hashpw(user.getPassword()));
-        toAjax(userService.resetUserPwd(user.getUserId(), user.getPassword()));
+        userService.resetUserPwd(user.getUserId(), user.getPassword());
     }
 
     /**
@@ -249,7 +249,7 @@ public class SysUserController extends BaseController {
     public void changeStatus(@RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
         userService.checkUserDataScope(user.getUserId());
-        toAjax(userService.updateUserStatus(user.getUserId(), user.getStatus()));
+        userService.updateUserStatus(user.getUserId(), user.getStatus());
     }
 
     /**

@@ -656,7 +656,7 @@ public class SysUserService {
         SysUserVo userVo = selectUserById(userId);
         List<String> signRecord = userVo.getSignRecord();
         // 检查是否已签到
-        if (signRecord.contains(date)) {
+        if (signRecord.contains(date.toString())) {
             throw new BizException("该日期已经签到过了");
         }
         // 添加补签记录

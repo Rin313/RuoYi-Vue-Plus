@@ -10,7 +10,7 @@ import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.sse.utils.SseMessageUtils;
-import org.dromara.common.web.core.BaseController;
+
 import org.dromara.system.domain.bo.SysNoticeBo;
 import org.dromara.system.domain.vo.SysNoticeVo;
 import org.dromara.system.service.SysNoticeService;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/notice")
-public class SysNoticeController extends BaseController {
+public class SysNoticeController {
 
     private final SysNoticeService noticeService;
     private final DictService dictService;
@@ -75,7 +75,7 @@ public class SysNoticeController extends BaseController {
     @RepeatSubmit()
     @PutMapping
     public void edit(@Validated @RequestBody SysNoticeBo notice) {
-        toAjax(noticeService.updateNotice(notice));
+        noticeService.updateNotice(notice);
     }
 
     /**
@@ -87,6 +87,6 @@ public class SysNoticeController extends BaseController {
     @Log(title = "通知公告", businessType = BusinessType.DELETE)
     @DeleteMapping("/{noticeIds}")
     public void remove(@PathVariable Long[] noticeIds) {
-        toAjax(noticeService.deleteNoticeByIds(noticeIds));
+        noticeService.deleteNoticeByIds(noticeIds);
     }
 }
