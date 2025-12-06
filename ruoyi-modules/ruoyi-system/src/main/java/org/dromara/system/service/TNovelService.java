@@ -5,14 +5,12 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 
 import cn.hutool.core.util.ReUtil;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +27,6 @@ import org.dromara.system.mapper.TChapterMapper;
 import org.dromara.system.mapper.TNovelMapper;
 
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -153,10 +150,9 @@ public class TNovelService {
      * @param pageQuery 分页参数
      * @return 小说分页列表
      */
-    public TableDataInfo<TNovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
+    public IPage<TNovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
-        Page<TNovelVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(result);
+        return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
 
     /**

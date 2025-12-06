@@ -9,6 +9,7 @@ import com.baomidou.dynamic.datasource.annotation.DSTransactional;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.incrementer.IdentifierGenerator;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
@@ -27,8 +28,8 @@ import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.file.FileUtils;
 import org.dromara.common.json.utils.JsonUtils;
+import org.dromara.common.mybatis.core.PageUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.generator.constant.GenConstants;
 import org.dromara.generator.domain.GenTable;
 import org.dromara.generator.domain.GenTableColumn;
@@ -57,7 +58,7 @@ import java.util.zip.ZipOutputStream;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class GenTableServiceImpl implements IGenTableService {
+public class GenTableService {
 
     private final GenTableMapper baseMapper;
     private final GenTableColumnMapper genTableColumnMapper;
@@ -71,7 +72,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableId 业务字段编号
      * @return 业务字段集合
      */
-    @Override
     public List<GenTableColumn> selectGenTableColumnListByTableId(Long tableId) {
         return genTableColumnMapper.selectList(new LambdaQueryWrapper<GenTableColumn>()
             .eq(GenTableColumn::getTableId, tableId)
@@ -84,17 +84,14 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param id 业务ID
      * @return 业务信息
      */
-    @Override
     public GenTable selectGenTableById(Long id) {
         GenTable genTable = baseMapper.selectGenTableById(id);
         setTableFromOptions(genTable);
         return genTable;
     }
 
-    @Override
-    public TableDataInfo<GenTable> selectPageGenTableList(GenTable genTable, PageQuery pageQuery) {
-        Page<GenTable> page = baseMapper.selectPage(pageQuery.build(), this.buildGenTableQueryWrapper(genTable));
-        return TableDataInfo.build(page);
+    public IPage<GenTable> selectPageGenTableList(GenTable genTable, PageQuery pageQuery) {
+        return baseMapper.selectPage(pageQuery.build(), this.buildGenTableQueryWrapper(genTable));
     }
 
     private QueryWrapper<GenTable> buildGenTableQueryWrapper(GenTable genTable) {
@@ -114,18 +111,16 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @param genTable  包含查询条件的GenTable对象
      * @param pageQuery 包含分页信息的PageQuery对象
-     * @return 包含分页结果的TableDataInfo对象
      */
     @DS("#genTable.dataName")
-    @Override
-    public TableDataInfo<GenTable> selectPageDbTableList(GenTable genTable, PageQuery pageQuery) {
+    public IPage<GenTable> selectPageDbTableList(GenTable genTable, PageQuery pageQuery) {
         // 获取查询条件
         String tableName = genTable.getTableName();
         String tableComment = genTable.getTableComment();
 
         LinkedHashMap<String, Table<?>> tablesMap = ServiceProxy.metadata().tables();
         if (CollUtil.isEmpty(tablesMap)) {
-            return TableDataInfo.build();
+            return new Page<>();
         }
         List<String> tableNames = baseMapper.selectTableNameList(genTable.getDataName());
         String[] tableArrays;
@@ -167,7 +162,7 @@ public class GenTableServiceImpl implements IGenTableService {
                 return gen;
             }).sorted(Comparator.comparing(GenTable::getCreateTime).reversed())
             .toList();
-        return TableDataInfo.build(tables, pageQuery.build());
+            return PageUtils.toPage(tables,Long.valueOf(pageQuery.getPageNum()),Long.valueOf(pageQuery.getPageSize()));
     }
 
     /**
@@ -178,7 +173,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @return 数据库表集合
      */
     @DS("#dataName")
-    @Override
     public List<GenTable> selectDbTableListByNames(String[] tableNames, String dataName) {
         Set<String> tableNameSet = new HashSet<>(List.of(tableNames));
         LinkedHashMap<String, Table<?>> tablesMap = ServiceProxy.metadata().tables();
@@ -210,7 +204,6 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @return 表信息集合
      */
-    @Override
     public List<GenTable> selectGenTableAll() {
         return baseMapper.selectGenTableAll();
     }
@@ -221,7 +214,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param genTable 业务信息
      */
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void updateGenTable(GenTable genTable) {
         String options = JsonUtils.toJsonString(genTable.getParams());
         genTable.setOptions(options);
@@ -239,7 +231,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableIds 需要删除的数据ID
      */
     @Transactional(rollbackFor = Exception.class)
-    @Override
     public void deleteGenTableByIds(Long[] tableIds) {
         List<Long> ids = Arrays.asList(tableIds);
         baseMapper.deleteByIds(ids);
@@ -253,7 +244,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param dataName  数据源名称
      */
     @DSTransactional
-    @Override
     public void importGenTable(List<GenTable> tableList, String dataName) {
         try {
             for (GenTable table : tableList) {
@@ -287,7 +277,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @return 列信息
      */
     @DS("#dataName")
-    @Override
     public List<GenTableColumn> selectDbTableColumnsByName(String tableName, String dataName) {
         Table<?> table = ServiceProxy.metadata().table(tableName);
         if (ObjectUtil.isNull(table)) {
@@ -315,7 +304,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableId 表编号
      * @return 预览数据列表
      */
-    @Override
     public Map<String, String> previewCode(Long tableId) {
         Map<String, String> dataMap = new LinkedHashMap<>();
         // 查询表信息
@@ -349,7 +337,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableId 表名称
      * @return 数据
      */
-    @Override
     public byte[] downloadCode(Long tableId) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
@@ -363,7 +350,6 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @param tableId 表名称
      */
-    @Override
     public void generatorCode(Long tableId) {
         // 查询表信息
         GenTable table = baseMapper.selectGenTableById(tableId);
@@ -398,7 +384,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableId 表名称
      */
     @DSTransactional
-    @Override
     public void synchDb(Long tableId) {
         GenTable table = baseMapper.selectGenTableById(tableId);
         List<GenTableColumn> tableColumns = table.getColumns();
@@ -449,7 +434,6 @@ public class GenTableServiceImpl implements IGenTableService {
      * @param tableIds 表ID数组
      * @return 数据
      */
-    @Override
     public byte[] downloadCode(String[] tableIds) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         ZipOutputStream zip = new ZipOutputStream(outputStream);
@@ -503,7 +487,6 @@ public class GenTableServiceImpl implements IGenTableService {
      *
      * @param genTable 业务信息
      */
-    @Override
     public void validateEdit(GenTable genTable) {
         if (GenConstants.TPL_TREE.equals(genTable.getTplCategory())) {
             String options = JsonUtils.toJsonString(genTable.getParams());

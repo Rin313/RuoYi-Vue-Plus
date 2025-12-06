@@ -3,23 +3,23 @@ package org.dromara.system.controller;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
-import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.bo.ChapterBo;
 import org.dromara.system.service.TChapterService;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
  * 小说章节
@@ -40,7 +40,7 @@ public class TChapterController {
      */
     @SaCheckPermission("system:chapter:list")
     @GetMapping("/list")
-    public TableDataInfo<TChapterListVo> list(ChapterBo bo, PageQuery pageQuery) {
+    public IPage<TChapterListVo> list(ChapterBo bo, PageQuery pageQuery) {
         return tChapterService.queryPageList(bo, pageQuery);
     }
 

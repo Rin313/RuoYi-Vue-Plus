@@ -3,22 +3,22 @@ package org.dromara.system.controller;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.*;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
-import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.system.domain.vo.TNovelVo;
 import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.bo.NovelQueryBo;
@@ -26,7 +26,6 @@ import org.dromara.system.domain.bo.NovelUpdateBo;
 import org.dromara.system.service.TNovelService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
 import org.dromara.common.ratelimiter.enums.LimitType;
 
@@ -76,7 +75,7 @@ public class TNovelController {
      */
     @SaCheckPermission("system:novel:list")
     @GetMapping("/list")
-    public TableDataInfo<TNovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
+    public IPage<TNovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
         return tNovelService.queryPageList(bo, pageQuery);
     }
 

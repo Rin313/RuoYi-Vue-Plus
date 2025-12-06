@@ -2,6 +2,8 @@ package org.dromara.system.controller.monitor;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import com.baomidou.lock.annotation.Lock4j;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheConstants;
@@ -10,7 +12,6 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.RedisUtils;
 
 import org.dromara.system.domain.bo.SysLogininforBo;
@@ -39,7 +40,7 @@ public class SysLogininforController {
      */
     @SaCheckPermission("monitor:logininfor:list")
     @GetMapping("/list")
-    public TableDataInfo<SysLogininforVo> list(SysLogininforBo logininfor, PageQuery pageQuery) {
+    public IPage<SysLogininforVo> list(SysLogininforBo logininfor, PageQuery pageQuery) {
         return logininforService.selectPageLogininforList(logininfor, pageQuery);
     }
 

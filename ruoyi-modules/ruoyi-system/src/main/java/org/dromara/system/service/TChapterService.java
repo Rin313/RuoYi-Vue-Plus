@@ -2,10 +2,8 @@ package org.dromara.system.service;
 
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
-
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -50,10 +48,9 @@ public class TChapterService {
      * @param pageQuery 分页参数
      * @return 小说章节分页列表
      */
-    public TableDataInfo<TChapterListVo> queryPageList(ChapterBo bo, PageQuery pageQuery) {
+    public IPage<TChapterListVo> queryPageList(ChapterBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
-        Page<TChapterListVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
-        return TableDataInfo.build(result);
+        return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
 
     /**

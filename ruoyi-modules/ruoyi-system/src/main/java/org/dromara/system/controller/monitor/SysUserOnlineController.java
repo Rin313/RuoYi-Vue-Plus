@@ -12,11 +12,13 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
+import org.dromara.common.mybatis.core.PageUtils;
 import org.dromara.common.redis.utils.RedisUtils;
 
 import org.dromara.system.domain.SysUserOnline;
 import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -42,7 +44,7 @@ public class SysUserOnlineController {
      */
     @SaCheckPermission("monitor:online:list")
     @GetMapping("/list")
-    public TableDataInfo<SysUserOnline> list(String ipaddr, String userName) {
+    public IPage<SysUserOnline> list(String ipaddr, String userName) {
         // 获取所有未过期的 token
         Collection<String> keys = RedisUtils.keys(CacheConstants.ONLINE_TOKEN_KEY + "*");
         List<UserOnlineDTO> userOnlineDTOList = new ArrayList<>();
@@ -71,7 +73,7 @@ public class SysUserOnlineController {
         Collections.reverse(userOnlineDTOList);
         userOnlineDTOList.removeAll(Collections.singleton(null));
         List<SysUserOnline> userOnlineList = BeanUtil.copyToList(userOnlineDTOList, SysUserOnline.class);
-        return TableDataInfo.build(userOnlineList);
+        return PageUtils.toPage(userOnlineList);
     }
 
     /**
@@ -94,7 +96,7 @@ public class SysUserOnlineController {
      * 获取当前用户登录在线设备
      */
     @GetMapping()
-    public TableDataInfo<SysUserOnline> getInfo() {
+    public IPage<SysUserOnline> getInfo() {
         // 获取指定账号 id 的 token 集合
         List<String> tokenIds = StpUtil.getTokenValueListByLoginId(StpUtil.getLoginIdAsString());
         List<UserOnlineDTO> userOnlineDTOList = tokenIds.stream()
@@ -105,7 +107,7 @@ public class SysUserOnlineController {
         Collections.reverse(userOnlineDTOList);
         userOnlineDTOList.removeAll(Collections.singleton(null));
         List<SysUserOnline> userOnlineList = BeanUtil.copyToList(userOnlineDTOList, SysUserOnline.class);
-        return TableDataInfo.build(userOnlineList);
+        return PageUtils.toPage(userOnlineList);
     }
 
     /**

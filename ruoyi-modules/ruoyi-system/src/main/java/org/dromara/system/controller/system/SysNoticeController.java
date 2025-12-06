@@ -2,13 +2,11 @@ package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.sse.utils.SseMessageUtils;
 
 import org.dromara.system.domain.bo.SysNoticeBo;
@@ -16,6 +14,8 @@ import org.dromara.system.domain.vo.SysNoticeVo;
 import org.dromara.system.service.SysNoticeService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 /**
  * 公告 信息操作处理
@@ -36,7 +36,7 @@ public class SysNoticeController {
      */
     @SaCheckPermission("system:notice:list")
     @GetMapping("/list")
-    public TableDataInfo<SysNoticeVo> list(SysNoticeBo notice, PageQuery pageQuery) {
+    public IPage<SysNoticeVo> list(SysNoticeBo notice, PageQuery pageQuery) {
         return noticeService.selectPageNoticeList(notice, pageQuery);
     }
 

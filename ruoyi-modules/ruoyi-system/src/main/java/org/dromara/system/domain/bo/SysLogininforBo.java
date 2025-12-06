@@ -6,8 +6,6 @@ import org.dromara.system.domain.SysLogininfor;
 
 import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 系统访问记录业务对象 sys_logininfor

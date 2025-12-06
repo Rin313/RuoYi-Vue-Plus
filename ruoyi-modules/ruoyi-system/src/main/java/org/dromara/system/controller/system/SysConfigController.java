@@ -9,13 +9,14 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BusinessType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 import org.dromara.system.domain.bo.SysConfigBo;
 import org.dromara.system.domain.vo.SysConfigVo;
 import org.dromara.system.service.SysConfigService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,7 @@ public class SysConfigController {
      */
     @SaCheckPermission("system:config:list")
     @GetMapping("/list")
-    public TableDataInfo<SysConfigVo> list(SysConfigBo config, PageQuery pageQuery) {
+    public IPage<SysConfigVo> list(SysConfigBo config, PageQuery pageQuery) {
         return configService.selectPageConfigList(config, pageQuery);
     }
 
