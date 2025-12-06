@@ -68,7 +68,6 @@ public class TChapterService {
     }
 
     private LambdaQueryWrapper<TChapter> buildQueryWrapper(ChapterBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<TChapter> lqw = Wrappers.lambdaQuery();
         lqw.orderByAsc(TChapter::getChapterIndex);
         lqw.eq(bo.getNovelId() != null, TChapter::getNovelId, bo.getNovelId());

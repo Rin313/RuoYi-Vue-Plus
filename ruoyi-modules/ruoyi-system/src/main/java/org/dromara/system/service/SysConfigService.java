@@ -20,6 +20,7 @@ import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.CacheUtils;
 import org.dromara.system.domain.SysConfig;
+import org.dromara.system.domain.TNovel;
 import org.dromara.system.domain.bo.SysConfigBo;
 import org.dromara.system.domain.vo.SysConfigVo;
 import org.dromara.system.mapper.SysConfigMapper;
@@ -98,13 +99,12 @@ public class SysConfigService implements ConfigService {
     }
 
     private LambdaQueryWrapper<SysConfig> buildQueryWrapper(SysConfigBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<SysConfig> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getConfigName()), SysConfig::getConfigName, bo.getConfigName());
         lqw.eq(StringUtils.isNotBlank(bo.getConfigType()), SysConfig::getConfigType, bo.getConfigType());
         lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfig::getConfigKey, bo.getConfigKey());
-        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
-            SysConfig::getCreateTime, params.get("beginTime"), params.get("endTime"));
+        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysConfig::getCreateTime,bo.getBeginTime());
+        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysConfig::getCreateTime,bo.getEndTime());
         lqw.orderByAsc(SysConfig::getConfigId);
         return lqw;
     }

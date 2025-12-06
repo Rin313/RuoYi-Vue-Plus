@@ -15,11 +15,13 @@ import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.core.utils.ObjectUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.domain.SysConfig;
 import org.dromara.system.domain.SysRole;
 import org.dromara.system.domain.SysRoleMenu;
 import org.dromara.system.domain.SysUserRole;
@@ -69,14 +71,13 @@ public class SysRoleService {
     }
 
     private Wrapper<SysRole> buildQueryWrapper(SysRoleBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<SysRole> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(ObjectUtil.isNotNull(bo.getRoleId()), SysRole::getRoleId, bo.getRoleId())
             .like(StringUtils.isNotBlank(bo.getRoleName()), SysRole::getRoleName, bo.getRoleName())
             .eq(StringUtils.isNotBlank(bo.getStatus()), SysRole::getStatus, bo.getStatus())
             .like(StringUtils.isNotBlank(bo.getRoleKey()), SysRole::getRoleKey, bo.getRoleKey())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysRole::getCreateTime, params.get("beginTime"), params.get("endTime"))
+            .ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysRole::getCreateTime,bo.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysRole::getCreateTime,bo.getEndTime())
             .orderByAsc(SysRole::getRoleSort).orderByAsc(SysRole::getCreateTime);
         return wrapper;
     }

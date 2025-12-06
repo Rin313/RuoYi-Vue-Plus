@@ -7,6 +7,8 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.ServletUtils;
@@ -98,13 +100,12 @@ public class SysLogininforService {
      * @return 登录日志分页列表
      */
     public TableDataInfo<SysLogininforVo> selectPageLogininforList(SysLogininforBo logininfor, PageQuery pageQuery) {
-        Map<String, Object> params = logininfor.getParams();
         LambdaQueryWrapper<SysLogininfor> lqw = new LambdaQueryWrapper<SysLogininfor>()
             .like(StringUtils.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
             .eq(StringUtils.isNotBlank(logininfor.getStatus()), SysLogininfor::getStatus, logininfor.getStatus())
             .like(StringUtils.isNotBlank(logininfor.getUserName()), SysLogininfor::getUserName, logininfor.getUserName())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysLogininfor::getLoginTime, params.get("beginTime"), params.get("endTime"));
+            .ge(ObjectUtils.isNotEmpty(logininfor.getBeginTime()), SysLogininfor::getLoginTime,logininfor.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(logininfor.getEndTime()), SysLogininfor::getLoginTime,logininfor.getEndTime());
         if (StringUtils.isBlank(pageQuery.getOrderByColumn())) {
             lqw.orderByDesc(SysLogininfor::getInfoId);
         }
@@ -130,13 +131,12 @@ public class SysLogininforService {
      * @return 登录记录集合
      */
     public List<SysLogininforVo> selectLogininforList(SysLogininforBo logininfor) {
-        Map<String, Object> params = logininfor.getParams();
         return baseMapper.selectVoList(new LambdaQueryWrapper<SysLogininfor>()
             .like(StringUtils.isNotBlank(logininfor.getIpaddr()), SysLogininfor::getIpaddr, logininfor.getIpaddr())
             .eq(StringUtils.isNotBlank(logininfor.getStatus()), SysLogininfor::getStatus, logininfor.getStatus())
             .like(StringUtils.isNotBlank(logininfor.getUserName()), SysLogininfor::getUserName, logininfor.getUserName())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysLogininfor::getLoginTime, params.get("beginTime"), params.get("endTime"))
+            .ge(ObjectUtils.isNotEmpty(logininfor.getBeginTime()), SysLogininfor::getLoginTime,logininfor.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(logininfor.getEndTime()), SysLogininfor::getLoginTime,logininfor.getEndTime())
             .orderByDesc(SysLogininfor::getInfoId));
     }
 

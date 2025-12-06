@@ -6,6 +6,8 @@ import lombok.Data;
 import org.dromara.common.log.event.OperLogEvent;
 import org.dromara.system.domain.SysOperLog;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -110,9 +112,7 @@ public class SysOperLogBo {
      */
     private Long costTime;
 
-    /**
-     * 请求参数
-     */
-    private Map<String, Object> params = new HashMap<>();
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
 }

@@ -23,8 +23,10 @@ import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.domain.SysDictType;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.SysUserRole;
+import org.dromara.system.domain.TNovel;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -65,21 +67,19 @@ public class SysUserService {
      * @return 用户信息集合信息
      */
     public List<SysUserExportVo> selectUserExportList(SysUserBo user) {
-        Map<String, Object> params = user.getParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
             .like(StringUtils.isNotBlank(user.getUserName()), "u.user_name", user.getUserName())
             .like(StringUtils.isNotBlank(user.getNickName()), "u.nick_name", user.getNickName())
             .eq(StringUtils.isNotBlank(user.getStatus()), "u.status", user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), "u.phonenumber", user.getPhonenumber())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "u.create_time", params.get("beginTime"), params.get("endTime"))
+            .ge(ObjectUtils.isNotEmpty(user.getBeginTime()), "u.create_time",user.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(user.getEndTime()), "u.create_time",user.getEndTime())
             .orderByAsc("u.user_id");
         return baseMapper.selectUserExportList(wrapper);
     }
 
     private Wrapper<SysUser> buildQueryWrapper(SysUserBo user) {
-        Map<String, Object> params = user.getParams();
         LambdaQueryWrapper<SysUser> wrapper = Wrappers.lambdaQuery();
         wrapper.eq(SysUser::getDelFlag, SystemConstants.NORMAL)
             .eq(ObjectUtil.isNotNull(user.getUserId()), SysUser::getUserId, user.getUserId())
@@ -88,8 +88,8 @@ public class SysUserService {
             .like(StringUtils.isNotBlank(user.getNickName()), SysUser::getNickName, user.getNickName())
             .eq(StringUtils.isNotBlank(user.getStatus()), SysUser::getStatus, user.getStatus())
             .like(StringUtils.isNotBlank(user.getPhonenumber()), SysUser::getPhonenumber, user.getPhonenumber())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysUser::getCreateTime, params.get("beginTime"), params.get("endTime"))
+            .ge(ObjectUtils.isNotEmpty(user.getBeginTime()), SysUser::getCreateTime,user.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(user.getEndTime()), SysUser::getCreateTime,user.getEndTime())
             .orderByAsc(SysUser::getUserId);
         return wrapper;
     }

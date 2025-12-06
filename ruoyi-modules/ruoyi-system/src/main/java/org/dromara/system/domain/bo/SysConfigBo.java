@@ -5,6 +5,10 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.system.domain.SysConfig;
 
@@ -54,6 +58,7 @@ public class SysConfigBo extends BaseEntity {
      * 备注
      */
     private String remark;
-
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
 }

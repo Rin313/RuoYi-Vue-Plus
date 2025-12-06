@@ -7,6 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.system.domain.SysRole;
@@ -72,6 +76,8 @@ public class SysRoleBo extends BaseEntity {
      * 菜单组
      */
     private Long[] menuIds;
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
     public SysRoleBo(Long roleId) {
         this.roleId = roleId;

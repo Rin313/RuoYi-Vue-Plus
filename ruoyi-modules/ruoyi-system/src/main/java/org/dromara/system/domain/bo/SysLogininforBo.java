@@ -4,6 +4,7 @@ import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
 import org.dromara.system.domain.SysLogininfor;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,10 +69,8 @@ public class SysLogininforBo {
      */
     private Date loginTime;
 
-    /**
-     * 请求参数
-     */
-    private Map<String, Object> params = new HashMap<>();
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
 
 }

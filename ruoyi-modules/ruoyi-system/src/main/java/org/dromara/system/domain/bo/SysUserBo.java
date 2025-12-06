@@ -7,6 +7,10 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.xss.Xss;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
@@ -101,7 +105,8 @@ public class SysUserBo extends BaseEntity {
      * 邀请人
      */
     private Long parentId;
-
+    private LocalDateTime beginTime;
+    private LocalDateTime endTime;
 
     public SysUserBo(Long userId) {
         this.userId = userId;

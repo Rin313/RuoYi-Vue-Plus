@@ -16,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.anyline.metadata.Column;
 import org.anyline.metadata.Table;
 import org.anyline.proxy.ServiceProxy;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -97,14 +98,13 @@ public class GenTableServiceImpl implements IGenTableService {
     }
 
     private QueryWrapper<GenTable> buildGenTableQueryWrapper(GenTable genTable) {
-        Map<String, Object> params = genTable.getParams();
         QueryWrapper<GenTable> wrapper = Wrappers.query();
         wrapper
             .eq(StringUtils.isNotEmpty(genTable.getDataName()), "data_name", genTable.getDataName())
             .like(StringUtils.isNotBlank(genTable.getTableName()), "lower(table_name)", StringUtils.lowerCase(genTable.getTableName()))
             .like(StringUtils.isNotBlank(genTable.getTableComment()), "lower(table_comment)", StringUtils.lowerCase(genTable.getTableComment()))
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                "create_time", params.get("beginTime"), params.get("endTime"))
+            .ge(ObjectUtils.isNotEmpty(genTable.getBeginTime()), "create_time",genTable.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(genTable.getEndTime()), "create_time",genTable.getEndTime())
             .orderByDesc("update_time");
         return wrapper;
     }

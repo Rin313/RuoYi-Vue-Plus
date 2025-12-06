@@ -14,12 +14,14 @@ import org.dromara.common.core.domain.dto.DictTypeDTO;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.utils.MapstructUtils;
+import org.dromara.common.core.utils.ObjectUtils;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.redis.utils.CacheUtils;
+import org.dromara.system.domain.SysConfig;
 import org.dromara.system.domain.SysDictData;
 import org.dromara.system.domain.SysDictType;
 import org.dromara.system.domain.bo.SysDictTypeBo;
@@ -72,12 +74,11 @@ public class SysDictTypeService implements DictService {
     }
 
     private LambdaQueryWrapper<SysDictType> buildQueryWrapper(SysDictTypeBo bo) {
-        Map<String, Object> params = bo.getParams();
         LambdaQueryWrapper<SysDictType> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getDictName()), SysDictType::getDictName, bo.getDictName());
         lqw.like(StringUtils.isNotBlank(bo.getDictType()), SysDictType::getDictType, bo.getDictType());
-        lqw.between(params.get("beginTime") != null && params.get("endTime") != null,
-            SysDictType::getCreateTime, params.get("beginTime"), params.get("endTime"));
+        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysDictType::getCreateTime,bo.getBeginTime());
+        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysDictType::getCreateTime,bo.getEndTime());
         lqw.orderByAsc(SysDictType::getDictId);
         return lqw;
     }

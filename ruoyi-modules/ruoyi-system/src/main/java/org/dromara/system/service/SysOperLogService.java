@@ -4,6 +4,8 @@ import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ip.AddressUtils;
@@ -11,6 +13,7 @@ import org.dromara.common.log.event.OperLogEvent;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.system.domain.SysOperLog;
+import org.dromara.system.domain.TNovel;
 import org.dromara.system.domain.bo.SysOperLogBo;
 import org.dromara.system.domain.vo.SysOperLogVo;
 import org.dromara.system.mapper.SysOperLogMapper;
@@ -65,7 +68,6 @@ public class SysOperLogService {
     }
 
     private LambdaQueryWrapper<SysOperLog> buildQueryWrapper(SysOperLogBo operLog) {
-        Map<String, Object> params = operLog.getParams();
         return new LambdaQueryWrapper<SysOperLog>()
             .like(StringUtils.isNotBlank(operLog.getOperIp()), SysOperLog::getOperIp, operLog.getOperIp())
             .like(StringUtils.isNotBlank(operLog.getTitle()), SysOperLog::getTitle, operLog.getTitle())
@@ -79,8 +81,8 @@ public class SysOperLogService {
             .eq(operLog.getStatus() != null,
                 SysOperLog::getStatus, operLog.getStatus())
             .like(StringUtils.isNotBlank(operLog.getOperName()), SysOperLog::getOperName, operLog.getOperName())
-            .between(params.get("beginTime") != null && params.get("endTime") != null,
-                SysOperLog::getOperTime, params.get("beginTime"), params.get("endTime"));
+            .ge(ObjectUtils.isNotEmpty(operLog.getBeginTime()), SysOperLog::getOperTime,operLog.getBeginTime())
+            .le(ObjectUtils.isNotEmpty(operLog.getEndTime()), SysOperLog::getOperTime,operLog.getEndTime());
     }
 
     /**

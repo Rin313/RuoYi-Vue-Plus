@@ -12,6 +12,8 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.generator.constant.GenConstants;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -169,6 +171,10 @@ public class GenTable extends BaseEntity {
      */
     @TableField(exist = false)
     private String parentMenuName;
+    @TableField(exist = false)
+    private LocalDateTime beginTime;
+    @TableField(exist = false)
+    private LocalDateTime endTime;
 
     public boolean isTree() {
         return isTree(this.tplCategory);

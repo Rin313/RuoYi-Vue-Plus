@@ -2,6 +2,7 @@ package org.dromara.system.domain.bo;
 
 import org.dromara.system.domain.TNovel;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import org.dromara.common.core.validate.AddGroup;
