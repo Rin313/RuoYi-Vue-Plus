@@ -12,7 +12,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysOperLogBo;
 import org.dromara.system.domain.vo.SysOperLogVo;
-import org.dromara.system.service.ISysOperLogService;
+import org.dromara.system.service.SysOperLogService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +29,7 @@ import java.util.List;
 @RequestMapping("/monitor/operlog")
 public class SysOperlogController extends BaseController {
 
-    private final ISysOperLogService operLogService;
+    private final SysOperLogService operLogService;
 
     /**
      * 获取操作日志记录列表

@@ -1,12 +1,9 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.service.PermissionService;
 import org.dromara.common.satoken.utils.LoginHelper;
-import org.dromara.system.service.ISysMenuService;
-import org.dromara.system.service.ISysPermissionService;
-import org.dromara.system.service.ISysRoleService;
 import org.springframework.stereotype.Service;
 
 import java.util.HashSet;
@@ -19,10 +16,10 @@ import java.util.Set;
  */
 @RequiredArgsConstructor
 @Service
-public class SysPermissionServiceImpl implements ISysPermissionService, PermissionService {
+public class SysPermissionService implements PermissionService {
 
-    private final ISysRoleService roleService;
-    private final ISysMenuService menuService;
+    private final SysRoleService roleService;
+    private final SysMenuService menuService;
 
     /**
      * 获取角色数据权限
@@ -30,7 +27,6 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
      * @param userId  用户id
      * @return 角色权限信息
      */
-    @Override
     public Set<String> getRolePermission(Long userId) {
         Set<String> roles = new HashSet<>();
         // 管理员拥有所有权限
@@ -48,7 +44,6 @@ public class SysPermissionServiceImpl implements ISysPermissionService, Permissi
      * @param userId  用户id
      * @return 菜单权限信息
      */
-    @Override
     public Set<String> getMenuPermission(Long userId) {
         Set<String> perms = new HashSet<>();
         // 管理员拥有所有权限

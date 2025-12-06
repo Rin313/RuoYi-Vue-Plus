@@ -21,7 +21,7 @@ import org.dromara.common.social.config.properties.SocialProperties;
 import org.dromara.common.social.utils.SocialUtils;
 import org.dromara.common.sse.dto.SseMessageDto;
 import org.dromara.common.sse.utils.SseMessageUtils;
-import org.dromara.system.service.ISysSocialService;
+import org.dromara.system.service.SysSocialService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
@@ -48,7 +48,7 @@ public class AuthController {
 
     private final SocialProperties socialProperties;
     private final SysLoginService loginService;
-    private final ISysSocialService socialUserService;
+    private final SysSocialService socialUserService;
     private final ScheduledExecutorService scheduledExecutorService;
 
 

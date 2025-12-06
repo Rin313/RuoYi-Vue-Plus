@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -16,7 +16,6 @@ import org.dromara.system.domain.vo.SysNoticeVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysNoticeMapper;
 import org.dromara.system.mapper.SysUserMapper;
-import org.dromara.system.service.ISysNoticeService;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -29,7 +28,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Service
-public class SysNoticeServiceImpl implements ISysNoticeService {
+public class SysNoticeService {
 
     private final SysNoticeMapper baseMapper;
     private final SysUserMapper userMapper;
@@ -41,7 +40,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param pageQuery 分页参数
      * @return 通知公告分页列表
      */
-    @Override
     public TableDataInfo<SysNoticeVo> selectPageNoticeList(SysNoticeBo notice, PageQuery pageQuery) {
         LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
         Page<SysNoticeVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -54,7 +52,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param noticeId 公告ID
      * @return 公告信息
      */
-    @Override
     public SysNoticeVo selectNoticeById(Long noticeId) {
         return baseMapper.selectVoById(noticeId);
     }
@@ -65,7 +62,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param notice 公告信息
      * @return 公告集合
      */
-    @Override
     public List<SysNoticeVo> selectNoticeList(SysNoticeBo notice) {
         LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
         return baseMapper.selectVoList(lqw);
@@ -89,7 +85,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param bo 公告信息
      * @return 结果
      */
-    @Override
     public int insertNotice(SysNoticeBo bo) {
         SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
         return baseMapper.insert(notice);
@@ -101,7 +96,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param bo 公告信息
      * @return 结果
      */
-    @Override
     public int updateNotice(SysNoticeBo bo) {
         SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
         return baseMapper.updateById(notice);
@@ -113,7 +107,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param noticeId 公告ID
      * @return 结果
      */
-    @Override
     public int deleteNoticeById(Long noticeId) {
         return baseMapper.deleteById(noticeId);
     }
@@ -124,7 +117,6 @@ public class SysNoticeServiceImpl implements ISysNoticeService {
      * @param noticeIds 需要删除的公告ID
      * @return 结果
      */
-    @Override
     public int deleteNoticeByIds(Long[] noticeIds) {
         return baseMapper.deleteByIds(Arrays.asList(noticeIds));
     }

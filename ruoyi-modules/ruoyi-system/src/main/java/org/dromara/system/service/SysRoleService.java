@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.service.RoleService;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -29,7 +28,6 @@ import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.mapper.SysRoleMapper;
 import org.dromara.system.mapper.SysRoleMenuMapper;
 import org.dromara.system.mapper.SysUserRoleMapper;
-import org.dromara.system.service.ISysRoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,7 +40,7 @@ import java.util.*;
  */
 @RequiredArgsConstructor
 @Service
-public class SysRoleServiceImpl implements ISysRoleService, RoleService {
+public class SysRoleService {
 
     private final SysRoleMapper baseMapper;
     private final SysRoleMenuMapper roleMenuMapper;
@@ -55,7 +53,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param pageQuery 分页参数
      * @return 角色分页列表
      */
-    @Override
     public TableDataInfo<SysRoleVo> selectPageRoleList(SysRoleBo role, PageQuery pageQuery) {
         Page<SysRoleVo> page = baseMapper.selectPageRoleList(pageQuery.build(), this.buildQueryWrapper(role));
         return TableDataInfo.build(page);
@@ -67,7 +64,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param role 角色信息
      * @return 角色数据集合信息
      */
-    @Override
     public List<SysRoleVo> selectRoleList(SysRoleBo role) {
         return baseMapper.selectRoleList(this.buildQueryWrapper(role));
     }
@@ -91,7 +87,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userId 用户ID
      * @return 角色列表
      */
-    @Override
     public List<SysRoleVo> selectRolesByUserId(Long userId) {
         return baseMapper.selectRolesByUserId(userId);
     }
@@ -102,7 +97,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userId 用户ID
      * @return 角色列表
      */
-    @Override
     public List<SysRoleVo> selectRolesAuthByUserId(Long userId) {
         List<SysRoleVo> userRoles = baseMapper.selectRolesByUserId(userId);
         List<SysRoleVo> roles = selectRoleAll();
@@ -122,7 +116,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userId 用户ID
      * @return 权限列表
      */
-    @Override
     public Set<String> selectRolePermissionByUserId(Long userId) {
         List<SysRoleVo> perms = baseMapper.selectRolesByUserId(userId);
         Set<String> permsSet = new HashSet<>();
@@ -139,7 +132,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @return 角色列表
      */
-    @Override
     public List<SysRoleVo> selectRoleAll() {
         return this.selectRoleList(new SysRoleBo());
     }
@@ -150,7 +142,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userId 用户ID
      * @return 选中角色ID列表
      */
-    @Override
     public List<Long> selectRoleListByUserId(Long userId) {
         List<SysRoleVo> list = baseMapper.selectRolesByUserId(userId);
         return StreamUtils.toList(list, SysRoleVo::getRoleId);
@@ -162,7 +153,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleId 角色ID
      * @return 角色对象信息
      */
-    @Override
     public SysRoleVo selectRoleById(Long roleId) {
         return baseMapper.selectRoleById(roleId);
     }
@@ -173,7 +163,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleIds 角色ID串
      * @return 角色列表信息
      */
-    @Override
     public List<SysRoleVo> selectRoleByIds(List<Long> roleIds) {
         return baseMapper.selectRoleList(new LambdaQueryWrapper<SysRole>()
             .eq(SysRole::getStatus, SystemConstants.NORMAL)
@@ -186,7 +175,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param role 角色信息
      * @return 结果
      */
-    @Override
     public boolean checkRoleNameUnique(SysRoleBo role) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysRole>()
             .eq(SysRole::getRoleName, role.getRoleName())
@@ -200,7 +188,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param role 角色信息
      * @return 结果
      */
-    @Override
     public boolean checkRoleKeyUnique(SysRoleBo role) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysRole>()
             .eq(SysRole::getRoleKey, role.getRoleKey())
@@ -213,7 +200,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @param role 角色信息
      */
-    @Override
     public void checkRoleAllowed(SysRoleBo role) {
         if (ObjectUtil.isNotNull(role.getRoleId()) && LoginHelper.isSuperAdmin(role.getRoleId())) {
             throw new BizException("不允许操作超级管理员角色");
@@ -243,7 +229,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @param roleId 角色id
      */
-    @Override
     public void checkRoleDataScope(Long roleId) {
         if (ObjectUtil.isNull(roleId)) {
             return;
@@ -256,7 +241,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @param roleIds 角色ID列表（支持传单个ID）
      */
-    @Override
     public void checkRoleDataScope(List<Long> roleIds) {
         if (CollUtil.isEmpty(roleIds) || LoginHelper.isSuperAdmin()) {
             return;
@@ -273,7 +257,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleId 角色ID
      * @return 结果
      */
-    @Override
     public long countUserRoleByRoleId(Long roleId) {
         return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
     }
@@ -284,7 +267,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param bo 角色信息
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertRole(SysRoleBo bo) {
         SysRole role = MapstructUtils.convert(bo, SysRole.class);
@@ -300,7 +282,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param bo 角色信息
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int updateRole(SysRoleBo bo) {
         SysRole role = MapstructUtils.convert(bo, SysRole.class);
@@ -322,7 +303,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param status 角色状态
      * @return 结果
      */
-    @Override
     public int updateRoleStatus(Long roleId, String status) {
         if (SystemConstants.DISABLE.equals(status) && this.countUserRoleByRoleId(roleId) > 0) {
             throw new BizException("角色已分配，不能禁用!");
@@ -339,7 +319,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param bo 角色信息
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int authDataScope(SysRoleBo bo) {
         SysRole role = MapstructUtils.convert(bo, SysRole.class);
@@ -374,7 +353,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleId 角色ID
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteRoleById(Long roleId) {
         // 删除角色与菜单关联
@@ -388,7 +366,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleIds 需要删除的角色ID
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteRoleByIds(List<Long> roleIds) {
         this.checkRoleDataScope(roleIds);
@@ -410,7 +387,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userRole 用户和角色关联信息
      * @return 结果
      */
-    @Override
     public int deleteAuthUser(SysUserRole userRole) {
         if (LoginHelper.getUserId().equals(userRole.getUserId())) {
             throw new BizException("不允许修改当前用户角色!");
@@ -431,7 +407,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userIds 需要取消授权的用户数据ID
      * @return 结果
      */
-    @Override
     public int deleteAuthUsers(Long roleId, Long[] userIds) {
         List<Long> ids = List.of(userIds);
         if (ids.contains(LoginHelper.getUserId())) {
@@ -453,7 +428,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param userIds 需要授权的用户数据ID
      * @return 结果
      */
-    @Override
     public int insertAuthUsers(Long roleId, Long[] userIds) {
         // 新增用户与角色管理
         int rows = 1;
@@ -487,7 +461,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @param roleId 角色ID
      */
-    @Override
     public void cleanOnlineUserByRole(Long roleId) {
         // 如果角色未绑定用户 直接返回
         Long num = userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
@@ -528,7 +501,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      *
      * @param userIds 需要清除的用户ID列表
      */
-    @Override
     public void cleanOnlineUser(List<Long> userIds) {
         List<String> keys = StpUtil.searchTokenValue("", 0, -1, false);
         if (CollUtil.isEmpty(keys)) {
@@ -560,7 +532,6 @@ public class SysRoleServiceImpl implements ISysRoleService, RoleService {
      * @param roleIds 角色 ID 列表
      * @return Map，其中 key 为角色 ID，value 为对应的角色名称
      */
-    @Override
     public Map<Long, String> selectRoleNamesByIds(List<Long> roleIds) {
         if (CollUtil.isEmpty(roleIds)) {
             return Collections.emptyMap();

@@ -49,9 +49,9 @@ public class SysLoginService {
     @Value("${user.password.lockTime}")
     private Integer lockTime;
 
-    private final ISysPermissionService permissionService;
-    private final ISysSocialService sysSocialService;
-    private final ISysRoleService roleService;
+    private final SysPermissionService permissionService;
+    private final SysSocialService sysSocialService;
+    private final SysRoleService roleService;
     private final SysUserMapper userMapper;
 
 

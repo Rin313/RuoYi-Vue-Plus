@@ -17,7 +17,7 @@ import org.dromara.system.domain.SysMenu;
 import org.dromara.system.domain.bo.SysMenuBo;
 import org.dromara.system.domain.vo.RouterVo;
 import org.dromara.system.domain.vo.SysMenuVo;
-import org.dromara.system.service.ISysMenuService;
+import org.dromara.system.service.SysMenuService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,7 +34,7 @@ import java.util.List;
 @RequestMapping("/system/menu")
 public class SysMenuController extends BaseController {
 
-    private final ISysMenuService menuService;
+    private final SysMenuService menuService;
 
     /**
      * 获取路由信息

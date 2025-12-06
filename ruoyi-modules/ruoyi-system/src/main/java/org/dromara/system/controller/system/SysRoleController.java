@@ -16,8 +16,8 @@ import org.dromara.system.domain.bo.SysRoleBo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserVo;
-import org.dromara.system.service.ISysRoleService;
-import org.dromara.system.service.ISysUserService;
+import org.dromara.system.service.SysRoleService;
+import org.dromara.system.service.SysUserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +34,8 @@ import java.util.List;
 @RequestMapping("/system/role")
 public class SysRoleController extends BaseController {
 
-    private final ISysRoleService roleService;
-    private final ISysUserService userService;
+    private final SysRoleService roleService;
+    private final SysUserService userService;
 
     /**
      * 获取角色信息列表

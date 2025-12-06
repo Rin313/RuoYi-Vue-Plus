@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.convert.Convert;
 import cn.hutool.core.lang.Dict;
@@ -23,7 +23,6 @@ import org.dromara.system.domain.SysConfig;
 import org.dromara.system.domain.bo.SysConfigBo;
 import org.dromara.system.domain.vo.SysConfigVo;
 import org.dromara.system.mapper.SysConfigMapper;
-import org.dromara.system.service.ISysConfigService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -38,7 +37,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
+public class SysConfigService implements ConfigService {
 
     private final SysConfigMapper baseMapper;
 
@@ -49,7 +48,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @param pageQuery 分页参数
      * @return 参数配置分页列表
      */
-    @Override
     public TableDataInfo<SysConfigVo> selectPageConfigList(SysConfigBo config, PageQuery pageQuery) {
         LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
         Page<SysConfigVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -62,7 +60,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @param configId 参数配置ID
      * @return 参数配置信息
      */
-    @Override
     public SysConfigVo selectConfigById(Long configId) {
         return baseMapper.selectVoById(configId);
     }
@@ -74,7 +71,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @return 参数键值
      */
     @Cacheable(cacheNames = CacheNames.SYS_CONFIG, key = "#configKey")
-    @Override
     public String selectConfigByKey(String configKey) {
         SysConfig retConfig = baseMapper.selectOne(new LambdaQueryWrapper<SysConfig>()
             .eq(SysConfig::getConfigKey, configKey));
@@ -85,7 +81,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * 获取注册开关
      * @return true开启，false关闭
      */
-    @Override
     public boolean selectRegisterEnabled() {
         String configValue = this.selectConfigByKey("sys.account.registerUser");
         return Convert.toBool(configValue);
@@ -97,7 +92,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @param config 参数配置信息
      * @return 参数配置集合
      */
-    @Override
     public List<SysConfigVo> selectConfigList(SysConfigBo config) {
         LambdaQueryWrapper<SysConfig> lqw = buildQueryWrapper(config);
         return baseMapper.selectVoList(lqw);
@@ -122,7 +116,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
-    @Override
     public String insertConfig(SysConfigBo bo) {
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
         int row = baseMapper.insert(config);
@@ -139,7 +132,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
-    @Override
     public String updateConfig(SysConfigBo bo) {
         int row = 0;
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
@@ -165,7 +157,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      *
      * @param configIds 需要删除的参数ID
      */
-    @Override
     public void deleteConfigByIds(List<Long> configIds) {
         List<SysConfig> list = baseMapper.selectByIds(configIds);
         list.forEach(config -> {
@@ -180,7 +171,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
     /**
      * 重置参数缓存数据
      */
-    @Override
     public void resetConfigCache() {
         CacheUtils.clear(CacheNames.SYS_CONFIG);
     }
@@ -191,7 +181,6 @@ public class SysConfigServiceImpl implements ISysConfigService, ConfigService {
      * @param config 参数配置信息
      * @return 结果
      */
-    @Override
     public boolean checkConfigKeyUnique(SysConfigBo config) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysConfig>()
             .eq(SysConfig::getConfigKey, config.getConfigKey())

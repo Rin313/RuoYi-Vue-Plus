@@ -16,7 +16,7 @@ import org.dromara.system.domain.bo.SysUserPasswordBo;
 import org.dromara.system.domain.bo.SysUserProfileBo;
 import org.dromara.system.domain.vo.ProfileUserVo;
 import org.dromara.system.domain.vo.SysUserVo;
-import org.dromara.system.service.ISysUserService;
+import org.dromara.system.service.SysUserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/system/user/profile")
 public class SysProfileController extends BaseController {
 
-    private final ISysUserService userService;
+    private final SysUserService userService;
 
     /**
      * 修改用户信息

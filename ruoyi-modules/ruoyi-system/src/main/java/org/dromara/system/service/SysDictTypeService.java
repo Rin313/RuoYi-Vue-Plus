@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -27,7 +27,6 @@ import org.dromara.system.domain.vo.SysDictDataVo;
 import org.dromara.system.domain.vo.SysDictTypeVo;
 import org.dromara.system.mapper.SysDictDataMapper;
 import org.dromara.system.mapper.SysDictTypeMapper;
-import org.dromara.system.service.ISysDictTypeService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -43,7 +42,7 @@ import java.util.stream.Collectors;
  */
 @RequiredArgsConstructor
 @Service
-public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService {
+public class SysDictTypeService implements DictService {
 
     private final SysDictTypeMapper baseMapper;
     private final SysDictDataMapper dictDataMapper;
@@ -55,7 +54,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @param pageQuery 分页参数
      * @return 字典类型分页列表
      */
-    @Override
     public TableDataInfo<SysDictTypeVo> selectPageDictTypeList(SysDictTypeBo dictType, PageQuery pageQuery) {
         LambdaQueryWrapper<SysDictType> lqw = buildQueryWrapper(dictType);
         Page<SysDictTypeVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -68,7 +66,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @param dictType 字典类型信息
      * @return 字典类型集合信息
      */
-    @Override
     public List<SysDictTypeVo> selectDictTypeList(SysDictTypeBo dictType) {
         LambdaQueryWrapper<SysDictType> lqw = buildQueryWrapper(dictType);
         return baseMapper.selectVoList(lqw);
@@ -90,7 +87,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      *
      * @return 字典类型集合信息
      */
-    @Override
     public List<SysDictTypeVo> selectDictTypeAll() {
         return baseMapper.selectVoList();
     }
@@ -102,7 +98,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @return 字典数据集合信息
      */
     @Cacheable(cacheNames = CacheNames.SYS_DICT, key = "#dictType")
-    @Override
     public List<SysDictDataVo> selectDictDataByType(String dictType) {
         List<SysDictDataVo> dictDatas = dictDataMapper.selectDictDataByType(dictType);
         return CollUtil.isNotEmpty(dictDatas) ? dictDatas : null;
@@ -114,7 +109,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @param dictId 字典类型ID
      * @return 字典类型
      */
-    @Override
     public SysDictTypeVo selectDictTypeById(Long dictId) {
         return baseMapper.selectVoById(dictId);
     }
@@ -126,7 +120,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @return 字典类型
      */
     @Cacheable(cacheNames = CacheNames.SYS_DICT_TYPE, key = "#dictType")
-    @Override
     public SysDictTypeVo selectDictTypeByType(String dictType) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysDictType>().eq(SysDictType::getDictType, dictType));
     }
@@ -136,7 +129,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      *
      * @param dictIds 需要删除的字典ID
      */
-    @Override
     public void deleteDictTypeByIds(List<Long> dictIds) {
         List<SysDictType> list = baseMapper.selectByIds(dictIds);
         list.forEach(x -> {
@@ -156,7 +148,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
     /**
      * 重置字典缓存数据
      */
-    @Override
     public void resetDictCache() {
         CacheUtils.clear(CacheNames.SYS_DICT);
         CacheUtils.clear(CacheNames.SYS_DICT_TYPE);
@@ -169,7 +160,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
-    @Override
     public List<SysDictDataVo> insertDictType(SysDictTypeBo bo) {
         SysDictType dict = MapstructUtils.convert(bo, SysDictType.class);
         int row = baseMapper.insert(dict);
@@ -187,7 +177,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public List<SysDictDataVo> updateDictType(SysDictTypeBo bo) {
         SysDictType dict = MapstructUtils.convert(bo, SysDictType.class);
@@ -210,7 +199,6 @@ public class SysDictTypeServiceImpl implements ISysDictTypeService, DictService 
      * @param dictType 字典类型
      * @return 结果
      */
-    @Override
     public boolean checkDictTypeUnique(SysDictTypeBo dictType) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysDictType>()
             .eq(SysDictType::getDictType, dictType.getDictType())

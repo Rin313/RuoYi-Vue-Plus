@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -9,7 +9,6 @@ import org.dromara.system.domain.SysSocial;
 import org.dromara.system.domain.bo.SysSocialBo;
 import org.dromara.system.domain.vo.SysSocialVo;
 import org.dromara.system.mapper.SysSocialMapper;
-import org.dromara.system.service.ISysSocialService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,7 +21,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Service
-public class SysSocialServiceImpl implements ISysSocialService {
+public class SysSocialService {
 
     private final SysSocialMapper baseMapper;
 
@@ -30,7 +29,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
     /**
      * 查询社会化关系
      */
-    @Override
     public SysSocialVo queryById(String id) {
         return baseMapper.selectVoById(id);
     }
@@ -38,7 +36,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
     /**
      * 授权列表
      */
-    @Override
     public List<SysSocialVo> queryList(SysSocialBo bo) {
         LambdaQueryWrapper<SysSocial> lqw = new LambdaQueryWrapper<SysSocial>()
             .eq(ObjectUtil.isNotNull(bo.getUserId()), SysSocial::getUserId, bo.getUserId())
@@ -47,7 +44,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
         return baseMapper.selectVoList(lqw);
     }
 
-    @Override
     public List<SysSocialVo> queryListByUserId(Long userId) {
         return baseMapper.selectVoList(new LambdaQueryWrapper<SysSocial>().eq(SysSocial::getUserId, userId));
     }
@@ -56,7 +52,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
     /**
      * 新增社会化关系
      */
-    @Override
     public Boolean insertByBo(SysSocialBo bo) {
         SysSocial add = MapstructUtils.convert(bo, SysSocial.class);
         validEntityBeforeSave(add);
@@ -74,7 +69,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
     /**
      * 更新社会化关系
      */
-    @Override
     public Boolean updateByBo(SysSocialBo bo) {
         SysSocial update = MapstructUtils.convert(bo, SysSocial.class);
         validEntityBeforeSave(update);
@@ -92,7 +86,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
     /**
      * 删除社会化关系
      */
-    @Override
     public Boolean deleteWithValidById(Long id) {
         return baseMapper.deleteById(id) > 0;
     }
@@ -104,7 +97,6 @@ public class SysSocialServiceImpl implements ISysSocialService {
      * @param authId 认证id
      * @return 授权信息
      */
-    @Override
     public List<SysSocialVo> selectByAuthId(String authId) {
         return baseMapper.selectVoList(new LambdaQueryWrapper<SysSocial>().eq(SysSocial::getAuthId, authId));
     }

@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
@@ -19,7 +19,6 @@ import org.dromara.system.domain.SysLogininfor;
 import org.dromara.system.domain.bo.SysLogininforBo;
 import org.dromara.system.domain.vo.SysLogininforVo;
 import org.dromara.system.mapper.SysLogininforMapper;
-import org.dromara.system.service.ISysLogininforService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -37,7 +36,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Slf4j
 @Service
-public class SysLogininforServiceImpl implements ISysLogininforService {
+public class SysLogininforService {
 
     private final SysLogininforMapper baseMapper;
 
@@ -98,7 +97,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      * @param pageQuery  分页参数
      * @return 登录日志分页列表
      */
-    @Override
     public TableDataInfo<SysLogininforVo> selectPageLogininforList(SysLogininforBo logininfor, PageQuery pageQuery) {
         Map<String, Object> params = logininfor.getParams();
         LambdaQueryWrapper<SysLogininfor> lqw = new LambdaQueryWrapper<SysLogininfor>()
@@ -119,7 +117,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      *
      * @param bo 访问日志对象
      */
-    @Override
     public void insertLogininfor(SysLogininforBo bo) {
         SysLogininfor logininfor = MapstructUtils.convert(bo, SysLogininfor.class);
         logininfor.setLoginTime(new Date());
@@ -132,7 +129,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      * @param logininfor 访问日志对象
      * @return 登录记录集合
      */
-    @Override
     public List<SysLogininforVo> selectLogininforList(SysLogininforBo logininfor) {
         Map<String, Object> params = logininfor.getParams();
         return baseMapper.selectVoList(new LambdaQueryWrapper<SysLogininfor>()
@@ -150,7 +146,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
      * @param infoIds 需要删除的登录日志ID
      * @return 结果
      */
-    @Override
     public int deleteLogininforByIds(Long[] infoIds) {
         return baseMapper.deleteByIds(Arrays.asList(infoIds));
     }
@@ -158,7 +153,6 @@ public class SysLogininforServiceImpl implements ISysLogininforService {
     /**
      * 清空系统登录日志
      */
-    @Override
     public void cleanLogininfor() {
         baseMapper.delete(new LambdaQueryWrapper<>());
     }

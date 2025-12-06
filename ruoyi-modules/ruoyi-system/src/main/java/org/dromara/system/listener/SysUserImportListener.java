@@ -19,8 +19,8 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysUserImportVo;
 import org.dromara.system.domain.vo.SysUserVo;
-import org.dromara.system.service.ISysConfigService;
-import org.dromara.system.service.ISysUserService;
+import org.dromara.system.service.SysConfigService;
+import org.dromara.system.service.SysUserService;
 
 import java.util.List;
 
@@ -32,7 +32,7 @@ import java.util.List;
 @Slf4j
 public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo> implements ExcelListener<SysUserImportVo> {
 
-    private final ISysUserService userService;
+    private final SysUserService userService;
 
     private final String password;
 
@@ -46,8 +46,8 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo
     private final StringBuilder failureMsg = new StringBuilder();
 
     public SysUserImportListener(Boolean isUpdateSupport) {
-        String initPassword = SpringUtils.getBean(ISysConfigService.class).selectConfigByKey("sys.user.initPassword");
-        this.userService = SpringUtils.getBean(ISysUserService.class);
+        String initPassword = SpringUtils.getBean(SysConfigService.class).selectConfigByKey("sys.user.initPassword");
+        this.userService = SpringUtils.getBean(SysUserService.class);
         this.password = BCrypt.hashpw(initPassword);
         this.isUpdateSupport = isUpdateSupport;
         this.operUserId = LoginHelper.getUserId();

@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
@@ -19,7 +19,6 @@ import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.service.UserService;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.page.PageQuery;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -31,7 +30,6 @@ import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.*;
-import org.dromara.system.service.ISysUserService;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -49,13 +47,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class SysUserServiceImpl implements ISysUserService, UserService {
+public class SysUserService {
 
     private final SysUserMapper baseMapper;
     private final SysRoleMapper roleMapper;
     private final SysUserRoleMapper userRoleMapper;
 
-    @Override
     public TableDataInfo<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
         Page<SysUserVo> page = baseMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
         return TableDataInfo.build(page);
@@ -67,7 +64,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    @Override
     public List<SysUserExportVo> selectUserExportList(SysUserBo user) {
         Map<String, Object> params = user.getParams();
         QueryWrapper<SysUser> wrapper = Wrappers.query();
@@ -104,7 +100,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    @Override
     public TableDataInfo<SysUserVo> selectAllocatedList(SysUserBo user, PageQuery pageQuery) {
         QueryWrapper<SysUser> wrapper = Wrappers.query();
         wrapper.eq("u.del_flag", SystemConstants.NORMAL)
@@ -123,7 +118,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 用户信息集合信息
      */
-    @Override
     public TableDataInfo<SysUserVo> selectUnallocatedList(SysUserBo user, PageQuery pageQuery) {
         List<Long> userIds = userRoleMapper.selectUserIdsByRoleId(user.getRoleId());
         QueryWrapper<SysUser> wrapper = Wrappers.query();
@@ -143,7 +137,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userName 用户名
      * @return 用户对象信息
      */
-    @Override
     public SysUserVo selectUserByUserName(String userName) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
     }
@@ -154,7 +147,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param phonenumber 手机号
      * @return 用户对象信息
      */
-    @Override
     public SysUserVo selectUserByPhonenumber(String phonenumber) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
     }
@@ -165,7 +157,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户ID
      * @return 用户对象信息
      */
-    @Override
     public SysUserVo selectUserById(Long userId) {
         SysUserVo user = baseMapper.selectVoById(userId);
         if (ObjectUtil.isNull(user)) {
@@ -182,7 +173,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userIds 用户ID串
      * @return 用户列表信息
      */
-    @Override
     public List<SysUserVo> selectUserByIds(List<Long> userIds) {
         return baseMapper.selectUserList(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserId, SysUser::getUserName, SysUser::getNickName)
@@ -195,7 +185,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param phonenumber 手机号
      * @return 用户对象信息
      */
-    @Override
     public SysUserVo selectUserByInviteCode(String inviteCode) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getInviteCode, inviteCode));
     }
@@ -206,7 +195,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户ID
      * @return 结果
      */
-    @Override
     public String selectUserRoleGroup(Long userId) {
         List<SysRoleVo> list = roleMapper.selectRolesByUserId(userId);
         if (CollUtil.isEmpty(list)) {
@@ -221,7 +209,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Override
     public boolean checkUserNameUnique(SysUserBo user) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getUserName, user.getUserName())
@@ -234,7 +221,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      *
      * @param user 用户信息
      */
-    @Override
     public boolean checkPhoneUnique(SysUserBo user) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getPhonenumber, user.getPhonenumber())
@@ -247,7 +233,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      *
      * @param user 用户信息
      */
-    @Override
     public boolean checkEmailUnique(SysUserBo user) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysUser>()
             .eq(SysUser::getEmail, user.getEmail())
@@ -260,7 +245,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      *
      * @param userId 用户ID
      */
-    @Override
     public void checkUserAllowed(Long userId) {
         if (ObjectUtil.isNotNull(userId) && LoginHelper.isSuperAdmin(userId)) {
             throw new BizException("不允许操作超级管理员用户");
@@ -272,7 +256,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      *
      * @param userId 用户id
      */
-    @Override
     public void checkUserDataScope(Long userId) {
         if (ObjectUtil.isNull(userId)) {
             return;
@@ -291,7 +274,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int insertUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
@@ -309,7 +291,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Override
     public boolean registerUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         return baseMapper.insert(sysUser) > 0;
@@ -321,7 +302,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param user 用户信息
      * @return 结果
      */
-    @Override
     @CacheEvict(cacheNames = CacheNames.SYS_NICKNAME, key = "#user.userId")
     @Transactional(rollbackFor = Exception.class)
     public int updateUser(SysUserBo user) {
@@ -342,7 +322,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId  用户ID
      * @param roleIds 角色组
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void insertUserAuth(Long userId, Long[] roleIds) {
         insertUserRole(userId, roleIds, true);
@@ -355,7 +334,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param status 帐号状态
      * @return 结果
      */
-    @Override
     public int updateUserStatus(Long userId, String status) {
         return baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -370,7 +348,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @return 结果
      */
     @CacheEvict(cacheNames = CacheNames.SYS_NICKNAME, key = "#user.userId")
-    @Override
     public int updateUserProfile(SysUserBo user) {
         return baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -388,7 +365,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param avatar 头像地址
      * @return 结果
      */
-    @Override
     public boolean updateUserAvatar(Long userId, Long avatar) {
         return baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -403,7 +379,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param password 密码
      * @return 结果
      */
-    @Override
     public int resetUserPwd(Long userId, String password) {
         return baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -467,7 +442,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户ID
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteUserById(Long userId) {
         // 删除用户与角色关联
@@ -486,7 +460,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userIds 需要删除的用户ID
      * @return 结果
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public int deleteUserByIds(Long[] userIds) {
         for (Long userId : userIds) {
@@ -511,7 +484,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @return 用户账户
      */
     @Cacheable(cacheNames = CacheNames.SYS_USER_NAME, key = "#userId")
-    @Override
     public String selectUserNameById(Long userId) {
         SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getUserName).eq(SysUser::getUserId, userId));
@@ -524,7 +496,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户ID
      * @return 用户账户
      */
-    @Override
     @Cacheable(cacheNames = CacheNames.SYS_NICKNAME, key = "#userId")
     public String selectNicknameById(Long userId) {
         SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
@@ -538,7 +509,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userIds 用户ID 多个用逗号隔开
      * @return 用户账户
      */
-    @Override
     public String selectNicknameByIds(String userIds) {
         List<String> list = new ArrayList<>();
         for (Long id : StringUtils.splitTo(userIds, Convert::toLong)) {
@@ -556,7 +526,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户id
      * @return 用户手机号
      */
-    @Override
     public String selectPhonenumberById(Long userId) {
         SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getPhonenumber).eq(SysUser::getUserId, userId));
@@ -569,7 +538,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userId 用户id
      * @return 用户邮箱
      */
-    @Override
     public String selectEmailById(Long userId) {
         SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
             .select(SysUser::getEmail).eq(SysUser::getUserId, userId));
@@ -582,7 +550,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userIds 用户ids
      * @return 用户列表
      */
-    @Override
     public List<UserDTO> selectListByIds(List<Long> userIds) {
         if (CollUtil.isEmpty(userIds)) {
             return List.of();
@@ -603,7 +570,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param roleIds 角色ids
      * @return 用户ids
      */
-    @Override
     public List<Long> selectUserIdsByRoleIds(List<Long> roleIds) {
         if (CollUtil.isEmpty(roleIds)) {
             return List.of();
@@ -619,7 +585,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param roleIds 角色ids
      * @return 用户
      */
-    @Override
     public List<UserDTO> selectUsersByRoleIds(List<Long> roleIds) {
         if (CollUtil.isEmpty(roleIds)) {
             return List.of();
@@ -641,7 +606,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
      * @param userIds 用户 ID 列表
      * @return Map，其中 key 为用户 ID，value 为对应的用户名称
      */
-    @Override
     public Map<Long, String> selectUserNamesByIds(List<Long> userIds) {
         if (CollUtil.isEmpty(userIds)) {
             return Collections.emptyMap();
@@ -653,7 +617,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         );
         return StreamUtils.toMap(list, SysUser::getUserId, SysUser::getNickName);
     }
-    @Override
     public String getUniqueInviteCode() {
         String code;
         boolean isUnique = false;
@@ -675,7 +638,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         return null;
     }
 
-    @Override
     public boolean share() {
         int rows = baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -685,7 +647,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         return rows > 0;
     }
 
-    @Override
     public boolean retroSign(LocalDate date) {
         Long userId = LoginHelper.getUserId();
         LocalDate today = LocalDate.now();
@@ -706,7 +667,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
         return baseMapper.updateById(user)>0;
     }
 
-    @Override
     public boolean sign() {
         Long userId = LoginHelper.getUserId();
         String today = LocalDate.now().toString();
@@ -726,7 +686,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     /**
      * 是否已签到
      */
-    @Override
     public boolean hasSignedToday(Long userId) {
         SysUserVo user = selectUserById(userId);
         List<String> signRecord = user.getSignRecord();
@@ -738,7 +697,6 @@ public class SysUserServiceImpl implements ISysUserService, UserService {
     /**
      * 计算连续签到天数
      */
-    @Override
     public int getConsecutiveSignDays(Long userId) {
         SysUserVo user = selectUserById(userId);
         List<String> signRecord = user.getSignRecord();

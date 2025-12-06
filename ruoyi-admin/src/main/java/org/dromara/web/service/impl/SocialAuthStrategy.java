@@ -22,7 +22,7 @@ import org.dromara.common.social.utils.SocialUtils;
 import org.dromara.system.domain.vo.SysSocialVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
-import org.dromara.system.service.ISysSocialService;
+import org.dromara.system.service.SysSocialService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
@@ -41,7 +41,7 @@ import java.util.List;
 public class SocialAuthStrategy implements IAuthStrategy {
 
     private final SocialProperties socialProperties;
-    private final ISysSocialService sysSocialService;
+    private final SysSocialService sysSocialService;
     private final SysUserMapper userMapper;
     private final SysLoginService loginService;
 

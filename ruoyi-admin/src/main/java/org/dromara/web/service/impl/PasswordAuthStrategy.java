@@ -33,8 +33,8 @@ import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
-import org.dromara.system.service.ISysConfigService;
-import org.dromara.system.service.ISysUserService;
+import org.dromara.system.service.SysConfigService;
+import org.dromara.system.service.SysUserService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
@@ -52,9 +52,9 @@ public class PasswordAuthStrategy implements IAuthStrategy {
 
     private final CaptchaProperties captchaProperties;
     private final SysLoginService loginService;
-    private final ISysUserService userService;
+    private final SysUserService userService;
     private final SysUserMapper userMapper;
-    private final ISysConfigService configService;
+    private final SysConfigService configService;
 
     @Override
     public LoginVo login(String body) {

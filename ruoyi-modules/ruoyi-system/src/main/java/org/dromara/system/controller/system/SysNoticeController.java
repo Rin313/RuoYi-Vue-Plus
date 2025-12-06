@@ -13,7 +13,7 @@ import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysNoticeBo;
 import org.dromara.system.domain.vo.SysNoticeVo;
-import org.dromara.system.service.ISysNoticeService;
+import org.dromara.system.service.SysNoticeService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/system/notice")
 public class SysNoticeController extends BaseController {
 
-    private final ISysNoticeService noticeService;
+    private final SysNoticeService noticeService;
     private final DictService dictService;
 
     /**

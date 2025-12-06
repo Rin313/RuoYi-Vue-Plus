@@ -19,7 +19,7 @@ import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.bo.TChapterBo;
-import org.dromara.system.service.ITChapterService;
+import org.dromara.system.service.TChapterService;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 
 /**
@@ -34,7 +34,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 @RequestMapping("/system/chapter")
 public class TChapterController extends BaseController {
 
-    private final ITChapterService tChapterService;
+    private final TChapterService tChapterService;
 
     /**
      * 查询小说章节列表

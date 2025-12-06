@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.vo.SysSocialVo;
-import org.dromara.system.service.ISysSocialService;
+import org.dromara.system.service.SysSocialService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +24,7 @@ import java.util.List;
 @RequestMapping("/system/social")
 public class SysSocialController extends BaseController {
 
-    private final ISysSocialService socialUserService;
+    private final SysSocialService socialUserService;
 
     /**
      * 查询社会化关系列表

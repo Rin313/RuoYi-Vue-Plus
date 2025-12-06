@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
@@ -14,7 +14,6 @@ import org.dromara.system.domain.vo.TChapterListVo;
 import org.dromara.system.domain.vo.TChapterVo;
 import org.dromara.system.domain.TChapter;
 import org.dromara.system.mapper.TChapterMapper;
-import org.dromara.system.service.ITChapterService;
 
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,7 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TChapterServiceImpl implements ITChapterService {
+public class TChapterService {
 
     private final TChapterMapper baseMapper;
 
@@ -39,7 +38,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param id 主键
      * @return 小说章节宽
      */
-    @Override
     public TChapterVo queryById(Long id){
         return baseMapper.selectVoById(id, TChapterVo.class);
     }
@@ -51,7 +49,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param pageQuery 分页参数
      * @return 小说章节宽分页列表
      */
-    @Override
     public TableDataInfo<TChapterListVo> queryPageList(TChapterBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
         Page<TChapterListVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -64,7 +61,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param bo 查询条件
      * @return 小说章节宽列表
      */
-    @Override
     public List<TChapterListVo> queryList(TChapterBo bo) {
         LambdaQueryWrapper<TChapter> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
@@ -84,7 +80,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param bo 小说章节宽
      * @return 是否新增成功
      */
-    @Override
     public Boolean insertByBo(TChapterBo bo) {
         TChapter add = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(add);
@@ -101,7 +96,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param bo 小说章节宽
      * @return 是否修改成功
      */
-    @Override
     public Boolean updateByBo(TChapterBo bo) {
         TChapter update = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(update);
@@ -122,7 +116,6 @@ public class TChapterServiceImpl implements ITChapterService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验

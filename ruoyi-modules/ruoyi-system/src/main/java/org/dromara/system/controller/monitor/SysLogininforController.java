@@ -15,7 +15,7 @@ import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysLogininforBo;
 import org.dromara.system.domain.vo.SysLogininforVo;
-import org.dromara.system.service.ISysLogininforService;
+import org.dromara.system.service.SysLogininforService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ import java.util.List;
 @RequestMapping("/monitor/logininfor")
 public class SysLogininforController extends BaseController {
 
-    private final ISysLogininforService logininforService;
+    private final SysLogininforService logininforService;
 
     /**
      * 获取系统访问记录列表

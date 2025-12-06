@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.util.ArrayUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -14,7 +14,6 @@ import org.dromara.system.domain.SysOperLog;
 import org.dromara.system.domain.bo.SysOperLogBo;
 import org.dromara.system.domain.vo.SysOperLogVo;
 import org.dromara.system.mapper.SysOperLogMapper;
-import org.dromara.system.service.ISysOperLogService;
 import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -31,7 +30,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Service
-public class SysOperLogServiceImpl implements ISysOperLogService {
+public class SysOperLogService {
 
     private final SysOperLogMapper baseMapper;
 
@@ -56,7 +55,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
      * @param pageQuery 分页参数
      * @return 操作日志分页列表
      */
-    @Override
     public TableDataInfo<SysOperLogVo> selectPageOperLogList(SysOperLogBo operLog, PageQuery pageQuery) {
         LambdaQueryWrapper<SysOperLog> lqw = buildQueryWrapper(operLog);
         if (StringUtils.isBlank(pageQuery.getOrderByColumn())) {
@@ -90,7 +88,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
      *
      * @param bo 操作日志对象
      */
-    @Override
     public void insertOperlog(SysOperLogBo bo) {
         SysOperLog operLog = MapstructUtils.convert(bo, SysOperLog.class);
         operLog.setOperTime(new Date());
@@ -103,7 +100,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
      * @param operLog 操作日志对象
      * @return 操作日志集合
      */
-    @Override
     public List<SysOperLogVo> selectOperLogList(SysOperLogBo operLog) {
         LambdaQueryWrapper<SysOperLog> lqw = buildQueryWrapper(operLog);
         return baseMapper.selectVoList(lqw.orderByDesc(SysOperLog::getOperId));
@@ -115,7 +111,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
      * @param operIds 需要删除的操作日志ID
      * @return 结果
      */
-    @Override
     public int deleteOperLogByIds(Long[] operIds) {
         return baseMapper.deleteByIds(Arrays.asList(operIds));
     }
@@ -126,7 +121,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
      * @param operId 操作ID
      * @return 操作日志对象
      */
-    @Override
     public SysOperLogVo selectOperLogById(Long operId) {
         return baseMapper.selectVoById(operId);
     }
@@ -134,7 +128,6 @@ public class SysOperLogServiceImpl implements ISysOperLogService {
     /**
      * 清空操作日志
      */
-    @Override
     public void cleanOperLog() {
         baseMapper.delete(new LambdaQueryWrapper<>());
     }

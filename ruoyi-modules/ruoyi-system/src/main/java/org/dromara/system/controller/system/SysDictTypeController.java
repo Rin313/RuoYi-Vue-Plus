@@ -14,7 +14,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysDictTypeBo;
 import org.dromara.system.domain.vo.SysDictTypeVo;
-import org.dromara.system.service.ISysDictTypeService;
+import org.dromara.system.service.SysDictTypeService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +32,7 @@ import java.util.List;
 @RequestMapping("/system/dict/type")
 public class SysDictTypeController extends BaseController {
 
-    private final ISysDictTypeService dictTypeService;
+    private final SysDictTypeService dictTypeService;
 
     /**
      * 查询字典类型列表

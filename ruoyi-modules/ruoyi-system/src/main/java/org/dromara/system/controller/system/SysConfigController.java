@@ -13,7 +13,7 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysConfigBo;
 import org.dromara.system.domain.vo.SysConfigVo;
-import org.dromara.system.service.ISysConfigService;
+import org.dromara.system.service.SysConfigService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,7 +31,7 @@ import java.util.List;
 @RequestMapping("/system/config")
 public class SysConfigController extends BaseController {
 
-    private final ISysConfigService configService;
+    private final SysConfigService configService;
 
     /**
      * 获取参数配置列表

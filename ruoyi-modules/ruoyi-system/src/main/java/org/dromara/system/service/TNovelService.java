@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.exception.BizException;
@@ -25,7 +25,6 @@ import org.dromara.system.domain.TChapter;
 import org.dromara.system.domain.TNovel;
 import org.dromara.system.mapper.TChapterMapper;
 import org.dromara.system.mapper.TNovelMapper;
-import org.dromara.system.service.ITNovelService;
 
 import java.util.List;
 import java.util.Map;
@@ -46,7 +45,7 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TNovelServiceImpl implements ITNovelService {
+public class TNovelService {
 
     private final TNovelMapper baseMapper;
     private final TChapterMapper tChapterMapper;
@@ -67,7 +66,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param file     文件
      * @param tNovelSubmitBo 附加信息（可选）
      */
-    @Override
     @Transactional(rollbackFor = Exception.class)
     public void importTxtNovel(MultipartFile file, TNovelSubmitBo tNovelSubmitBo) {
         TNovel novel = MapstructUtils.convert(tNovelSubmitBo, TNovel.class);
@@ -143,7 +141,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param id 主键
      * @return 小说宽
      */
-    @Override
     public TNovelVo queryById(Long id){
         return baseMapper.selectVoById(id);
     }
@@ -155,7 +152,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param pageQuery 分页参数
      * @return 小说宽分页列表
      */
-    @Override
     public TableDataInfo<TNovelVo> queryPageList(TNovelBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
         Page<TNovelVo> result = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -168,7 +164,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param bo 查询条件
      * @return 小说列表
      */
-    @Override
     public List<TNovelVo> queryList(TNovelBo bo) {
         LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoList(lqw);
@@ -194,8 +189,7 @@ public class TNovelServiceImpl implements ITNovelService {
     //  * @param bo 小说
     //  * @return 是否新增成功
     //  */
-    // @Override
-    // public Boolean insertByBo(TNovelBo bo) {
+    // // public Boolean insertByBo(TNovelBo bo) {
     //     TNovel add = MapstructUtils.convert(bo, TNovel.class);
     //     validEntityBeforeSave(add);
     //     boolean flag = baseMapper.insert(add) > 0;
@@ -211,7 +205,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param bo 小说宽
      * @return 是否修改成功
      */
-    @Override
     public Boolean updateByBo(TNovelBo bo) {
         TNovel update = MapstructUtils.convert(bo, TNovel.class);
         validEntityBeforeSave(update);
@@ -232,7 +225,6 @@ public class TNovelServiceImpl implements ITNovelService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    @Override
     public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
@@ -240,7 +232,6 @@ public class TNovelServiceImpl implements ITNovelService {
         return baseMapper.deleteByIds(ids) > 0;
     }
 
-    @Override
     public boolean addViewCount(Long id) {
         // 使用 setSql 实现原子性更新，避免并发导致的数据不一致
         int rows = baseMapper.update(null,

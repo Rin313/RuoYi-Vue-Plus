@@ -24,7 +24,7 @@ import org.dromara.common.excel.utils.ExcelUtil;
 import org.dromara.system.domain.vo.TNovelVo;
 import org.dromara.system.domain.bo.TNovelBo;
 import org.dromara.system.domain.bo.TNovelSubmitBo;
-import org.dromara.system.service.ITNovelService;
+import org.dromara.system.service.TNovelService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
@@ -42,7 +42,7 @@ import org.dromara.common.ratelimiter.enums.LimitType;
 @RequestMapping("/system/novel")
 public class TNovelController extends BaseController {
 
-    private final ITNovelService tNovelService;
+    private final TNovelService tNovelService;
     
     /**
      * 导入TXT小说

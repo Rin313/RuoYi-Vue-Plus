@@ -1,4 +1,4 @@
-package org.dromara.system.service.impl;
+package org.dromara.system.service;
 
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -16,7 +16,6 @@ import org.dromara.system.domain.SysDictData;
 import org.dromara.system.domain.bo.SysDictDataBo;
 import org.dromara.system.domain.vo.SysDictDataVo;
 import org.dromara.system.mapper.SysDictDataMapper;
-import org.dromara.system.service.ISysDictDataService;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +28,7 @@ import java.util.List;
  */
 @RequiredArgsConstructor
 @Service
-public class SysDictDataServiceImpl implements ISysDictDataService {
+public class SysDictDataService {
 
     private final SysDictDataMapper baseMapper;
 
@@ -40,7 +39,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @param pageQuery 分页参数
      * @return 字典数据分页列表
      */
-    @Override
     public TableDataInfo<SysDictDataVo> selectPageDictDataList(SysDictDataBo dictData, PageQuery pageQuery) {
         LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
         Page<SysDictDataVo> page = baseMapper.selectVoPage(pageQuery.build(), lqw);
@@ -53,7 +51,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @param dictData 字典数据信息
      * @return 字典数据集合信息
      */
-    @Override
     public List<SysDictDataVo> selectDictDataList(SysDictDataBo dictData) {
         LambdaQueryWrapper<SysDictData> lqw = buildQueryWrapper(dictData);
         return baseMapper.selectVoList(lqw);
@@ -75,7 +72,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @param dictValue 字典键值
      * @return 字典标签
      */
-    @Override
     public String selectDictLabel(String dictType, String dictValue) {
         return baseMapper.selectOne(new LambdaQueryWrapper<SysDictData>()
                 .select(SysDictData::getDictLabel)
@@ -90,7 +86,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @param dictCode 字典数据ID
      * @return 字典数据
      */
-    @Override
     public SysDictDataVo selectDictDataById(Long dictCode) {
         return baseMapper.selectVoById(dictCode);
     }
@@ -100,7 +95,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      *
      * @param dictCodes 需要删除的字典数据ID
      */
-    @Override
     public void deleteDictDataByIds(List<Long> dictCodes) {
         List<SysDictData> list = baseMapper.selectByIds(dictCodes);
         baseMapper.deleteByIds(dictCodes);
@@ -114,7 +108,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
-    @Override
     public List<SysDictDataVo> insertDictData(SysDictDataBo bo) {
         SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
         int row = baseMapper.insert(data);
@@ -131,7 +124,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @return 结果
      */
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
-    @Override
     public List<SysDictDataVo> updateDictData(SysDictDataBo bo) {
         SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
         int row = baseMapper.updateById(data);
@@ -147,7 +139,6 @@ public class SysDictDataServiceImpl implements ISysDictDataService {
      * @param dict 字典数据
      * @return 结果
      */
-    @Override
     public boolean checkDictDataUnique(SysDictDataBo dict) {
         boolean exist = baseMapper.exists(new LambdaQueryWrapper<SysDictData>()
             .eq(SysDictData::getDictType, dict.getDictType())

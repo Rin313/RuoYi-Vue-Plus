@@ -48,8 +48,8 @@ import java.util.List;
 @RequestMapping("/system/user")
 public class SysUserController extends BaseController {
 
-    private final ISysUserService userService;
-    private final ISysRoleService roleService;
+    private final SysUserService userService;
+    private final SysRoleService roleService;
     /**
      * 签到
      */

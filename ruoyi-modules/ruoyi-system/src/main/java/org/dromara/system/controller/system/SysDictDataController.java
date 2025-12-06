@@ -14,8 +14,8 @@ import org.dromara.common.mybatis.core.page.TableDataInfo;
 import org.dromara.common.web.core.BaseController;
 import org.dromara.system.domain.bo.SysDictDataBo;
 import org.dromara.system.domain.vo.SysDictDataVo;
-import org.dromara.system.service.ISysDictDataService;
-import org.dromara.system.service.ISysDictTypeService;
+import org.dromara.system.service.SysDictDataService;
+import org.dromara.system.service.SysDictTypeService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,8 +34,8 @@ import java.util.List;
 @RequestMapping("/system/dict/data")
 public class SysDictDataController extends BaseController {
 
-    private final ISysDictDataService dictDataService;
-    private final ISysDictTypeService dictTypeService;
+    private final SysDictDataService dictDataService;
+    private final SysDictTypeService dictTypeService;
 
     /**
      * 查询字典数据列表
