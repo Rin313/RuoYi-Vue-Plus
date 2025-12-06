@@ -1,7 +1,6 @@
 package org.dromara.common.web.core;
 
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.utils.StringUtils;
 
 /**
  * web层通用数据处理
@@ -28,13 +27,6 @@ public class BaseController {
      */
     protected void toAjax(boolean result) {
         if(!result)throw new BizException();
-    }
-
-    /**
-     * 页面跳转
-     */
-    public String redirect(String url) {
-        return StringUtils.format("redirect:{}", url);
     }
 
 }
