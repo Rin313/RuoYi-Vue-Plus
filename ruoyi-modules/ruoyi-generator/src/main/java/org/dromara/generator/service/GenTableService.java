@@ -209,23 +209,6 @@ public class GenTableService {
     }
 
     /**
-     * 修改业务
-     *
-     * @param genTable 业务信息
-     */
-    @Transactional(rollbackFor = Exception.class)
-    public void updateGenTable(GenTable genTable) {
-        String options = JsonUtils.toJsonString(genTable.getParams());
-        genTable.setOptions(options);
-        int row = baseMapper.updateById(genTable);
-        if (row > 0) {
-            for (GenTableColumn cenTableColumn : genTable.getColumns()) {
-                genTableColumnMapper.updateById(cenTableColumn);
-            }
-        }
-    }
-
-    /**
      * 删除业务对象
      *
      * @param tableIds 需要删除的数据ID
@@ -478,25 +461,6 @@ public class GenTableService {
                 zip.closeEntry();
             } catch (IOException e) {
                 log.error("渲染模板失败，表名：" + table.getTableName(), e);
-            }
-        }
-    }
-
-    /**
-     * 修改保存参数校验
-     *
-     * @param genTable 业务信息
-     */
-    public void validateEdit(GenTable genTable) {
-        if (GenConstants.TPL_TREE.equals(genTable.getTplCategory())) {
-            String options = JsonUtils.toJsonString(genTable.getParams());
-            Dict paramsObj = JsonUtils.parseMap(options);
-            if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_CODE))) {
-                throw new BizException("树编码字段不能为空");
-            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_PARENT_CODE))) {
-                throw new BizException("树父编码字段不能为空");
-            } else if (StringUtils.isEmpty(paramsObj.getStr(GenConstants.TREE_NAME))) {
-                throw new BizException("树名称字段不能为空");
             }
         }
     }

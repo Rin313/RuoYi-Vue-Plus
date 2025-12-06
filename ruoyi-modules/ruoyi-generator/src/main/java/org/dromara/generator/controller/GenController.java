@@ -107,18 +107,6 @@ public class GenController {
     }
 
     /**
-     * 修改保存代码生成业务
-     */
-    @SaCheckPermission("tool:gen:edit")
-    @Log(title = "代码生成", businessType = BusinessType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping
-    public void editSave(@Validated @RequestBody GenTable genTable) {
-        genTableService.validateEdit(genTable);
-        genTableService.updateGenTable(genTable);
-    }
-
-    /**
      * 删除代码生成
      *
      * @param tableIds 表ID串
