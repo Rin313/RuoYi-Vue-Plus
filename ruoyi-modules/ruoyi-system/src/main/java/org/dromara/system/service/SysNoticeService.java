@@ -85,9 +85,9 @@ public class SysNoticeService {
      * @param bo 公告信息
      * @return 结果
      */
-    public int insertNotice(SysNoticeBo bo) {
+    public void insertNotice(SysNoticeBo bo) {
         SysNotice notice = MapstructUtils.convert(bo, SysNotice.class);
-        return baseMapper.insert(notice);
+        baseMapper.insert(notice);
     }
 
     /**

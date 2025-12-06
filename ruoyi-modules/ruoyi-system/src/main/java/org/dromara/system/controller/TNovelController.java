@@ -68,8 +68,7 @@ public class TNovelController {
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/view/{id}")
     public void addViewCount(@PathVariable("id") Long id) {
-        boolean result = tNovelService.addViewCount(id);
-        if(!result)throw new BizException();
+        tNovelService.addViewCount(id);
     }
 
     /**

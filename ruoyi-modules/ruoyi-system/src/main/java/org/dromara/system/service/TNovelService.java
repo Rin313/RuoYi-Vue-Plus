@@ -70,8 +70,7 @@ public class TNovelService {
     public void importTxtNovel(MultipartFile file, TNovelSubmitBo tNovelSubmitBo) {
         TNovel novel = MapstructUtils.convert(tNovelSubmitBo, TNovel.class);
         validEntityBeforeSave(novel);
-        if (!(baseMapper.insert(novel) > 0))
-            throw new BizException("添加失败");
+        baseMapper.insert(novel);
         if (ObjectUtils.isNotEmpty(file)) {
             String originalFilename = file.getOriginalFilename();
             if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt"))
@@ -183,32 +182,16 @@ public class TNovelService {
         return lqw;
     }
 
-    // /**
-    //  * 新增小说
-    //  *
-    //  * @param bo 小说
-    //  * @return 是否新增成功
-    //  */
-    // // public Boolean insertByBo(TNovelBo bo) {
-    //     TNovel add = MapstructUtils.convert(bo, TNovel.class);
-    //     validEntityBeforeSave(add);
-    //     boolean flag = baseMapper.insert(add) > 0;
-    //     if (flag) {
-    //         bo.setId(add.getId());
-    //     }
-    //     return flag;
-    // }
-
     /**
      * 修改小说宽
      *
      * @param bo 小说宽
      * @return 是否修改成功
      */
-    public Boolean updateByBo(TNovelBo bo) {
+    public void updateByBo(TNovelBo bo) {
         TNovel update = MapstructUtils.convert(bo, TNovel.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
     }
 
     /**
@@ -225,20 +208,19 @@ public class TNovelService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+    public void deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteByIds(ids) > 0;
+        baseMapper.deleteByIds(ids);
     }
 
-    public boolean addViewCount(Long id) {
+    public void addViewCount(Long id) {
         // 使用 setSql 实现原子性更新，避免并发导致的数据不一致
-        int rows = baseMapper.update(null,
+        baseMapper.update(null,
             new LambdaUpdateWrapper<TNovel>()
                 .setSql("view_count = view_count + 1")
                 .eq(TNovel::getId, id)
         );
-        return rows > 0;
     }
 }

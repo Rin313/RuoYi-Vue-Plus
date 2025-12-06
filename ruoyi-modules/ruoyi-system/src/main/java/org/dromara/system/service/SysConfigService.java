@@ -118,11 +118,8 @@ public class SysConfigService implements ConfigService {
     @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
     public String insertConfig(SysConfigBo bo) {
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
-        int row = baseMapper.insert(config);
-        if (row > 0) {
-            return config.getConfigValue();
-        }
-        throw new BizException("操作失败");
+        baseMapper.insert(config);
+        return config.getConfigValue();
     }
 
     /**
@@ -146,10 +143,7 @@ public class SysConfigService implements ConfigService {
             row = baseMapper.update(config, new LambdaQueryWrapper<SysConfig>()
                 .eq(SysConfig::getConfigKey, config.getConfigKey()));
         }
-        if (row > 0) {
-            return config.getConfigValue();
-        }
-        throw new BizException("操作失败");
+        return config.getConfigValue();
     }
 
     /**

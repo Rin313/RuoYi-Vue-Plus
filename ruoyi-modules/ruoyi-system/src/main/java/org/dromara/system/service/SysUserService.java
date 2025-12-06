@@ -275,14 +275,13 @@ public class SysUserService {
      * @return 结果
      */
     @Transactional(rollbackFor = Exception.class)
-    public int insertUser(SysUserBo user) {
+    public void insertUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
         // 新增用户信息
-        int rows = baseMapper.insert(sysUser);
+        baseMapper.insert(sysUser);
         user.setUserId(sysUser.getUserId());
         // 新增用户与角色管理
         insertUserRole(user, false);
-        return rows;
     }
 
     /**
@@ -291,9 +290,9 @@ public class SysUserService {
      * @param user 用户信息
      * @return 结果
      */
-    public boolean registerUser(SysUserBo user) {
+    public void registerUser(SysUserBo user) {
         SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        return baseMapper.insert(sysUser) > 0;
+        baseMapper.insert(sysUser);
     }
 
     /**
@@ -638,16 +637,15 @@ public class SysUserService {
         return null;
     }
 
-    public boolean share() {
-        int rows = baseMapper.update(null,
+    public void share() {
+        baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
                 .setSql("total_share_count = total_share_count + 1")
                 .eq(SysUser::getUserId, LoginHelper.getUserId())
         );
-        return rows > 0;
     }
 
-    public boolean retroSign(LocalDate date) {
+    public void retroSign(LocalDate date) {
         Long userId = LoginHelper.getUserId();
         LocalDate today = LocalDate.now();
         if (!date.isBefore(today)) {
@@ -664,10 +662,10 @@ public class SysUserService {
         SysUser user = new SysUser();
         user.setUserId(userId);
         user.setSignRecord(signRecord);
-        return baseMapper.updateById(user)>0;
+        baseMapper.updateById(user);
     }
 
-    public boolean sign() {
+    public void sign() {
         Long userId = LoginHelper.getUserId();
         String today = LocalDate.now().toString();
         SysUserVo userVo = selectUserById(userId);
@@ -681,7 +679,7 @@ public class SysUserService {
         SysUser user = new SysUser();
         user.setUserId(userId);
         user.setSignRecord(signRecord);
-        return baseMapper.updateById(user)>0;
+        baseMapper.updateById(user);
     }
     /**
      * 是否已签到

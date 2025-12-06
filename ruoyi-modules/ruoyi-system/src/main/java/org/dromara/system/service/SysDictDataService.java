@@ -110,11 +110,8 @@ public class SysDictDataService {
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
     public List<SysDictDataVo> insertDictData(SysDictDataBo bo) {
         SysDictData data = MapstructUtils.convert(bo, SysDictData.class);
-        int row = baseMapper.insert(data);
-        if (row > 0) {
-            return baseMapper.selectDictDataByType(data.getDictType());
-        }
-        throw new BizException("操作失败");
+        baseMapper.insert(data);
+        return baseMapper.selectDictDataByType(data.getDictType());
     }
 
     /**

@@ -55,7 +55,7 @@ public class SysUserController {
      */
     @PostMapping("/sign")
     public void sign() {
-        if(!userService.sign())throw new BizException();
+        userService.sign();
     }
 
     /**
@@ -65,7 +65,7 @@ public class SysUserController {
      */
     @PostMapping("/retroSign")
     public void retroSign(@RequestParam LocalDate date) {
-        if(!userService.retroSign(date))throw new BizException();
+        userService.retroSign(date);
     }
     /**
      * 记录用户分享
@@ -74,7 +74,7 @@ public class SysUserController {
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/share")
     public void share() {
-        if(!userService.share())throw new BizException("浏览量更新失败");
+        userService.share();
     }
     /**
      * 获取用户列表

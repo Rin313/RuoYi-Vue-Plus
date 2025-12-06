@@ -387,7 +387,7 @@ public class SysRoleService {
      * @param userRole 用户和角色关联信息
      * @return 结果
      */
-    public int deleteAuthUser(SysUserRole userRole) {
+    public void deleteAuthUser(SysUserRole userRole) {
         if (LoginHelper.getUserId().equals(userRole.getUserId())) {
             throw new BizException("不允许修改当前用户角色!");
         }
@@ -397,7 +397,6 @@ public class SysRoleService {
         if (rows > 0) {
             cleanOnlineUser(List.of(userRole.getUserId()));
         }
-        return rows;
     }
 
     /**
@@ -407,7 +406,7 @@ public class SysRoleService {
      * @param userIds 需要取消授权的用户数据ID
      * @return 结果
      */
-    public int deleteAuthUsers(Long roleId, Long[] userIds) {
+    public void deleteAuthUsers(Long roleId, Long[] userIds) {
         List<Long> ids = List.of(userIds);
         if (ids.contains(LoginHelper.getUserId())) {
             throw new BizException("不允许修改当前用户角色!");
@@ -418,7 +417,6 @@ public class SysRoleService {
         if (rows > 0) {
             cleanOnlineUser(ids);
         }
-        return rows;
     }
 
     /**

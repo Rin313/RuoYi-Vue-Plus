@@ -125,8 +125,7 @@ public class AuthController {
     public void unlockSocial(@PathVariable Long socialId) {
         // 校验token
         StpUtil.checkLogin();
-        Boolean rows = socialUserService.deleteWithValidById(socialId);
-        if(!rows)throw new BizException("取消授权失败");
+        socialUserService.deleteWithValidById(socialId);
     }
 
 

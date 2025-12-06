@@ -80,14 +80,10 @@ public class TChapterService {
      * @param bo 小说章节宽
      * @return 是否新增成功
      */
-    public Boolean insertByBo(TChapterBo bo) {
+    public void insertByBo(TChapterBo bo) {
         TChapter add = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(add);
-        boolean flag = baseMapper.insert(add) > 0;
-        if (flag) {
-            bo.setId(add.getId());
-        }
-        return flag;
+        baseMapper.insert(add);
     }
 
     /**
@@ -96,10 +92,10 @@ public class TChapterService {
      * @param bo 小说章节宽
      * @return 是否修改成功
      */
-    public Boolean updateByBo(TChapterBo bo) {
+    public void updateByBo(TChapterBo bo) {
         TChapter update = MapstructUtils.convert(bo, TChapter.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
     }
 
     /**
@@ -116,10 +112,10 @@ public class TChapterService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    public Boolean deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
+    public void deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
         if(isValid){
             //TODO 做一些业务上的校验,判断是否需要校验
         }
-        return baseMapper.deleteByIds(ids) > 0;
+        baseMapper.deleteByIds(ids);
     }
 }

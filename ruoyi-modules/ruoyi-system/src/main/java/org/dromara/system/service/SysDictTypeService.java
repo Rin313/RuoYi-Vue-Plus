@@ -163,11 +163,8 @@ public class SysDictTypeService implements DictService {
     public List<SysDictDataVo> insertDictType(SysDictTypeBo bo) {
         SysDictType dict = MapstructUtils.convert(bo, SysDictType.class);
         int row = baseMapper.insert(dict);
-        if (row > 0) {
-            // 新增 type 下无 data 数据 返回空防止缓存穿透
-            return new ArrayList<>();
-        }
-        throw new BizException("操作失败");
+        // 新增 type 下无 data 数据 返回空防止缓存穿透
+        return new ArrayList<>();
     }
 
     /**

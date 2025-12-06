@@ -95,8 +95,7 @@ public class PasswordAuthStrategy implements IAuthStrategy {
                 sysUser.setParentId(parent.getUserId());
             }
             SysUser t = MapstructUtils.convert(sysUser, SysUser.class);
-            if (!(userMapper.insert(t) > 0))
-                throw new UserException("user.register.error");
+            userMapper.insert(t);
             loginService.recordLogininfor(inputValue, Constants.REGISTER, MessageUtils.message("user.register.success"));
             loginUser = loginService.buildLoginUser(userMapper.selectVoById(t.getUserId()));
         }

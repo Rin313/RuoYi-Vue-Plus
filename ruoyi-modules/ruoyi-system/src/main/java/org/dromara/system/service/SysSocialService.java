@@ -52,7 +52,7 @@ public class SysSocialService {
     /**
      * 新增社会化关系
      */
-    public Boolean insertByBo(SysSocialBo bo) {
+    public Boolean insertByBo(SysSocialBo bo) {//不知道这段几把在写啥
         SysSocial add = MapstructUtils.convert(bo, SysSocial.class);
         validEntityBeforeSave(add);
         boolean flag = baseMapper.insert(add) > 0;
@@ -69,10 +69,10 @@ public class SysSocialService {
     /**
      * 更新社会化关系
      */
-    public Boolean updateByBo(SysSocialBo bo) {
+    public void updateByBo(SysSocialBo bo) {
         SysSocial update = MapstructUtils.convert(bo, SysSocial.class);
         validEntityBeforeSave(update);
-        return baseMapper.updateById(update) > 0;
+        baseMapper.updateById(update);
     }
 
     /**
@@ -86,8 +86,8 @@ public class SysSocialService {
     /**
      * 删除社会化关系
      */
-    public Boolean deleteWithValidById(Long id) {
-        return baseMapper.deleteById(id) > 0;
+    public void deleteWithValidById(Long id) {
+        baseMapper.deleteById(id);
     }
 
 

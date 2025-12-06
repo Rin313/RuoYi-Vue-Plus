@@ -59,10 +59,7 @@ public class SysNoticeController {
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysNoticeBo notice) {
-        int rows = noticeService.insertNotice(notice);
-        if (rows <= 0) {
-            throw new BizException();
-        }
+        noticeService.insertNotice(notice);
         String type = dictService.getDictLabel("sys_notice_type", notice.getNoticeType());
         SseMessageUtils.publishAll("[" + type + "] " + notice.getNoticeTitle());
     }
