@@ -1,7 +1,7 @@
 package org.dromara.system.mapper;
 
-import org.dromara.system.domain.TChapter;
-import org.dromara.system.domain.vo.TChapterListVo;
+import org.dromara.system.domain.Chapter;
+import org.dromara.system.domain.vo.ChapterListVo;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 
 /**
@@ -10,6 +10,6 @@ import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
  * @author Lion Li
  * @date 2025-12-04
  */
-public interface TChapterMapper extends BaseMapperPlus<TChapter, TChapterListVo> {
+public interface ChapterMapper extends BaseMapperPlus<Chapter, ChapterListVo> {
 
 }

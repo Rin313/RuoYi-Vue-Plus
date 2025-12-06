@@ -20,11 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.dromara.system.domain.bo.NovelQueryBo;
 import org.dromara.system.domain.bo.NovelUpdateBo;
 import org.dromara.system.domain.bo.NovelInsertBo;
-import org.dromara.system.domain.vo.TNovelVo;
-import org.dromara.system.domain.TChapter;
-import org.dromara.system.domain.TNovel;
-import org.dromara.system.mapper.TChapterMapper;
-import org.dromara.system.mapper.TNovelMapper;
+import org.dromara.system.domain.vo.NovelVo;
+import org.dromara.system.domain.Chapter;
+import org.dromara.system.domain.Novel;
+import org.dromara.system.mapper.ChapterMapper;
+import org.dromara.system.mapper.NovelMapper;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -44,10 +44,10 @@ import java.util.Collection;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class TNovelService {
+public class NovelService {
 
-    private final TNovelMapper baseMapper;
-    private final TChapterMapper tChapterMapper;
+    private final NovelMapper baseMapper;
+    private final ChapterMapper tChapterMapper;
 
     /**
      * 正则匹配优化：
@@ -67,15 +67,14 @@ public class TNovelService {
      */
     @Transactional(rollbackFor = Exception.class)
     public void importTxtNovel(MultipartFile file, NovelInsertBo tNovelSubmitBo) {
-        TNovel novel = MapstructUtils.convert(tNovelSubmitBo, TNovel.class);
-        validEntityBeforeSave(novel);
+        Novel novel = MapstructUtils.convert(tNovelSubmitBo, Novel.class);
         baseMapper.insert(novel);
         if (ObjectUtils.isNotEmpty(file)) {
             String originalFilename = file.getOriginalFilename();
             if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt"))
                 throw new BizException("仅支持txt格式文件");
             Long novelId = novel.getId();
-            List<TChapter> chapters = new ArrayList<>();
+            List<Chapter> chapters = new ArrayList<>();
             try (BufferedReader reader = new BufferedReader(
                     new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
                 String line;
@@ -89,7 +88,7 @@ public class TNovelService {
                         // 遇到章节标题
                         if (firstChapterFound) {
                             // 如果已经是第一个章节之后，保存上一章
-                            TChapter chapter = new TChapter();
+                            Chapter chapter = new Chapter();
                             chapter.setNovelId(novelId);
                             chapter.setTitle(currentTitle);
                             chapter.setContent(currentContent.toString());
@@ -114,7 +113,7 @@ public class TNovelService {
                 }
                 // 循环结束后，处理最后一章（仅当至少有一个章节被识别）
                 if (firstChapterFound && currentContent.length() > 0) {
-                    TChapter chapter = new TChapter();
+                    Chapter chapter = new Chapter();
                     chapter.setNovelId(novelId);
                     chapter.setTitle(currentTitle);
                     chapter.setContent(currentContent.toString());
@@ -139,7 +138,7 @@ public class TNovelService {
      * @param id 主键
      * @return 小说
      */
-    public TNovelVo queryById(Long id){
+    public NovelVo queryById(Long id){
         return baseMapper.selectVoById(id);
     }
 
@@ -150,31 +149,31 @@ public class TNovelService {
      * @param pageQuery 分页参数
      * @return 小说分页列表
      */
-    public IPage<TNovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
-        LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
+    public IPage<NovelVo> queryPageList(NovelQueryBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<Novel> lqw = buildQueryWrapper(bo);
         return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
 
-    /**
-     * 查询符合条件的小说列表
-     *
-     * @param bo 查询条件
-     * @return 小说列表
-     */
-    public List<TNovelVo> queryList(NovelQueryBo bo) {
-        LambdaQueryWrapper<TNovel> lqw = buildQueryWrapper(bo);
-        return baseMapper.selectVoList(lqw);
-    }
+    // /**
+    //  * 查询符合条件的小说列表
+    //  *
+    //  * @param bo 查询条件
+    //  * @return 小说列表
+    //  */
+    // public List<NovelVo> queryList(NovelQueryBo bo) {
+    //     LambdaQueryWrapper<Novel> lqw = buildQueryWrapper(bo);
+    //     return baseMapper.selectVoList(lqw);
+    // }
 
-    private LambdaQueryWrapper<TNovel> buildQueryWrapper(NovelQueryBo bo) {
-        LambdaQueryWrapper<TNovel> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getTitle()), TNovel::getTitle, bo.getTitle());
-        lqw.like(StringUtils.isNotBlank(bo.getAuthor()), TNovel::getAuthor, bo.getAuthor());
-        lqw.like(StringUtils.isNotBlank(bo.getIntro()), TNovel::getIntro, bo.getIntro());
-        lqw.eq(StringUtils.isNotBlank(bo.getCategory()), TNovel::getCategory, bo.getCategory());
-        lqw.eq(StringUtils.isNotBlank(bo.getStatus()), TNovel::getStatus, bo.getStatus());
-        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), TNovel::getCreateTime,bo.getBeginTime());
-        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), TNovel::getCreateTime,bo.getEndTime());
+    private LambdaQueryWrapper<Novel> buildQueryWrapper(NovelQueryBo bo) {
+        LambdaQueryWrapper<Novel> lqw = Wrappers.lambdaQuery();
+        lqw.like(StringUtils.isNotBlank(bo.getTitle()), Novel::getTitle, bo.getTitle());
+        lqw.like(StringUtils.isNotBlank(bo.getAuthor()), Novel::getAuthor, bo.getAuthor());
+        lqw.like(StringUtils.isNotBlank(bo.getIntro()), Novel::getIntro, bo.getIntro());
+        lqw.eq(StringUtils.isNotBlank(bo.getCategory()), Novel::getCategory, bo.getCategory());
+        lqw.eq(StringUtils.isNotBlank(bo.getStatus()), Novel::getStatus, bo.getStatus());
+        lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), Novel::getCreateTime,bo.getBeginTime());
+        lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), Novel::getCreateTime,bo.getEndTime());
         return lqw;
     }
     /**
@@ -184,16 +183,8 @@ public class TNovelService {
      * @return 是否修改成功
      */
     public void updateByBo(NovelUpdateBo bo) {
-        TNovel update = MapstructUtils.convert(bo, TNovel.class);
-        validEntityBeforeSave(update);
+        Novel update = MapstructUtils.convert(bo, Novel.class);
         baseMapper.updateById(update);
-    }
-
-    /**
-     * 保存前的数据校验
-     */
-    private void validEntityBeforeSave(TNovel entity){
-        //TODO 做一些数据校验,如唯一约束
     }
 
     /**
@@ -203,19 +194,16 @@ public class TNovelService {
      * @param isValid 是否进行有效性校验
      * @return 是否删除成功
      */
-    public void deleteWithValidByIds(Collection<Long> ids, Boolean isValid) {
-        if(isValid){
-            //TODO 做一些业务上的校验,判断是否需要校验
-        }
+    public void deleteWithValidByIds(Collection<Long> ids) {
         baseMapper.deleteByIds(ids);
     }
 
     public void addViewCount(Long id) {
         // 使用 setSql 实现原子性更新，避免并发导致的数据不一致
         baseMapper.update(null,
-            new LambdaUpdateWrapper<TNovel>()
+            new LambdaUpdateWrapper<Novel>()
                 .setSql("view_count = view_count + 1")
-                .eq(TNovel::getId, id)
+                .eq(Novel::getId, id)
         );
     }
 }

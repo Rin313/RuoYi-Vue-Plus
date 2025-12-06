@@ -8,15 +8,15 @@ import lombok.EqualsAndHashCode;
 import java.io.Serial;
 
 /**
- * 小说对象 t_novel
+ * 小说对象 novel
  *
  * @author Lion Li
  * @date 2025-12-04
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("t_novel")
-public class TNovel extends BaseEntity {
+@TableName("novel")
+public class Novel extends BaseEntity {
 
     @Serial
     private static final long serialVersionUID = 1L;

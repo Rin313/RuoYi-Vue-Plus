@@ -1,6 +1,6 @@
 package org.dromara.system.domain.vo;
 
-import org.dromara.system.domain.TChapter;
+import org.dromara.system.domain.Chapter;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -12,15 +12,15 @@ import java.io.Serializable;
 
 
 /**
- * 小说章节视图对象 t_chapter
+ * 小说章节视图对象 chapter
  *
  * @author Lion Li
  * @date 2025-12-04
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = TChapter.class)
-public class TChapterListVo implements Serializable {
+@AutoMapper(target = Chapter.class)
+public class ChapterVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
@@ -42,6 +42,12 @@ public class TChapterListVo implements Serializable {
      */
     @ExcelProperty(value = "标题")
     private String title;
+
+    /**
+     * 内容
+     */
+    @ExcelProperty(value = "内容")
+    private String content;
 
     /**
      * 章节序号

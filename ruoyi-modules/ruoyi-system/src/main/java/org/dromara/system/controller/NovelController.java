@@ -19,11 +19,11 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BusinessType;
-import org.dromara.system.domain.vo.TNovelVo;
+import org.dromara.system.domain.vo.NovelVo;
 import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.bo.NovelQueryBo;
 import org.dromara.system.domain.bo.NovelUpdateBo;
-import org.dromara.system.service.TNovelService;
+import org.dromara.system.service.NovelService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.ratelimiter.annotation.RateLimiter;
@@ -39,16 +39,15 @@ import org.dromara.common.ratelimiter.enums.LimitType;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/system/novel")
-public class TNovelController {
+public class NovelController {
 
-    private final TNovelService tNovelService;
+    private final NovelService novelService;
     
     /**
      * 导入TXT小说
      *
      * @param file TXT文件
-     * @param tNovelSubmitBo 附加信息（可选）
-     * @return 结果
+     * @param tNovelSubmitBo 附加信息
      */
     @SaCheckPermission("system:novel:add")
     @Log(title = "小说", businessType = BusinessType.INSERT)
@@ -56,18 +55,17 @@ public class TNovelController {
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void importTxt(@RequestPart(required=false) MultipartFile file,
                              @Validated(AddGroup.class) @ParameterObject @ModelAttribute NovelInsertBo tNovelSubmitBo) {
-        tNovelService.importTxtNovel(file, tNovelSubmitBo);
+        novelService.importTxtNovel(file, tNovelSubmitBo);
     }
     /**
      * 增加小说浏览量
-     * 
      * @param id 小说ID
      */
     @SaIgnore
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/view/{id}")
     public void addViewCount(@PathVariable("id") Long id) {
-        tNovelService.addViewCount(id);
+        novelService.addViewCount(id);
     }
 
     /**
@@ -75,8 +73,8 @@ public class TNovelController {
      */
     @SaCheckPermission("system:novel:list")
     @GetMapping("/list")
-    public IPage<TNovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
-        return tNovelService.queryPageList(bo, pageQuery);
+    public IPage<NovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
+        return novelService.queryPageList(bo, pageQuery);
     }
 
     // /**
@@ -97,9 +95,9 @@ public class TNovelController {
      */
     @SaCheckPermission("system:novel:query")
     @GetMapping("/{id}")
-    public TNovelVo getInfo(@NotNull(message = "主键不能为空")
+    public NovelVo getInfo(@NotNull(message = "主键不能为空")
                                      @PathVariable Long id) {
-        return tNovelService.queryById(id);
+        return novelService.queryById(id);
     }
 
     /**
@@ -110,7 +108,7 @@ public class TNovelController {
     @RepeatSubmit()
     @PutMapping()
     public void edit(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
-        tNovelService.updateByBo(bo);
+        novelService.updateByBo(bo);
     }
 
     /**
@@ -123,6 +121,6 @@ public class TNovelController {
     @DeleteMapping("/{ids}")
     public void remove(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
-        tNovelService.deleteWithValidByIds(List.of(ids), true);
+        novelService.deleteWithValidByIds(List.of(ids));
     }
 }

@@ -1,6 +1,6 @@
 package org.dromara.system.domain.vo;
 
-import org.dromara.system.domain.TNovel;
+import org.dromara.system.domain.Novel;
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
 import io.github.linpeilie.annotations.AutoMapper;
@@ -12,15 +12,15 @@ import java.io.Serializable;
 
 
 /**
- * 小说视图对象 t_novel
+ * 小说视图对象 novel
  *
  * @author Lion Li
  * @date 2025-12-04
  */
 @Data
 @ExcelIgnoreUnannotated
-@AutoMapper(target = TNovel.class)
-public class TNovelVo implements Serializable {
+@AutoMapper(target = Novel.class)
+public class NovelVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;

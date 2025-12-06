@@ -95,7 +95,6 @@ public class GenController {
      * @param dataName 数据源名称
      */
     @SaCheckPermission("tool:gen:import")
-    @Log(title = "代码生成", businessType = BusinessType.IMPORT)
     @Lock4j(keys = {"#dataName"}, acquireTimeout = 10000)
     @RepeatSubmit()
     @PostMapping("/importTable")
@@ -112,7 +111,6 @@ public class GenController {
      * @param tableIds 表ID串
      */
     @SaCheckPermission("tool:gen:remove")
-    @Log(title = "代码生成", businessType = BusinessType.DELETE)
     @DeleteMapping("/{tableIds}")
     public void remove(@PathVariable Long[] tableIds) {
         genTableService.deleteGenTableByIds(tableIds);
@@ -136,7 +134,6 @@ public class GenController {
      * @param tableId 表ID
      */
     @SaCheckPermission("tool:gen:code")
-    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/download/{tableId}")
     public void download(HttpServletResponse response, @PathVariable("tableId") Long tableId) throws IOException {
         byte[] data = genTableService.downloadCode(tableId);
@@ -149,7 +146,6 @@ public class GenController {
      * @param tableId 表ID
      */
     @SaCheckPermission("tool:gen:code")
-    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/genCode/{tableId}")
     public void genCode(@PathVariable("tableId") Long tableId) {
         genTableService.generatorCode(tableId);
@@ -161,7 +157,6 @@ public class GenController {
      * @param tableId 表ID
      */
     @SaCheckPermission("tool:gen:edit")
-    @Log(title = "代码生成", businessType = BusinessType.UPDATE)
     @Lock4j(keys = {"#tableId"}, acquireTimeout = 5000)
     @GetMapping("/synchDb/{tableId}")
     public void synchDb(@PathVariable("tableId") Long tableId) {
@@ -174,7 +169,6 @@ public class GenController {
      * @param tableIdStr 表ID串
      */
     @SaCheckPermission("tool:gen:code")
-    @Log(title = "代码生成", businessType = BusinessType.GENCODE)
     @GetMapping("/batchGenCode")
     public void batchGenCode(HttpServletResponse response, String tableIdStr) throws IOException {
         String[] tableIds = Convert.toStrArray(tableIdStr);

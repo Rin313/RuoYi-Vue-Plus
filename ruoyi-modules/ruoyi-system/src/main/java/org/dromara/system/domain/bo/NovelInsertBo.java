@@ -2,19 +2,19 @@ package org.dromara.system.domain.bo;
 
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.system.domain.TNovel;
+import org.dromara.system.domain.Novel;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
- * 小说业务对象 t_novel
+ * 小说业务对象 novel
  *
  * @author Lion Li
  * @date 2025-12-04
  */
 @Data
-@AutoMapper(target = TNovel.class, reverseConvertGenerate = false)
+@AutoMapper(target = Novel.class, reverseConvertGenerate = false)
 public class NovelInsertBo {
     /**
      * 标题
@@ -41,6 +41,10 @@ public class NovelInsertBo {
      * 分类
      */
     private String category;
+    /**
+     * 0-正常 1-停用
+     */
+    private String status;
 
 
 }

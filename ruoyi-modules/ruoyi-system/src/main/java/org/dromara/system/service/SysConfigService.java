@@ -126,17 +126,16 @@ public class SysConfigService implements ConfigService {
      */
     @CachePut(cacheNames = CacheNames.SYS_CONFIG, key = "#bo.configKey")
     public String updateConfig(SysConfigBo bo) {
-        int row = 0;
         SysConfig config = MapstructUtils.convert(bo, SysConfig.class);
         if (config.getConfigId() != null) {
             SysConfig temp = baseMapper.selectById(config.getConfigId());
             if (!StringUtils.equals(temp.getConfigKey(), config.getConfigKey())) {
                 CacheUtils.evict(CacheNames.SYS_CONFIG, temp.getConfigKey());
             }
-            row = baseMapper.updateById(config);
+            baseMapper.updateById(config);
         } else {
             CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
-            row = baseMapper.update(config, new LambdaQueryWrapper<SysConfig>()
+            baseMapper.update(config, new LambdaQueryWrapper<SysConfig>()
                 .eq(SysConfig::getConfigKey, config.getConfigKey()));
         }
         return config.getConfigValue();

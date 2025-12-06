@@ -1,22 +1,21 @@
 package org.dromara.system.domain.bo;
 
+import org.dromara.system.domain.Chapter;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
-import org.dromara.system.domain.Novel;
 import io.github.linpeilie.annotations.AutoMapper;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import jakarta.validation.constraints.*;
 
 /**
- * 小说业务对象 novel
+ * 小说章节业务对象 chapter
  *
  * @author Lion Li
  * @date 2025-12-04
  */
 @Data
-@AutoMapper(target = Novel.class, reverseConvertGenerate = false)
-public class NovelUpdateBo {
+@AutoMapper(target = Chapter.class, reverseConvertGenerate = false)
+public class ChapterUpdateBo {
     @NotNull(message = "主键ID不能为空", groups = { EditGroup.class })
     private Long id;
     /**
@@ -24,29 +23,14 @@ public class NovelUpdateBo {
      */
     @NotBlank(message = "标题不能为空", groups = { AddGroup.class, EditGroup.class })
     private String title;
-    /**
-     * 作者名称
-     */
-    private String author;
 
     /**
-     * 封面
+     * 内容
      */
-    private String url;
+    private String content;
 
     /**
-     * 小说简介
+     * 章节序号
      */
-    private String intro;
-
-    /**
-     * 分类
-     */
-    private String category;
-    /**
-     * 0-正常 1-停用
-     */
-    private String status;
-
-
+    private Long chapterIndex;
 }
