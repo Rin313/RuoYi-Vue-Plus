@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
+import org.dromara.common.core.enums.AssetType;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -630,7 +632,13 @@ public class SysUserService {
         }
         return null;
     }
-
+    public void updateAsset(Long userId, AssetType assetType, Number amount) {
+        UpdateWrapper<SysUser> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.setSql(assetType.getField() + " = " + assetType.getField() + " + " + amount);
+        updateWrapper.eq("user_id", userId);
+        int rows = baseMapper.update(null, updateWrapper);
+        if(rows==0)throw new BizException("无效用户或余额不足");
+    }
     public void share() {
         baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -695,7 +703,6 @@ public class SysUserService {
         if (signRecord == null || signRecord.isEmpty()) {
             return 0;
         }
-
         // 将日期字符串转换为 LocalDate 并排序（降序，最近的日期在前）
         List<LocalDate> sortedDates = signRecord.stream()
             .map(dateStr -> LocalDate.parse(dateStr))

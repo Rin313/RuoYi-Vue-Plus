@@ -21,9 +21,6 @@ public class BaseEntity implements Serializable {
     private Date createTime;
 
     @TableField(fill = FieldFill.INSERT_UPDATE)
-    private Long updateBy;
-
-    @TableField(fill = FieldFill.INSERT_UPDATE)
     private Date updateTime;
 
 }

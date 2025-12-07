@@ -73,7 +73,6 @@ public class SysUserImportListener extends AnalysisEventListener<SysUserImportVo
                 ValidatorUtils.validate(user);
                 userService.checkUserAllowed(user.getUserId());
                 userService.checkUserDataScope(user.getUserId());
-                user.setUpdateBy(operUserId);
                 userService.updateUser(user);
                 successNum++;
                 successMsg.append("<br/>").append(successNum).append("、账号 ").append(user.getUserName()).append(" 更新成功");

@@ -11,42 +11,21 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
 
-/**
- * 用户信息宽对象 sys_user
- *
- * @author Lion Li
- * @date 2025-12-03
- */
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @TableName(value="sys_user",autoResultMap=true)
 public class SysUser extends BaseEntity {
 
-    /**
-     * 用户ID
-     */
     @TableId(value = "user_id")
     private Long userId;
 
-    /**
-     * 用户账号
-     */
     private String userName;
 
-    /**
-     * 用户昵称
-     */
     private String nickName;
 
-    /**
-     * 邮箱
-     */
     private String email;
 
-    /**
-     * 手机
-     */
     private String phonenumber;
 
     /**
@@ -59,9 +38,6 @@ public class SysUser extends BaseEntity {
      */
     private Long avatar;
 
-    /**
-     * 密码
-     */
     @TableField(
         insertStrategy = FieldStrategy.NOT_EMPTY,
         updateStrategy = FieldStrategy.NOT_EMPTY,
