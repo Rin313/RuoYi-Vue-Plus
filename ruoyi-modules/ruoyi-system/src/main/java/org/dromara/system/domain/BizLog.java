@@ -15,14 +15,11 @@ public class BizLog {
 
     @TableId
     private Long id;
-    /**
-     * 可记忆的业务标识
-     */
-    private String bizCode;
+    //业务中文标识
     private String bizType;
-    /**
-     * [{"asset_name","amount","before","after"},]
-     */
+    //可灵活根据业务需求，绑定一些id、日期、符号，可用于条件、状态的判断
+    private String bizKey;
+    //[{"asset_name","amount","before","after"},]
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Map<String,Object>> assetLog;
 

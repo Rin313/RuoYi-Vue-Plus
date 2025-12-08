@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.dromara.common.core.enums.BizRule;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -106,32 +105,32 @@ public class BizLogService {
         }
         throw new BizException("系统繁忙，请稍后重试");
     }
-    //根据枚举修改资产
-    public void executeRule(Long userId, BizRule rule) {
-        if (!checkLimit(userId, rule))
-            throw new BizException("已达到限制次数");
-        updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule());
-    }
-    public void executeRule(Long userId, BizRule rule,Date creatTime) {
-        if (!checkLimit(userId, rule))
-            throw new BizException("已达到限制次数");
-        updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule(),creatTime);
-    }
-    public boolean checkLimit(Long userId, BizRule rule) {
-        if ("NONE".equals(rule.getLimitType())) return true;
-        Date now = new Date();
-        Date startTime = switch (rule.getLimitType()) {
-            case "DAY"   -> DateUtil.beginOfDay(now);
-            case "WEEK"  -> DateUtil.beginOfWeek(now);
-            case "MONTH" -> DateUtil.beginOfMonth(now);
-            default      -> null;  // ALL
-        };
-        return bizLogMapper.selectCount(Wrappers.<BizLog>lambdaQuery()
-            .eq(BizLog::getCreateBy, userId)
-            .eq(BizLog::getBizCode, rule.getBizCode())
-            .ge(startTime != null, BizLog::getCreateTime, startTime)
-        ) < rule.getLimit();
-    }
+    // //根据枚举修改资产
+    // public void executeRule(Long userId, BizRule rule) {
+    //     if (!checkLimit(userId, rule))
+    //         throw new BizException("已达到限制次数");
+    //     updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule());
+    // }
+    // public void executeRule(Long userId, BizRule rule,Date creatTime) {
+    //     if (!checkLimit(userId, rule))
+    //         throw new BizException("已达到限制次数");
+    //     updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule(),creatTime);
+    // }
+    // public boolean checkLimit(Long userId, BizRule rule) {
+    //     if ("NONE".equals(rule.getLimitType())) return true;
+    //     Date now = new Date();
+    //     Date startTime = switch (rule.getLimitType()) {
+    //         case "DAY"   -> DateUtil.beginOfDay(now);
+    //         case "WEEK"  -> DateUtil.beginOfWeek(now);
+    //         case "MONTH" -> DateUtil.beginOfMonth(now);
+    //         default      -> null;  // ALL
+    //     };
+    //     return bizLogMapper.selectCount(Wrappers.<BizLog>lambdaQuery()
+    //         .eq(BizLog::getCreateBy, userId)
+    //         .eq(BizLog::getBizCode, rule.getBizCode())
+    //         .ge(startTime != null, BizLog::getCreateTime, startTime)
+    //     ) < rule.getLimit();
+    // }
     
     // private final BizLogMapper baseMapper;
     // public IPage<BizLogVo> selectPage(BizLogQueryBo bo, PageQuery pageQuery) {
