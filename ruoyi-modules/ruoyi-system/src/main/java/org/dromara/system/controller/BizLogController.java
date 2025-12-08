@@ -31,7 +31,8 @@ public class BizLogController {
     @SaCheckPermission("system:BizLog:list")
     @GetMapping("/list")
     public IPage<BizLogVo> list(BizLogQueryBo bo, PageQuery pageQuery) {
-        return BizLogService.selectPage(bo, pageQuery);
+        return null;
+        //return BizLogService.selectPage(bo, pageQuery);
     }
     //现在我需要什么数据表？商品表？业务表？如何将流水变化应用到项目的各个模块
     // @SaCheckPermission("system:chapter:add")

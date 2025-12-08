@@ -8,9 +8,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum BizRule {//要想不堆叠枚举，就不得不引入配置用的JSON，才能灵活设置签到第几天获得什么，连续签到几天获得什么之类的。
-    SIGN("sign","签到",1,"DAY",Map.of("gold",10)),
+    SIGN("sign","签到",1,"DAY"),
     SIGN_STREAK("sign_steak","连续签到",1,"DAY",Map.of());
-    //可记忆的业务的唯一标识
+    //可记忆的业务标识
     private String bizCode;
     //业务类型
     private String bizType;

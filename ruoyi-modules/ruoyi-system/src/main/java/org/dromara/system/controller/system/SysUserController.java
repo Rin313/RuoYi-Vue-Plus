@@ -7,6 +7,7 @@ import cn.hutool.crypto.digest.BCrypt;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.SystemConstants;
+import org.dromara.common.core.domain.R;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StreamUtils;
@@ -37,6 +38,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 用户信息
@@ -51,22 +53,42 @@ public class SysUserController {
 
     private final SysUserService userService;
     private final SysRoleService roleService;
-    /**
-     * 签到
+
+     /**
+     * 获取签到首页信息
+     * 返回：{cycleStart, todayIndex, isSignedToday, calendar: {1:true, 2:false...}, streakDay, claimedStreaks}
      */
-    @PostMapping("/sign")
+    @GetMapping("/info")
+    public Map<String, Object> getSignInfo() {
+        return userService.getSignInfo(LoginHelper.getUserId());
+    }
+
+    /**
+     * 每日签到
+     */
+    @PostMapping("/do")
     public void sign() {
-        userService.sign();
+        userService.sign(LoginHelper.getUserId());
     }
 
     /**
      * 补签
-     *
-     * @param date 补签日期，格式：yyyy-MM-dd
+     * @param day 周期内的第几天 (1-30)
      */
-    @PostMapping("/retroSign")
-    public void retroSign(@RequestParam LocalDate date) {
-        userService.retroSign(date);
+    @PostMapping("/resign")
+    public void resign(Integer day) {
+        if (day == null) throw new BizException("参数错误");
+        userService.resign(LoginHelper.getUserId(), day);
+    }
+
+    /**
+     * 领取连续签到奖励
+     * @param days 连续天数，如 3, 7, 30
+     */
+    @PostMapping("/streak")
+    public void claimStreak(Integer days) {
+        if (days == null) throw new BizException("参数错误");
+        userService.claimStreakReward(LoginHelper.getUserId(), days);
     }
     /**
      * 记录用户分享

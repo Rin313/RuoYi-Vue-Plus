@@ -1,6 +1,5 @@
-* 当需要确认“是否有数据被实际修改”来决定下一步流程（如乐观锁、扣库存），才使用int返回值(受影响的行数)，insert和常规的update/delete一般直接调用方法。
+* 当需要确认“是否有数据被实际修改”来决定下一步流程（如乐观锁、扣库存），才使用int返回值(受影响的行数)，insert和常规的update/delete一般直接调用
 * 只使用分页查询（具体说明待详写）
-
 
 你的问题非常典型，反映了资产系统设计中常见的困惑。我来为你提供一个优雅的解决方案。
 
@@ -127,28 +126,28 @@ public class AssetService {
     public AssetTransactionDTO changeAsset(AssetChangeRequest request) {
         // 1. 参数验证
         validateRequest(request);
-      
+    
         // 2. 生成幂等性ID
         String transactionNo = generateTransactionNo(request);
-      
+    
         // 3. 检查是否已处理（幂等性）
         AssetTransaction exist = transactionMapper.selectByTransactionNo(transactionNo);
         if (exist != null) {
             return convertToDTO(exist);
         }
-      
+    
         // 4. 获取业务规则
         BusinessRule rule = ruleService.getRule(request.getBusinessType());
         if (rule == null) {
             throw new BusinessException("业务规则未配置");
         }
-      
+    
         // 5. 验证业务规则（频次限制、条件等）
         ruleService.validateRule(rule, request.getUserId(), request.getExtParams());
-      
+    
         // 6. 资产变动（使用乐观锁）
         AssetAccount account = getOrCreateAccount(request.getUserId(), rule.getAssetType());
-      
+    
         BigDecimal newBalance;
         if (rule.getChangeType() == ChangeType.INCOME) {
             newBalance = account.getBalance().add(rule.getAmount());
@@ -158,24 +157,24 @@ public class AssetService {
                 throw new BusinessException("余额不足");
             }
         }
-      
+    
         int updated = accountMapper.updateBalance(
             account.getId(), 
             newBalance, 
             account.getVersion()
         );
-      
+    
         if (updated == 0) {
             throw new ConcurrentException("资产变更冲突，请重试");
         }
-      
+    
         // 7. 记录流水
         AssetTransaction transaction = createTransaction(request, transactionNo, rule, account);
         transactionMapper.insert(transaction);
-      
+    
         // 8. 发布资产变动事件（异步处理后续逻辑）
         eventPublisher.publishEvent(new AssetChangedEvent(transaction));
-      
+    
         return convertToDTO(transaction);
     }
   
@@ -232,7 +231,7 @@ public class BusinessRuleService {
         if (!rule.isActive()) {
             throw new BusinessException("该业务暂不可用");
         }
-      
+    
         // 2. 频次限制验证
         if (rule.getLimitType() != null) {
             Integer count = queryUserBusinessCount(userId, rule.getBusinessType(), rule.getLimitType());
@@ -240,7 +239,7 @@ public class BusinessRuleService {
                 throw new BusinessException("今日次数已用完");
             }
         }
-      
+    
         // 3. 自定义条件验证
         if (rule.getConditions() != null) {
             validateCustomConditions(rule.getConditions(), userId, extParams);
@@ -287,9 +286,9 @@ public class TaskController {
         AssetChangeRequest request = new AssetChangeRequest();
         request.setUserId(userId);
         request.setBusinessType("DAILY_SIGNIN");
-      
+    
         AssetTransactionDTO result = assetService.changeAsset(request);
-      
+    
         return ApiResponse.success(result);
     }
   
@@ -303,9 +302,9 @@ public class TaskController {
         request.setUserId(userId);
         request.setBusinessType("TASK_READING");
         request.setExtParams(Map.of("readingMinutes", minutes));
-      
+    
         AssetTransactionDTO result = assetService.changeAsset(request);
-      
+    
         return ApiResponse.success(result);
     }
 }
@@ -328,9 +327,9 @@ public class ConsumeController {
         request.setModule("NOVEL");
         request.setTargetId(chapterId);
         request.setTargetType("CHAPTER");
-      
+    
         AssetTransactionDTO result = assetService.consumeAsset(request);
-      
+    
         return ApiResponse.success(result);
     }
 }

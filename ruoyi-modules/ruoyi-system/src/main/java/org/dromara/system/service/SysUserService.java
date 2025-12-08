@@ -3,9 +3,11 @@ package org.dromara.system.service;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.convert.Convert;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -13,7 +15,15 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
@@ -21,11 +31,14 @@ import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.enums.BizRule;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.*;
+import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.satoken.utils.LoginHelper;
+import org.dromara.system.domain.BizLog;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.SysUserRole;
 import org.dromara.system.domain.bo.SysUserBo;
+import org.dromara.system.domain.vo.SignStatusVo;
 import org.dromara.system.domain.vo.SysRoleVo;
 import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
@@ -36,6 +49,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +69,9 @@ public class SysUserService {
     private final SysRoleMapper roleMapper;
     private final SysUserRoleMapper userRoleMapper;
     private final BizLogService bizLogService;
+    private final BizLogMapper bizLogMapper;
     private final SysConfigService configService;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public IPage<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
         return baseMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
@@ -617,6 +635,8 @@ public class SysUserService {
     }
 
     public void sign() {
+        Map<String,Object> map=JsonUtils.parseMap(configService.selectConfigByKey("sign_rewards"));
+        
         bizLogService.executeRule(LoginHelper.getUserId(),BizRule.SIGN);
     }
     /**
@@ -662,5 +682,222 @@ public class SysUserService {
         }
 
         return consecutiveDays;
+    }
+    // 配置Key
+    private static final String KEY_DAILY_REWARD = "sign.daily.rewards";
+    private static final String KEY_STREAK_REWARD = "sign.streak.rewards";
+
+    /**
+     * 核心接口：获取签到面板信息
+     */
+    public Map<String, Object> getSignInfo(Long userId) {
+        // 1. 获取所有签到日志（按时间正序）
+        List<BizLog> logs = getSignLogs(userId);
+        
+        // 2. 计算周期开始时间
+        Date cycleStart = calculateCycleStart(logs);
+        
+        // 3. 构建30天日历状态
+        Map<Integer, Boolean> calendar = new HashMap<>();
+        // 今天的索引（0-29）
+        long daysBetween = DateUtil.betweenDay(cycleStart, new Date(), true);
+        // 如果超过29天（第31天），说明其实今天是新周期的第一天，但用户还没签到
+        if (daysBetween >= 30) {
+            cycleStart = new Date(); // 逻辑重置
+            daysBetween = 0;
+            calendar.clear();
+        }
+
+        // 填充已签到的天数
+        int streak = 0; // 连续签到天数计算
+        boolean isBroken = false;
+        
+        // 这种算法虽然O(N)但很直观
+        for (int i = 0; i < 30; i++) {
+            Date targetDay = DateUtil.offsetDay(cycleStart, i);
+            boolean signed = isSignedOnDate(logs, targetDay);
+            calendar.put(i + 1, signed);
+        }
+
+        // 计算连续签到（截至到昨天/今天）
+        // 这种简单逻辑直接查最近的连续记录即可，为了快速，这里简化处理：
+        // 实际业务建议在Redis存一下streak，或者像下面这样倒序查log
+        int currentStreak = calculateStreak(logs, new Date());
+
+        // 4. 连续签到奖励领取状态
+        List<String> claimedStreaks = getClaimedStreakLogs(userId, cycleStart);
+
+        return Map.of(
+            "cycleStart", cycleStart,
+            "todayIndex", daysBetween + 1, // 第几天
+            "isSignedToday", calendar.get((int)daysBetween + 1),
+            "calendar", calendar,
+            "streakDay", currentStreak,
+            "claimedStreaks", claimedStreaks
+        );
+    }
+
+    /**
+     * 动作：签到
+     */
+    @Transactional
+    public void sign(Long userId) {
+        // 1. 检查今日是否已签（利用BizRule的LIMIT=1限制）
+        // 实际上checkLimit只管次数，不管是不是周期内的，所以还是得配合BizLogService
+        if (!bizLogService.checkLimit(userId, BizRule.SIGN)) {
+            throw new BizException("今天已经签到过了");
+        }
+
+        // 2. 计算今天是周期的第几天
+        List<BizLog> logs = getSignLogs(userId);
+        Date cycleStart = calculateCycleStart(logs);
+        long dayIndex = DateUtil.betweenDay(cycleStart, new Date(), true) + 1; // 1-30
+
+        if (dayIndex > 30) {
+            // 新周期第一天
+            dayIndex = 1;
+        }
+
+        // 3. 拿奖励配置
+        Map<String, Integer> reward = getRewardConfig(KEY_DAILY_REWARD, String.valueOf(dayIndex));
+        if (reward == null) reward = Map.of("coin", 10); // 兜底低保
+
+        // 4. 执行发奖 (checkLimit通过后)
+        bizLogService.execute(userId, BizRule.SIGN.getBizCode(), BizRule.SIGN.getBizType(), reward);
+    }
+
+    /**
+     * 动作：补签
+     * @param dayIndex 周期内的第几天 (1-30)
+     */
+    @Transactional
+    public void resign(Long userId, int dayIndex) {
+        // 1. 算出那一天是几号
+        List<BizLog> logs = getSignLogs(userId);
+        Date cycleStart = calculateCycleStart(logs);
+        // 如果当前是新周期第一天且未签到，cycleStart是旧的，这里逻辑会稍微复杂。
+        // 为了“莽撞”，我们假设补签只能补当前显示周期内的。
+        if (DateUtil.betweenDay(cycleStart, new Date(), true) >= 30) {
+            // 既然当前周期结束了，你补哪门子签？直接让前端刷新开启新周期
+            throw new BizException("当前周期已结束，请先签到开启新周期");
+        }
+
+        Date targetDate = DateUtil.offsetDay(cycleStart, dayIndex - 1);
+        if (DateUtil.isSameDay(targetDate, new Date())) throw new BizException("今天请直接签到");
+        if (targetDate.after(new Date())) throw new BizException("未来无法补签");
+
+        // 2. 检查那天是否签过
+        if (isSignedOnDate(logs, targetDate)) {
+            throw new BizException("那天已经签过了");
+        }
+
+        // 3. 拿那天的奖励
+        Map<String, Integer> reward = getRewardConfig(KEY_DAILY_REWARD, String.valueOf(dayIndex));
+        
+        // 4. 执行补签（扣钱+插日志+发奖）
+        bizLogService.executeResign(userId, targetDate, reward == null ? Map.of("coin", 10) : reward);
+    }
+
+    /**
+     * 动作：领取连签奖励
+     * @param targetStreak 目标连签天数，如 7, 14, 30
+     */
+    @Transactional
+    public void claimStreakReward(Long userId, int targetStreak) {
+        // 1. 检查是否已领取
+        Date cycleStart = calculateCycleStart(getSignLogs(userId));
+        Long count = bizLogMapper.selectCount(new LambdaQueryWrapper<BizLog>()
+            .eq(BizLog::getCreateBy, userId)
+            .eq(BizLog::getBizCode, BizRule.SIGN_STREAK.getBizCode())
+            .eq(BizLog::getBizType, String.valueOf(targetStreak)) // bizType存天数
+            .ge(BizLog::getCreateTime, cycleStart)); // 必须是本周期内的
+        
+        if (count > 0) throw new BizException("本周期该奖励已领取");
+
+        // 2. 检查连签是否达标
+        int currentStreak = calculateStreak(getSignLogs(userId), new Date());
+        if (currentStreak < targetStreak) throw new BizException("连续签到天数不足");
+
+        // 3. 发奖
+        Map<String, Integer> reward = getRewardConfig(KEY_STREAK_REWARD, String.valueOf(targetStreak));
+        if (reward == null) throw new BizException("该天数没有配置奖励");
+
+        // 这里bizType存天数 "7", "14"
+        bizLogService.execute(userId, BizRule.SIGN_STREAK.getBizCode(), String.valueOf(targetStreak), reward);
+    }
+
+    // ================== 私有 脏逻辑区 ==================
+
+    private List<BizLog> getSignLogs(Long userId) {
+        return bizLogMapper.selectList(new LambdaQueryWrapper<BizLog>()
+            .eq(BizLog::getCreateBy, userId)
+            .eq(BizLog::getBizCode, BizRule.SIGN.getBizCode())
+            .orderByAsc(BizLog::getCreateTime)); // 按时间正序，方便推算周期
+    }
+
+    // 核心算法：寻找当前30天周期的起点
+    private Date calculateCycleStart(List<BizLog> logs) {
+        if (logs.isEmpty()) return new Date(); // 没签过，今天就是起点
+
+        Date start = logs.get(0).getCreateTime();
+        for (int i = 1; i < logs.size(); i++) {
+            Date current = logs.get(i).getCreateTime();
+            // 如果某次签到距离上一个起点超过30天，它就是新的起点
+            if (DateUtil.betweenDay(start, current, true) >= 30) {
+                start = current;
+            }
+        }
+        
+        // 检查这个起点是不是太老了（比如上次玩是半年前）
+        // 如果起点距离今天超过30天，说明周期已过期，今天（或者最近一次签到）应当是新起点
+        if (DateUtil.betweenDay(start, new Date(), true) >= 30) {
+            return new Date(); // 视为新周期开始
+        }
+        return start;
+    }
+
+    private boolean isSignedOnDate(List<BizLog> logs, Date date) {
+        for (BizLog log : logs) {
+            if (DateUtil.isSameDay(log.getCreateTime(), date)) return true;
+        }
+        return false;
+    }
+
+    private int calculateStreak(List<BizLog> logs, Date baseDate) {
+        // 简单粗暴：从昨天开始往前倒推
+        int streak = 0;
+        // 如果今天签了，streak至少是1
+        if (isSignedOnDate(logs, baseDate)) streak++;
+        
+        Date checkDay = DateUtil.offsetDay(baseDate, -1);
+        while (true) {
+            if (isSignedOnDate(logs, checkDay)) {
+                streak++;
+                checkDay = DateUtil.offsetDay(checkDay, -1);
+            } else {
+                break;
+            }
+        }
+        return streak;
+    }
+
+    private List<String> getClaimedStreakLogs(Long userId, Date cycleStart) {
+        List<BizLog> logs = bizLogMapper.selectList(new LambdaQueryWrapper<BizLog>()
+            .eq(BizLog::getCreateBy, userId)
+            .eq(BizLog::getBizCode, BizRule.SIGN_STREAK.getBizCode())
+            .ge(BizLog::getCreateTime, cycleStart));
+        return logs.stream().map(BizLog::getBizType).toList();
+    }
+
+    // 解析配置 JSON -> Map<Day, Rewards> -> Map<Asset, Count>
+    // 假设配置格式: {"1": {"coin": 100}, "3": {"gold": 10}}
+    @SneakyThrows
+    private Map<String, Integer> getRewardConfig(String configKey, String subKey) {
+        String json = configService.selectConfigByKey(configKey);
+        if (StrUtil.isBlank(json)) return null;
+        JsonNode root = objectMapper.readTree(json);
+        JsonNode node = root.get(subKey);
+        if (node == null) return null;
+        return objectMapper.convertValue(node, new TypeReference<Map<String, Integer>>() {});
     }
 }

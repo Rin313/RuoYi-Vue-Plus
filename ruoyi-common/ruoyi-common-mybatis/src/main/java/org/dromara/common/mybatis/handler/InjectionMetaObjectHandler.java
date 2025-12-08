@@ -13,19 +13,8 @@ import org.dromara.common.satoken.utils.LoginHelper;
 
 import java.util.Date;
 
-/**
- * MP注入处理器
- *
- * @author Lion Li
- * @date 2021/4/25
- */
 @Slf4j
 public class InjectionMetaObjectHandler implements MetaObjectHandler {
-
-    /**
-     * 如果用户不存在默认注入-1代表无用户
-     */
-    private static final Long DEFAULT_USER_ID = -1L;
 
     /**
      * 插入填充方法，用于在插入数据时自动填充实体对象中的创建时间、更新时间、创建人、更新人等信息
@@ -48,10 +37,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                         Long userId = loginUser.getUserId();
                         // 填充创建人
                         baseEntity.setCreateBy(userId);
-                    } else {
-                        // 填充创建人、更新人
-                        baseEntity.setCreateBy(DEFAULT_USER_ID);
-                    }
+                    } 
                 }
             } else {
                 Date date = new Date();

@@ -17,7 +17,7 @@ public class Chapter{
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id")
+    @TableId
     private Long id;
 
     /**

@@ -25,20 +25,12 @@ public class BizLogVo implements Serializable {
 
     @Serial
     private static final long serialVersionUID = 1L;
-
     /**
      * [{"asset_name","amount","before","after"},]
      */
     @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Map<String,Object>> assetLog;
-
-    /**
-     * 业务类型
-     */
     private String bizType;
-
     private Long createBy;
     private Date createTime;
-
-
 }

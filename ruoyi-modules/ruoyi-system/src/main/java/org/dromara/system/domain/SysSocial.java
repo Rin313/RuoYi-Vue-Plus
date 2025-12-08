@@ -21,7 +21,7 @@ public class SysSocial extends BaseEntity {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @TableId(value = "id")
+    @TableId
     private Long id;
 
     /**

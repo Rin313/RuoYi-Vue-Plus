@@ -19,6 +19,7 @@ import cn.hutool.core.date.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.dromara.system.domain.bo.BizLogQueryBo;
 import org.dromara.system.domain.vo.BizLogVo;
 import org.dromara.system.domain.BizLog;
@@ -104,6 +105,25 @@ public class BizLogService {
         log.setAssetLog(assetLog);
         bizLogMapper.insert(log);
     }
+    //补签专用，用于不创建额外字段
+    @Transactional(rollbackFor = Exception.class)
+    public void executeResign(Long userId, Date targetDate, Map<String, Integer> rewards) {
+        // 1. 扣除补签卡或货币（假设补签一次100金币，这里写死，你可以做成配置）
+        updateAssets(userId, "resign_cost", "COST", Map.of("coin", -100));
+        // 注意：补签算作签到，bizCode用SIGN
+        updateAssets(userId, BizRule.SIGN.getBizCode(), BizRule.SIGN.getBizType(), rewards);
+        // 3. 【极度莽撞】刚插进去是当前时间，立马把上一条（刚插的）更新为指定时间
+        BizLog lastLog = bizLogMapper.selectOne(new LambdaQueryWrapper<BizLog>()
+                .eq(BizLog::getCreateBy, userId)
+                .eq(BizLog::getBizCode, BizRule.SIGN.getBizCode())
+                .orderByDesc(BizLog::getId)
+                .last("LIMIT 1"));
+        if (lastLog != null) {
+            lastLog.setCreateTime(targetDate); // 修改为历史时间
+            bizLogMapper.updateById(lastLog);
+        }
+    }
+
     // private final BizLogMapper baseMapper;
     // public IPage<BizLogVo> selectPage(BizLogQueryBo bo, PageQuery pageQuery) {
     //     LambdaQueryWrapper<BizLog> lqw = Wrappers.lambdaQuery();
