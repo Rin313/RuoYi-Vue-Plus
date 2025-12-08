@@ -80,26 +80,26 @@ public class PasswordAuthStrategy implements IAuthStrategy {
         else throw new BizException("无效输入");
         String inputValue=StringUtils.firstNonBlank(sysUser.getUserName(),sysUser.getEmail(),sysUser.getPhonenumber());
         LoginUser loginUser;
-        if(loginBody.getRegister()){
-            if (!configService.selectRegisterEnabled())
-                throw new BizException("当前系统已关闭注册");
-            if(ObjectUtil.isNotNull(userVo))
-                throw new BizException("用户已存在");
-            sysUser.setNickName("用户_"+RandomUtil.randomString(8));
-            sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
-            sysUser.setInviteCode(userService.getUniqueInviteCode());
-            if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
-                SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
-                if(ObjectUtils.isEmpty(parent))
-                    throw new UserException("user.invitecode.unknown");
-                sysUser.setParentId(parent.getUserId());
-            }
-            SysUser t = MapstructUtils.convert(sysUser, SysUser.class);
-            userMapper.insert(t);
-            loginService.recordLogininfor(inputValue, Constants.REGISTER, MessageUtils.message("user.register.success"));
-            loginUser = loginService.buildLoginUser(userMapper.selectVoById(t.getUserId()));
-        }
-        else{
+        // if(loginBody.getRegister()){
+        //     if (!configService.selectRegisterEnabled())
+        //         throw new BizException("当前系统已关闭注册");
+        //     if(ObjectUtil.isNotNull(userVo))
+        //         throw new BizException("用户已存在");
+        //     sysUser.setNickName("用户_"+RandomUtil.randomString(8));
+        //     sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
+        //     sysUser.setInviteCode(userService.getUniqueInviteCode());
+        //     if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
+        //         SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
+        //         if(ObjectUtils.isEmpty(parent))
+        //             throw new UserException("user.invitecode.unknown");
+        //         sysUser.setParentId(parent.getUserId());
+        //     }
+        //     SysUser t = MapstructUtils.convert(sysUser, SysUser.class);
+        //     userMapper.insert(t);
+        //     loginService.recordLogininfor(inputValue, Constants.REGISTER, MessageUtils.message("user.register.success"));
+        //     loginUser = loginService.buildLoginUser(userMapper.selectVoById(t.getUserId()));
+        // }
+        //else{
             if (ObjectUtil.isNull(userVo)) {
                 log.info("登录用户：{} 不存在.", inputValue);
                 throw new BizException("用户不存在或密码错误");
@@ -110,13 +110,13 @@ public class PasswordAuthStrategy implements IAuthStrategy {
             loginService.checkLogin(LoginType.PASSWORD, inputValue, () -> !BCrypt.checkpw(loginBody.getPassword(), userVo.getPassword()));
             // 此处可根据登录用户的数据不同 自行创建 loginUser
             loginUser = loginService.buildLoginUser(userVo);
-        }
+        //}
         loginUser.setClientKey(AddressUtils.getClientType());
         SaLoginParameter model = new SaLoginParameter();
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(1800);
-        model.setActiveTimeout(1800);
+        model.setTimeout(72000);
+        model.setActiveTimeout(72000);
         // 生成token
         LoginHelper.login(loginUser, model);
 

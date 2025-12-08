@@ -627,41 +627,6 @@ public class SysUserService {
 
     // ================= 签到视图 =================
 
-    public SignInViewVo getSignInView(Long userId) {
-        LocalDate today = LocalDate.now();
-        Set<LocalDate> signedDates = getSignedDateSet(userId);
-        boolean isSignedToday = signedDates.contains(today);
-
-        CycleInfo cycle = getCycleInfo(signedDates, isSignedToday);
-
-        SignInViewVo view = new SignInViewVo();
-        view.setSignedToday(isSignedToday);
-        view.setSignedDays(cycle.getSignedDaysInCycle());
-        view.setCurrentStreak(cycle.getCurrentStreak());
-        view.setCycleStartDate(Optional.ofNullable(cycle.getCycleStartDate())
-                .map(LocalDate::toString).orElse(null));
-
-        view.setDailyRewards(buildDailyRewards(cycle.getSignedDaysInCycle()));
-        view.setRetroDates(buildRetroDates(cycle, signedDates, today));
-        view.setStreakRewards(buildStreakRewards(userId, cycle));
-
-        return view;
-    }
-
-    private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(int signedDays) {
-        List<SignInViewVo.DailyRewardInfo> list = new ArrayList<>();
-        int displayDays = Math.max(signedDays + 3, 7);
-
-        for (int day = 1; day <= displayDays; day++) {
-            SignInViewVo.DailyRewardInfo info = new SignInViewVo.DailyRewardInfo();
-            info.setDay(day);
-            info.setReward(getDailyReward(day));
-            info.setSigned(day <= signedDays);
-            list.add(info);
-        }
-        return list;
-    }
-
     private List<String> buildRetroDates(CycleInfo cycle, Set<LocalDate> signedDates, LocalDate today) {
         if (cycle.getCycleStartDate() == null) {
             return List.of();
@@ -683,13 +648,13 @@ public class SysUserService {
         String cycleKey = Optional.ofNullable(cycle.getCycleStartDate())
                 .map(LocalDate::toString).orElse("none");
 
-        // 查询本周期已领取的奖励 (bizCode格式: 周期日期:天数)
+        // 查询本周期已领取的奖励 (bizKey格式: 周期日期:天数)
         Set<Integer> claimed = bizLogMapper.selectList(Wrappers.<BizLog>lambdaQuery()
                 .eq(BizLog::getCreateBy, userId)
                 .eq(BizLog::getBizType, BIZ_TYPE_STREAK)
-                .likeRight(BizLog::getBizCode, cycleKey + ":")
+                .likeRight(BizLog::getBizKey, cycleKey + ":")
         ).stream()
-                .map(log -> NumberUtil.parseInt(StrUtil.subAfter(log.getBizCode(), ":", false)))
+                .map(log -> NumberUtil.parseInt(StrUtil.subAfter(log.getBizKey(), ":", false)))
                 .collect(Collectors.toSet());
 
         int streak = cycle.getCurrentStreak();
@@ -716,7 +681,7 @@ public class SysUserService {
         return list;
     }
 
-    // ================= 核心方法 =================
+    // ================= 核心方法（修复后）=================
 
     @Transactional(rollbackFor = Exception.class)
     public void doSign(Long userId) {
@@ -728,11 +693,68 @@ public class SysUserService {
         }
 
         CycleInfo cycle = getCycleInfo(signedDates, false);
-        int todayIndex = cycle.getSignedDaysInCycle() + 1;
+        
+        // 【修复】基于日期差计算，而非累计签到天数
+        int todayIndex;
+        if (cycle.getCycleStartDate() == null) {
+            // 新周期，今天是第1天
+            todayIndex = 1;
+        } else {
+            // 周期内的自然日序号
+            todayIndex = (int) ChronoUnit.DAYS.between(cycle.getCycleStartDate(), today) + 1;
+        }
 
         Map<String, Integer> reward = getDailyReward(todayIndex);
-        // bizCode=日期, bizType=中文标识
         bizLogService.updateAssets(userId, today.toString(), BIZ_TYPE_SIGN, reward);
+    }
+
+    // ================= 视图构建（修复后）=================
+
+    public SignInViewVo getSignInView(Long userId) {
+        LocalDate today = LocalDate.now();
+        Set<LocalDate> signedDates = getSignedDateSet(userId);
+        boolean isSignedToday = signedDates.contains(today);
+
+        CycleInfo cycle = getCycleInfo(signedDates, isSignedToday);
+
+        SignInViewVo view = new SignInViewVo();
+        view.setSignedToday(isSignedToday);
+        view.setSignedDays(cycle.getSignedDaysInCycle());
+        view.setCurrentStreak(cycle.getCurrentStreak());
+        view.setCycleStartDate(Optional.ofNullable(cycle.getCycleStartDate())
+                .map(LocalDate::toString).orElse(null));
+
+        // 【修复】传入完整参数
+        view.setDailyRewards(buildDailyRewards(cycle.getCycleStartDate(), signedDates, today));
+        view.setRetroDates(buildRetroDates(cycle, signedDates, today));
+        view.setStreakRewards(buildStreakRewards(userId, cycle));
+
+        return view;
+    }
+
+    /**
+     * 【修复】根据实际日期判断签到状态，而非简单的 day <= signedDays
+     */
+    private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(
+            LocalDate cycleStartDate, Set<LocalDate> signedDates, LocalDate today) {
+        
+        List<SignInViewVo.DailyRewardInfo> list = new ArrayList<>();
+        
+        // 新周期：以今天作为起点展示预览
+        LocalDate effectiveStart = (cycleStartDate != null) ? cycleStartDate : today;
+        int currentDayIndex = (int) ChronoUnit.DAYS.between(effectiveStart, today) + 1;
+        int displayDays = Math.max(currentDayIndex + 3, 7);
+
+        for (int day = 1; day <= displayDays; day++) {
+            LocalDate dateForDay = effectiveStart.plusDays(day - 1);
+            
+            SignInViewVo.DailyRewardInfo info = new SignInViewVo.DailyRewardInfo();
+            info.setDay(day);
+            info.setReward(getDailyReward(day));
+            info.setSigned(signedDates.contains(dateForDay));
+            list.add(info);
+        }
+        return list;
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -776,17 +798,17 @@ public class SysUserService {
 
         String cycleKey = Optional.ofNullable(cycle.getCycleStartDate())
                 .map(LocalDate::toString).orElse("none");
-        String bizCode = cycleKey + ":" + days;
+        String bizKey = cycleKey + ":" + days;
 
         boolean claimed = bizLogMapper.exists(Wrappers.<BizLog>lambdaQuery()
                 .eq(BizLog::getCreateBy, userId)
                 .eq(BizLog::getBizType, BIZ_TYPE_STREAK)
-                .eq(BizLog::getBizCode, bizCode));
+                .eq(BizLog::getBizKey, bizKey));
         if (claimed) {
             throw new BizException("本周期已领取该奖励");
         }
 
-        bizLogService.updateAssets(userId, bizCode, BIZ_TYPE_STREAK, toIntMap(rewardJson));
+        bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_STREAK, toIntMap(rewardJson));
     }
 
     // ================= 核心周期计算（已修复） =================
@@ -852,13 +874,13 @@ public class SysUserService {
 
     private Set<LocalDate> getSignedDateSet(Long userId) {
         return bizLogMapper.selectList(Wrappers.<BizLog>lambdaQuery()
-                .select(BizLog::getBizCode) // 直接取日期
+                .select(BizLog::getBizKey) // 直接取日期
                 .eq(BizLog::getCreateBy, userId)
                 .eq(BizLog::getBizType, BIZ_TYPE_SIGN)
                 .orderByDesc(BizLog::getCreateTime)
                 .last("LIMIT 366")
         ).stream()
-                .map(log -> LocalDate.parse(log.getBizCode()))
+                .map(log -> LocalDate.parse(log.getBizKey()))
                 .collect(Collectors.toSet());
     }
 

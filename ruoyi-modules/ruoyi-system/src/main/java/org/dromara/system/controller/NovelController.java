@@ -40,9 +40,9 @@ public class NovelController {
     private final NovelService novelService;
     
     /**
-     * 导入TXT小说
+     * 上传小说
      *
-     * @param file TXT文件
+     * @param file
      * @param tNovelSubmitBo 附加信息
      */
     @SaCheckPermission("system:novel:add")

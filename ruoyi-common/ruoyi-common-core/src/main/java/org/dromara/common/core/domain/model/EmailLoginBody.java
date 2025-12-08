@@ -1,5 +1,7 @@
 package org.dromara.common.core.domain.model;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -27,5 +29,10 @@ public class EmailLoginBody extends LoginBody {
      */
     @NotBlank(message = "{email.code.not.blank}")
     private String emailCode;
+    
+    @NotBlank(message = "{user.password.not.blank}")
+    @Length(min = 5, max = 30, message = "{user.password.length.valid}")
+//    @Pattern(regexp = RegexConstants.PASSWORD, message = "{user.password.format.valid}")
+    private String password;
 
 }

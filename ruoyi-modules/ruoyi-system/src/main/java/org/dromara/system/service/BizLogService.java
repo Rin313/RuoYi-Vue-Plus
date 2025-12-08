@@ -35,7 +35,7 @@ public class BizLogService {
     /**
      * 资产变更+保存日志（CAS乐观锁重试）
      */
-    public void updateAssets(Long userId, String bizCode, String bizType, Map<String, Integer> changes) {
+    public void updateAssets(Long userId, String bizKey, String bizType, Map<String, Integer> changes) {
         int maxRetry = 3;
         for (int i = 0; i < maxRetry; i++) {
             // 必须查最新的Version
@@ -60,7 +60,7 @@ public class BizLogService {
             int rows = sysUserMapper.updateById(user);
             if (rows > 0) {
                 BizLog log = new BizLog();
-                log.setBizCode(bizCode);
+                log.setBizKey(bizKey);
                 log.setBizType(bizType);
                 log.setAssetLog(assetLog);
                 bizLogMapper.insert(log);
@@ -70,7 +70,7 @@ public class BizLogService {
         throw new BizException("系统繁忙，请稍后重试");
     }
     //允许手动设置日志时间
-    public void updateAssets(Long userId, String bizCode, String bizType, Map<String, Integer> changes,Date createTime) {
+    public void updateAssets(Long userId, String bizKey, String bizType, Map<String, Integer> changes,Date createTime) {
         int maxRetry = 3;
         for (int i = 0; i < maxRetry; i++) {
             // 必须查最新的Version
@@ -95,7 +95,7 @@ public class BizLogService {
             int rows = sysUserMapper.updateById(user);
             if (rows > 0) {
                 BizLog log = new BizLog();
-                log.setBizCode(bizCode);
+                log.setBizKey(bizType);
                 log.setBizType(bizType);
                 log.setAssetLog(assetLog);
                 log.setCreateTime(createTime);
@@ -105,32 +105,6 @@ public class BizLogService {
         }
         throw new BizException("系统繁忙，请稍后重试");
     }
-    // //根据枚举修改资产
-    // public void executeRule(Long userId, BizRule rule) {
-    //     if (!checkLimit(userId, rule))
-    //         throw new BizException("已达到限制次数");
-    //     updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule());
-    // }
-    // public void executeRule(Long userId, BizRule rule,Date creatTime) {
-    //     if (!checkLimit(userId, rule))
-    //         throw new BizException("已达到限制次数");
-    //     updateAssets(userId, rule.getBizCode(), rule.getBizType(), rule.getAssetRule(),creatTime);
-    // }
-    // public boolean checkLimit(Long userId, BizRule rule) {
-    //     if ("NONE".equals(rule.getLimitType())) return true;
-    //     Date now = new Date();
-    //     Date startTime = switch (rule.getLimitType()) {
-    //         case "DAY"   -> DateUtil.beginOfDay(now);
-    //         case "WEEK"  -> DateUtil.beginOfWeek(now);
-    //         case "MONTH" -> DateUtil.beginOfMonth(now);
-    //         default      -> null;  // ALL
-    //     };
-    //     return bizLogMapper.selectCount(Wrappers.<BizLog>lambdaQuery()
-    //         .eq(BizLog::getCreateBy, userId)
-    //         .eq(BizLog::getBizCode, rule.getBizCode())
-    //         .ge(startTime != null, BizLog::getCreateTime, startTime)
-    //     ) < rule.getLimit();
-    // }
     
     // private final BizLogMapper baseMapper;
     // public IPage<BizLogVo> selectPage(BizLogQueryBo bo, PageQuery pageQuery) {

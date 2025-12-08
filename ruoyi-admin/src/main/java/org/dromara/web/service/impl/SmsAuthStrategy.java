@@ -3,15 +3,21 @@ package org.dromara.web.service.impl;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.dev33.satoken.stp.parameter.SaLoginParameter;
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.RandomUtil;
+import cn.hutool.crypto.digest.BCrypt;
+
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SmsLoginBody;
 import org.dromara.common.core.enums.LoginType;
+import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.exception.user.CaptchaExpireException;
 import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
@@ -24,6 +30,7 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
+import org.dromara.system.service.SysUserService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
 import org.dromara.web.service.SysLoginService;
@@ -41,6 +48,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
 
     private final SysLoginService loginService;
     private final SysUserMapper userMapper;
+    private final SysUserService userService;
 
     @Override
     public LoginVo login(String body) {
@@ -48,18 +56,43 @@ public class SmsAuthStrategy implements IAuthStrategy {
         ValidatorUtils.validate(loginBody);
         String phonenumber = loginBody.getPhonenumber();
         String smsCode = loginBody.getSmsCode();
+        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
+        LoginUser loginUser;
+        if (ObjectUtil.isNull(user)) {
+            if(!validateSmsCode(phonenumber, smsCode))
+                throw new BizException("无效的验证码");
+            SysUser sysUser=new SysUser();
+            sysUser.setPhonenumber(phonenumber);
+            sysUser.setNickName("用户_"+RandomUtil.randomString(8));
+            sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
+            sysUser.setInviteCode(userService.getUniqueInviteCode());
+            if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
+                SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
+                if(ObjectUtils.isEmpty(parent))
+                    throw new UserException("user.invitecode.unknown");
+                sysUser.setParentId(parent.getUserId());
+            }
+            userMapper.insert(sysUser);
+            loginService.recordLogininfor(phonenumber, Constants.REGISTER, MessageUtils.message("user.register.success"));
+            loginUser = loginService.buildLoginUser(userMapper.selectVoById(sysUser.getUserId()));
+            // log.info("登录用户：{} 不存在.", phonenumber);
+            // throw new UserException("user.not.exists", phonenumber);
+        } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
+            log.info("登录用户：{} 已被停用.", phonenumber);
+            throw new UserException("user.blocked", phonenumber);
+        } else{
+            loginService.checkLogin(LoginType.SMS, user.getUserName(), () -> !validateSmsCode(phonenumber, smsCode));
+            // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
+            loginUser = loginService.buildLoginUser(user);
+        }
 
-        SysUserVo user = loadUserByPhonenumber(phonenumber);
-        loginService.checkLogin(LoginType.SMS, user.getUserName(), () -> !validateSmsCode(phonenumber, smsCode));
-        // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
-        LoginUser loginUser = loginService.buildLoginUser(user);
 
         loginUser.setClientKey(AddressUtils.getClientType());
         SaLoginParameter model = new SaLoginParameter();
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
         // 例如: 后台用户30分钟过期 app用户1天过期
-        model.setTimeout(1800);
-        model.setActiveTimeout(1800);
+        model.setTimeout(72000);
+        model.setActiveTimeout(72000);
         // 生成token
         LoginHelper.login(loginUser, model);
 
@@ -80,17 +113,4 @@ public class SmsAuthStrategy implements IAuthStrategy {
         }
         return code.equals(smsCode);
     }
-
-    private SysUserVo loadUserByPhonenumber(String phonenumber) {
-        SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
-        if (ObjectUtil.isNull(user)) {
-            log.info("登录用户：{} 不存在.", phonenumber);
-            throw new UserException("user.not.exists", phonenumber);
-        } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
-            log.info("登录用户：{} 已被停用.", phonenumber);
-            throw new UserException("user.blocked", phonenumber);
-        }
-        return user;
-    }
-
 }
