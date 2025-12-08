@@ -3,11 +3,6 @@ package org.dromara.common.core.enums;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 登录类型
- *
- * @author Lion Li
- */
 @Getter
 @AllArgsConstructor
 public enum LoginType {

@@ -1,6 +1,5 @@
 package org.dromara.system.domain;
 
-import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import com.baomidou.mybatisplus.annotation.*;
 import com.baomidou.mybatisplus.extension.handlers.JacksonTypeHandler;
@@ -10,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @NoArgsConstructor
@@ -55,52 +55,17 @@ public class SysUser extends BaseEntity {
      */
     @TableLogic
     private String delFlag;
-
-    /**
-     * 最后登录IP
-     */
     private String loginIp;
-
-    /**
-     * 最后登录时间
-     */
     private Date loginDate;
-
-    /**
-     * 备注
-     */
     private String remark;
-
     /**
      * 本人邀请码(6位)
      */
     private String inviteCode;
-
     /**
      * 邀请人
      */
     private Long parentId;
-
-    /**
-     * 现金余额
-     */
-    private Long balance;
-
-    /**
-     * 佣金余额
-     */
-    private Long commissionBalance;
-
-    /**
-     * 书币余额
-     */
-    private Long coinBalance;
-
-    /**
-     * 积分余额
-     */
-    private Long pointBalance;
-
     /**
      * 邀请码分享次数
      */
@@ -108,10 +73,16 @@ public class SysUser extends BaseEntity {
     /**
      * 签到记录
      */
-     @TableField(typeHandler = JacksonTypeHandler.class)
+    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<String> signRecord;
-
-    public boolean isSuperAdmin() {
-        return SystemConstants.SUPER_ADMIN_ID.equals(this.userId);
-    }
+    /**
+     * {"asset_name":count,}
+     */
+    @TableField(typeHandler = JacksonTypeHandler.class)
+    private Map<String,Integer> assets;
+    /**
+     * 乐观锁
+     */
+    @Version
+    private Integer version;
 }

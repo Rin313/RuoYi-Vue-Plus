@@ -72,24 +72,4 @@ public class ProfileUserVo implements Serializable {
      */
     private Long parentId;
 
-    /**
-     * 现金余额
-     */
-    private Long balance;
-
-    /**
-     * 佣金余额
-     */
-    private Long commissionBalance;
-
-    /**
-     * 书币余额
-     */
-    private Long coinBalance;
-
-    /**
-     * 积分余额
-     */
-    private Long pointBalance;
-
 }

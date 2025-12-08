@@ -11,7 +11,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
-import org.dromara.common.core.enums.AssetType;
+import org.dromara.common.core.enums.BizRule;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -53,6 +52,8 @@ public class SysUserService {
     private final SysUserMapper baseMapper;
     private final SysRoleMapper roleMapper;
     private final SysUserRoleMapper userRoleMapper;
+    private final BizLogService bizLogService;
+    private final SysConfigService configService;
 
     public IPage<SysUserVo> selectPageUserList(SysUserBo user, PageQuery pageQuery) {
         return baseMapper.selectPageUserList(pageQuery.build(), this.buildQueryWrapper(user));
@@ -135,16 +136,6 @@ public class SysUserService {
      */
     public SysUserVo selectUserByUserName(String userName) {
         return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, userName));
-    }
-
-    /**
-     * 通过手机号查询用户
-     *
-     * @param phonenumber 手机号
-     * @return 用户对象信息
-     */
-    public SysUserVo selectUserByPhonenumber(String phonenumber) {
-        return baseMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
     }
 
     /**
@@ -278,17 +269,6 @@ public class SysUserService {
         user.setUserId(sysUser.getUserId());
         // 新增用户与角色管理
         insertUserRole(user, false);
-    }
-
-    /**
-     * 注册用户信息
-     *
-     * @param user 用户信息
-     * @return 结果
-     */
-    public void registerUser(SysUserBo user) {
-        SysUser sysUser = MapstructUtils.convert(user, SysUser.class);
-        baseMapper.insert(sysUser);
     }
 
     /**
@@ -516,30 +496,6 @@ public class SysUserService {
     }
 
     /**
-     * 通过用户ID查询用户手机号
-     *
-     * @param userId 用户id
-     * @return 用户手机号
-     */
-    public String selectPhonenumberById(Long userId) {
-        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getPhonenumber).eq(SysUser::getUserId, userId));
-        return ObjectUtils.notNullGetter(sysUser, SysUser::getPhonenumber);
-    }
-
-    /**
-     * 通过用户ID查询用户邮箱
-     *
-     * @param userId 用户id
-     * @return 用户邮箱
-     */
-    public String selectEmailById(Long userId) {
-        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getEmail).eq(SysUser::getUserId, userId));
-        return ObjectUtils.notNullGetter(sysUser, SysUser::getEmail);
-    }
-
-    /**
      * 通过用户ID查询用户列表
      *
      * @param userIds 用户ids
@@ -632,13 +588,6 @@ public class SysUserService {
         }
         return null;
     }
-    public void updateAsset(Long userId, AssetType assetType, Number amount) {
-        UpdateWrapper<SysUser> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.setSql(assetType.getField() + " = " + assetType.getField() + " + " + amount);
-        updateWrapper.eq("user_id", userId);
-        int rows = baseMapper.update(null, updateWrapper);
-        if(rows==0)throw new BizException("无效用户或余额不足");
-    }
     public void share() {
         baseMapper.update(null,
             new LambdaUpdateWrapper<SysUser>()
@@ -668,31 +617,7 @@ public class SysUserService {
     }
 
     public void sign() {
-        Long userId = LoginHelper.getUserId();
-        String today = LocalDate.now().toString();
-        SysUserVo userVo = selectUserById(userId);
-        List<String> signRecord = userVo.getSignRecord();
-        // 检查今天是否已签到
-        if (signRecord.contains(today)) {
-            throw new BizException("今天已经签到过了");
-        }
-        // 添加今天的签到记录
-        signRecord.add(today);
-        SysUser user = new SysUser();
-        user.setUserId(userId);
-        user.setSignRecord(signRecord);
-        baseMapper.updateById(user);
-    }
-    /**
-     * 是否已签到
-     */
-    public boolean hasSignedToday(Long userId) {
-        SysUserVo user = selectUserById(userId);
-        List<String> signRecord = user.getSignRecord();
-        if (signRecord == null || signRecord.isEmpty()) {
-            return false;
-        }
-        return signRecord.contains(LocalDate.now().toString());
+        bizLogService.executeRule(LoginHelper.getUserId(),BizRule.SIGN);
     }
     /**
      * 计算连续签到天数

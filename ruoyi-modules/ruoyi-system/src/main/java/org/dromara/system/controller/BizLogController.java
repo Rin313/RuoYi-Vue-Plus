@@ -15,23 +15,23 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.core.validate.AddGroup;
 import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BizType;
-import org.dromara.system.domain.vo.AssetLogVo;
-import org.dromara.system.domain.bo.AssetLogQueryBo;
-import org.dromara.system.service.AssetLogService;
+import org.dromara.system.domain.vo.BizLogVo;
+import org.dromara.system.domain.bo.BizLogQueryBo;
+import org.dromara.system.service.BizLogService;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/system/assetlog")
-public class AssetLogController {
+@RequestMapping("/system/BizLog")
+public class BizLogController {
 
-    private final AssetLogService assetLogService;
+    private final BizLogService BizLogService;
 
-    @SaCheckPermission("system:assetlog:list")
+    @SaCheckPermission("system:BizLog:list")
     @GetMapping("/list")
-    public IPage<AssetLogVo> list(AssetLogQueryBo bo, PageQuery pageQuery) {
-        return assetLogService.selectPage(bo, pageQuery);
+    public IPage<BizLogVo> list(BizLogQueryBo bo, PageQuery pageQuery) {
+        return BizLogService.selectPage(bo, pageQuery);
     }
     //现在我需要什么数据表？商品表？业务表？如何将流水变化应用到项目的各个模块
     // @SaCheckPermission("system:chapter:add")
