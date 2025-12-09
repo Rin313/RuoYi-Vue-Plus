@@ -43,8 +43,6 @@ public class SysOperLogService {
     @EventListener
     public void recordOper(OperLogEvent operLogEvent) {
         SysOperLogBo operLog = MapstructUtils.convert(operLogEvent, SysOperLogBo.class);
-        // 远程查询操作地点
-        operLog.setOperLocation(AddressUtils.getRealAddressByIP(operLog.getOperIp()));
         insertOperlog(operLog);
     }
 

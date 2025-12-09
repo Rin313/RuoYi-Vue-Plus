@@ -60,12 +60,6 @@ public class SysLogininforVo implements Serializable {
     private String ipaddr;
 
     /**
-     * 登录地点
-     */
-    @ExcelProperty(value = "登录地点")
-    private String loginLocation;
-
-    /**
      * 浏览器类型
      */
     @ExcelProperty(value = "浏览器")

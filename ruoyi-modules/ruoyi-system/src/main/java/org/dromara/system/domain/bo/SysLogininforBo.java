@@ -38,11 +38,6 @@ public class SysLogininforBo {
     private String ipaddr;
 
     /**
-     * 登录地点
-     */
-    private String loginLocation;
-
-    /**
      * 浏览器类型
      */
     private String browser;

@@ -33,8 +33,6 @@
         <lombok.version>1.18.40</lombok.version>
         <bouncycastle.version>1.80</bouncycastle.version>
         <justauth.version>1.16.7</justauth.version>
-        <!-- 离线IP地址定位库 -->
-        <ip2region.version>2.7.0</ip2region.version>
         <!-- SMS 配置 -->
         <sms4j.version>3.3.5</sms4j.version>
         <!-- 限制框架中的fastjson版本 -->
@@ -203,13 +201,6 @@
                 <groupId>io.github.linpeilie</groupId>
                 <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
                 <version>${mapstruct-plus.version}</version>
-            </dependency>
-
-            <!-- 离线IP地址定位库 ip2region -->
-            <dependency>
-                <groupId>org.lionsoul</groupId>
-                <artifactId>ip2region</artifactId>
-                <version>${ip2region.version}</version>
             </dependency>
 
             <dependency>

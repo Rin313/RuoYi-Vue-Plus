@@ -51,10 +51,8 @@ public class SysLogininforService {
         HttpServletRequest request = logininforEvent.getRequest();
         final UserAgent userAgent = UserAgentUtil.parse(request.getHeader("User-Agent"));
         final String ip = ServletUtils.getClientIP(request);
-        String address = AddressUtils.getRealAddressByIP(ip);
         StringBuilder s = new StringBuilder();
         s.append(getBlock(ip));
-        s.append(address);
         s.append(getBlock(logininforEvent.getUsername()));
         s.append(getBlock(logininforEvent.getStatus()));
         s.append(getBlock(logininforEvent.getMessage()));
@@ -68,7 +66,6 @@ public class SysLogininforService {
         SysLogininforBo logininfor = new SysLogininforBo();
         logininfor.setUserName(logininforEvent.getUsername());
         logininfor.setIpaddr(ip);
-        logininfor.setLoginLocation(address);
         logininfor.setBrowser(browser);
         logininfor.setOs(os);
         logininfor.setMsg(logininforEvent.getMessage());

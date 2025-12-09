@@ -75,11 +75,6 @@ public class SysOperLogBo {
     private String operIp;
 
     /**
-     * 操作地点
-     */
-    private String operLocation;
-
-    /**
      * 请求参数
      */
     private String operParam;
