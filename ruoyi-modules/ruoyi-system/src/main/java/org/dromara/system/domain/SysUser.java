@@ -65,9 +65,7 @@ public class SysUser extends BaseEntity {
      * 邀请人
      */
     private Long parentId;
-    /**
-     * {"asset_name":count,}
-     */
+    //{"asset_name":count,}
     @TableField(typeHandler = JacksonTypeHandler.class)
     private Map<String,Integer> assets;
     /**

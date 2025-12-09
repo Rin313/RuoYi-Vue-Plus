@@ -605,7 +605,12 @@ public class SysUserService {
         return null;
     }
     private static final String BIZ_TYPE_TASK = "TASK";
-
+    /*
+    * 任务状态包括未领取、已领取、可领取
+    * 日常任务每天都能领取，成长任务只能领取一次
+    * 需要的接口：显示包含状态和任务说明的任务视图、领取奖励
+    * 每项任务的具体逻辑我会自行实现，返回值都为boolean表示当前是否满足条件 
+    */
     /**
      * 任务定义枚举
      * 每个任务都需要具体业务逻辑，没有必要额外加表允许改描述
@@ -718,7 +723,7 @@ public class SysUserService {
             case "sign":
                 return isSignedToday(userId);
             case "read":
-                return false; 
+                return true;//没必要为这点垃圾奖励和前端协调什么心跳机制 
             case "like":
                 return false;
             case "invite":
