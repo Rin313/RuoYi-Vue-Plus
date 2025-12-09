@@ -153,7 +153,6 @@ public class SysLoginService {
     public void recordLoginInfo(Long userId, String ip) {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(userId);
-        sysUser.setLoginIp(ip);
         sysUser.setLoginDate(DateUtils.getNowDate());
         DataPermissionHelper.ignore(() -> userMapper.updateById(sysUser));
     }

@@ -55,7 +55,6 @@ public class SysUser extends BaseEntity {
      */
     @TableLogic
     private String delFlag;
-    private String loginIp;
     private Date loginDate;
     private String remark;
     /**
