@@ -67,15 +67,6 @@ public class SysUser extends BaseEntity {
      */
     private Long parentId;
     /**
-     * 邀请码分享次数
-     */
-    private Long totalShareCount;
-    /**
-     * 签到记录
-     */
-    @TableField(typeHandler = JacksonTypeHandler.class)
-    private List<String> signRecord;
-    /**
      * {"asset_name":count,}
      */
     @TableField(typeHandler = JacksonTypeHandler.class)

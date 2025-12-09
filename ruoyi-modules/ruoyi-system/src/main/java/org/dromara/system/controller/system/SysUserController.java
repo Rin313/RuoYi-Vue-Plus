@@ -18,8 +18,6 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.mybatis.helper.DataPermissionHelper;
-import org.dromara.common.ratelimiter.annotation.RateLimiter;
-import org.dromara.common.ratelimiter.enums.LimitType;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import org.dromara.system.domain.bo.SysRoleBo;
@@ -27,6 +25,7 @@ import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.*;
 import org.dromara.system.listener.SysUserImportListener;
 import org.dromara.system.service.*;
+import org.dromara.system.service.SysUserService.TaskVo;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -36,6 +35,13 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 /**
  * 用户信息
@@ -50,6 +56,17 @@ public class SysUserController {
 
     private final SysUserService userService;
     private final SysRoleService roleService;
+    
+    @GetMapping("task/info")
+    public List<TaskVo> getTaskInfo() {
+        return userService.getTaskListView(LoginHelper.getUserId());
+    }
+
+    @PostMapping("task/claim")
+    public void postMethodName(String taskKey) {
+        userService.claimReward(LoginHelper.getUserId(), taskKey);
+    }
+    
 
      /**
      * 获取签到首页信息
@@ -86,12 +103,12 @@ public class SysUserController {
     }
     /**
      * 记录用户分享
+     * @return 
      * 
      */
-    @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/share")
-    public void share() {
-        userService.share();
+    public Map<String,Integer> share() {
+        return userService.share();
     }
     /**
      * 获取用户列表

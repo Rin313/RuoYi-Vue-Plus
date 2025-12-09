@@ -19,9 +19,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.CacheNames;
@@ -29,6 +32,7 @@ import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.*;
+import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.BizLog;
@@ -163,7 +167,6 @@ public class SysUserService {
             return user;
         }
         user.setRoles(roleMapper.selectRolesByUserId(user.getUserId()));
-        if(user.getSignRecord()==null)user.setSignRecord(new ArrayList<String>());
         return user;
     }
 
@@ -601,14 +604,187 @@ public class SysUserService {
         }
         return null;
     }
-    public void share() {
-        baseMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .setSql("total_share_count = total_share_count + 1")
-                .eq(SysUser::getUserId, LoginHelper.getUserId())
-        );
+    private static final String BIZ_TYPE_TASK = "TASK";
+
+    /**
+     * 任务定义枚举
+     * 每个任务都需要具体业务逻辑，没有必要额外加表允许改描述
+     */
+    @Getter
+    @AllArgsConstructor
+    public enum TaskDef {
+        // ID, 标题, 类型(Daily/Growth), 描述说明
+        DAILY_READ("read", "阅读30分钟", "Daily", "阅读三十分钟完成任务"),
+        DAILY_LIKE("like", "评论5次/点赞10次", "Daily", "任选一篇小说去评论/点赞"),
+        DAILY_SIGN("sign", "签到1次", "Daily", "点击按钮去签到"),
+        GROWTH_INVITE("invite", "邀请好友", "Growth", "邀请1人领取书币"),
+        GROWTH_AINOVEL("ainovel", "发布AI小说", "Growth", "发布1次AI创作"),
+        GROWTH_TOPUP("topup", "首次充值", "Growth", "首次充值领取书币"),
+        ;
+        public final String key;
+        public final String name;
+        public final String type;
+        public final String description;
+        // 根据ID查找枚举的便捷方法
+        public static TaskDef getById(String key) {
+            return Arrays.stream(values())
+                    .filter(t -> t.key.equals(key))
+                    .findFirst()
+                    .orElseThrow(() -> new BizException("任务不存在: " + key));
+        }
     }
 
+    /**
+     * 1. 获取任务列表视图
+     */
+    public List<TaskVo> getTaskListView(Long userId) {
+        Date now = new Date();
+        TaskDef[] tasks = TaskDef.values();
+        
+        // 预构建所有任务的 bizKey
+        Map<String, String> taskKeyMap = new HashMap<>();
+        for (TaskDef task : tasks) {
+            taskKeyMap.put(task.key, buildBizKey(task, now));
+        }
+
+        // 批量查询已领取的日志（一次IO）
+        List<BizLog> logs = bizLogMapper.selectList(new LambdaQueryWrapper<BizLog>()
+            .select(BizLog::getBizKey) // 稍微优化，只查需要的字段
+            .eq(BizLog::getCreateBy, userId)
+            .eq(BizLog::getBizType, BIZ_TYPE_TASK)
+            .in(BizLog::getBizKey, taskKeyMap.values()));
+        
+        Set<String> claimedKeys = logs.stream().map(BizLog::getBizKey).collect(Collectors.toSet());
+
+        List<TaskVo> result = new ArrayList<>(tasks.length);
+        for (TaskDef task : tasks) {
+            String bizKey = taskKeyMap.get(task.key);
+            int status;
+
+            if (claimedKeys.contains(bizKey)) {
+                status = 2; // 已领取
+            } else {
+                // 没领过，才去跑逻辑判断
+                boolean isMet = checkTaskCondition(userId, task.key);
+                status = isMet ? 1 : 0; // 1:可领取, 0:未完成
+            }
+
+            result.add(TaskVo.builder()
+                .taskKey(task.key)
+                .name(task.name)
+                .desc(task.description)
+                .type(task.type)        // 前端可能需要区分显示
+                .status(status)
+                .build());
+        }
+        return result;
+    }
+
+    /**
+     * 2. 领取奖励接口
+     */
+    public void claimReward(Long userId, String taskKey) {
+        TaskDef task = TaskDef.getById(taskKey);
+        Date now = new Date();
+        String bizKey = buildBizKey(task, now);
+
+        // 这里的查库必不可少，防止并发或直接调接口
+        boolean exists = bizLogMapper.exists(new LambdaQueryWrapper<BizLog>()
+            .eq(BizLog::getCreateBy, userId)
+            .eq(BizLog::getBizType, BIZ_TYPE_TASK)
+            .eq(BizLog::getBizKey, bizKey));
+
+        if (exists) {
+            throw new BizException("任务奖励已领取");
+        }
+
+        if (!checkTaskCondition(userId, taskKey)) {
+            throw new BizException("未满足领取条件");
+        }
+
+        // 动态读取奖励配置，方便运营随时调整数值
+        String configKey = "task.reward." + taskKey;
+        String rewardJson = configService.selectConfigByKey(configKey);
+        Map<String, Integer> rewards = JSONUtil.toBean(rewardJson, Map.class);
+
+        // 核心：发放资产 + 记日志
+        bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_TASK, rewards);
+    }
+    /**
+     * 任务具体的判断逻辑
+     */
+    private boolean checkTaskCondition(Long userId, String taskId) {
+        switch (taskId) {
+            case "sign":
+                return isSignedToday(userId);
+            case "read":
+                return false; 
+            case "like":
+                return false;
+            case "invite":
+                return false;
+            case "topup":
+                return false;
+            case "ainovel":
+                return false;
+            default:
+                return false;
+        }
+    }
+
+    private String buildBizKey(TaskDef task, Date date) {
+        // Growth任务Key固定，Daily任务Key带日期
+        if ("Daily".equals(task.type)) {
+            return StrUtil.format("TASK:{}:{}", task.key, DateUtil.format(date, "yyyyMMdd"));
+        }
+        return "TASK:" + task.key;
+    }
+
+    @Data
+    @Builder
+    public static class TaskVo {
+        private String taskKey;
+        private String name;
+        private String desc;
+        private String type;
+        private Integer status; // 0:未完成, 1:可领取, 2:已领取
+    }
+    private boolean isSignedToday(Long userId){
+        LocalDate today = LocalDate.now();
+        Set<LocalDate> signedDates = getSignedDateSet(userId);
+        return signedDates.contains(today);
+    }
+    private static final String BIZ_TYPE = "分享奖励";
+
+    public Map<String, Integer> share() {
+        Long userId = LoginHelper.getUserId();
+        String today = DateUtil.today(); // yyyy-MM-dd
+        String bizKey = "share:" + userId + ":" + today;
+
+        boolean exists = bizLogMapper.exists(
+            new LambdaQueryWrapper<BizLog>().eq(BizLog::getBizKey, bizKey)
+        );
+        if (exists) {
+            throw new BizException("今日已经分享过了");
+        }
+
+        // 读取奖励配置 {"coin":10,"diamond":1}
+        String json = configService.selectConfigByKey("share.reward");
+        Map<String, Integer> rewards = JsonUtils.parseObject(json, new TypeReference<>() {});
+
+        // 发放
+        bizLogService.updateAssets(userId, bizKey, BIZ_TYPE, rewards);
+
+        return rewards;
+    }
+    /*
+    * 通过配置表sys_config单独设置每一天的奖励、连续签到的奖励、允许的最大断签日期
+    * 当用户未签到的天数超过断签日期，或者是从未签到过，应该开启一个新的签到周期
+    * 如果用户第一天签到，第二天没有签到，那么第三天签到时，应该获得的是第三天的奖励
+    * 允许补签错过的日期，不能补签该周期前的日期，也不能补签未来的日期
+    * 如果不存在特定天数的奖励，获取default奖励，连续签到的奖励则不循环
+    * 返回签到视图，包括整个周期的签到奖励、签到状态（未签到/已签到）、连续签到奖励、连续签到状态（未领取/已领取/可领取）
+    */
     private static final String KEY_DAILY_RULE = "sign.daily.rule";
     private static final String KEY_STREAK_RULE = "sign.streak.rule";
     private static final String KEY_MAX_BREAK_DAYS = "sign.max.break.days";
@@ -681,7 +857,7 @@ public class SysUserService {
         return list;
     }
 
-    // ================= 核心方法（修复后）=================
+    // ================= 核心方法 =================
 
     @Transactional(rollbackFor = Exception.class)
     public void doSign(Long userId) {
@@ -708,7 +884,7 @@ public class SysUserService {
         bizLogService.updateAssets(userId, today.toString(), BIZ_TYPE_SIGN, reward);
     }
 
-    // ================= 视图构建（修复后）=================
+    // ================= 视图构建 =================
 
     public SignInViewVo getSignInView(Long userId) {
         LocalDate today = LocalDate.now();
@@ -724,7 +900,7 @@ public class SysUserService {
         view.setCycleStartDate(Optional.ofNullable(cycle.getCycleStartDate())
                 .map(LocalDate::toString).orElse(null));
 
-        // 【修复】传入完整参数
+        // 传入完整参数
         view.setDailyRewards(buildDailyRewards(cycle.getCycleStartDate(), signedDates, today));
         view.setRetroDates(buildRetroDates(cycle, signedDates, today));
         view.setStreakRewards(buildStreakRewards(userId, cycle));
@@ -733,7 +909,7 @@ public class SysUserService {
     }
 
     /**
-     * 【修复】根据实际日期判断签到状态，而非简单的 day <= signedDays
+     * 根据实际日期判断签到状态，而非简单的 day <= signedDays
      */
     private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(
             LocalDate cycleStartDate, Set<LocalDate> signedDates, LocalDate today) {
@@ -811,7 +987,7 @@ public class SysUserService {
         bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_STREAK, toIntMap(rewardJson));
     }
 
-    // ================= 核心周期计算（已修复） =================
+    // ================= 核心周期计算 =================
 
     private CycleInfo getCycleInfo(Set<LocalDate> signedDates, boolean isSignedToday) {
         if (signedDates.isEmpty()) {
@@ -856,7 +1032,7 @@ public class SysUserService {
             }
         }
 
-        // 4. 【修复】计算真正连续天数（从lastSigned无间断往前）
+        // 4. 计算真正连续天数（从lastSigned无间断往前）
         int streak = 0;
         for (int i = 0; i <= 365; i++) {
             LocalDate cursor = lastSigned.minusDays(i);
@@ -912,6 +1088,4 @@ public class SysUserService {
         json.forEach((k, v) -> map.put(k, Convert.toInt(v)));
         return map;
     }
-    
-
 }

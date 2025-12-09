@@ -10,6 +10,7 @@ import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -114,10 +115,6 @@ public class SysUserVo implements Serializable {
      * 邀请人
      */
     private Long parentId;
-
-    /**
-     * 签到记录
-     */
-    private List<String> signRecord;
+    private Map<String,Integer> assets;
 
 }
