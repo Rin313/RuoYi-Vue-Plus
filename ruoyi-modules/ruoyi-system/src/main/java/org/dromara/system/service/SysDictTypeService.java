@@ -160,7 +160,7 @@ public class SysDictTypeService implements DictService {
     @CachePut(cacheNames = CacheNames.SYS_DICT, key = "#bo.dictType")
     public List<SysDictDataVo> insertDictType(SysDictTypeBo bo) {
         SysDictType dict = MapstructUtils.convert(bo, SysDictType.class);
-        int row = baseMapper.insert(dict);
+        baseMapper.insert(dict);
         // 新增 type 下无 data 数据 返回空防止缓存穿透
         return new ArrayList<>();
     }

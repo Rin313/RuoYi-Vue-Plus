@@ -14,7 +14,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_dict_type")
+@TableName
 public class SysDictType extends BaseEntity {
 
     /**

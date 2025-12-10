@@ -18,7 +18,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("gen_table_column")
+@TableName
 public class GenTableColumn extends BaseEntity {
 
     /**

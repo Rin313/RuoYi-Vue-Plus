@@ -17,7 +17,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_role")
+@TableName
 public class SysRole extends BaseEntity {
 
     /**

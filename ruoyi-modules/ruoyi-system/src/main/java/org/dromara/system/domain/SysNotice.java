@@ -14,7 +14,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_notice")
+@TableName
 public class SysNotice extends BaseEntity {
 
     /**

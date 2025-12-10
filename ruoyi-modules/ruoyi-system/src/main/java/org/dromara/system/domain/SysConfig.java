@@ -14,7 +14,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("sys_config")
+@TableName
 public class SysConfig extends BaseEntity {
 
     /**

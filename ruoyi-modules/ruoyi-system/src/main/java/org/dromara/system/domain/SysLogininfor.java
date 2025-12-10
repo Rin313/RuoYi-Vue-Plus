@@ -15,7 +15,7 @@ import java.util.Date;
  */
 
 @Data
-@TableName("sys_logininfor")
+@TableName
 public class SysLogininfor implements Serializable {
 
     @Serial

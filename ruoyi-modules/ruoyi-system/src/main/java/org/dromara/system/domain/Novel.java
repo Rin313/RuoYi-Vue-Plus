@@ -7,15 +7,9 @@ import lombok.EqualsAndHashCode;
 
 import java.io.Serial;
 
-/**
- * 小说对象 novel
- *
- * @author Lion Li
- * @date 2025-12-04
- */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("novel")
+@TableName
 public class Novel extends BaseEntity {
 
     @Serial

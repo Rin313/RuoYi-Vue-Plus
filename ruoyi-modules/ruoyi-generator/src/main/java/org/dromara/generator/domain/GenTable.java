@@ -23,7 +23,7 @@ import java.util.List;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
-@TableName("gen_table")
+@TableName
 public class GenTable extends BaseEntity {
 
     /**

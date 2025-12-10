@@ -15,7 +15,7 @@ import java.util.Date;
  */
 
 @Data
-@TableName("sys_oper_log")
+@TableName
 public class SysOperLog implements Serializable {
 
     @Serial

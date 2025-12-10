@@ -12,7 +12,7 @@ import lombok.Data;
  */
 
 @Data
-@TableName("sys_user_role")
+@TableName
 public class SysUserRole {
 
     /**

@@ -23,18 +23,17 @@ import org.dromara.common.mybatis.core.domain.PageQuery;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/system/BizLog")
+@RequestMapping("/system/bizLog")
 public class BizLogController {
 
     private final BizLogService BizLogService;
 
-    @SaCheckPermission("system:BizLog:list")
+    @SaCheckPermission("system:bizLog:list")
     @GetMapping("/list")
     public IPage<BizLogVo> list(BizLogQueryBo bo, PageQuery pageQuery) {
         return null;
         //return BizLogService.selectPage(bo, pageQuery);
     }
-    //现在我需要什么数据表？商品表？业务表？如何将流水变化应用到项目的各个模块
     // @SaCheckPermission("system:chapter:add")
     // @Log(title = "小说章节", businessType = BizType.INSERT)
     // @RepeatSubmit()

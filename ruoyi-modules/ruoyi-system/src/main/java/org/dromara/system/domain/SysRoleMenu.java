@@ -12,7 +12,7 @@ import lombok.Data;
  */
 
 @Data
-@TableName("sys_role_menu")
+@TableName
 public class SysRoleMenu {
 
     /**
