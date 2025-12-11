@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -32,6 +33,7 @@ import org.dromara.system.mapper.SysUserMapper;
 public class BizLogService {
     private final BizLogMapper bizLogMapper;
     private final SysUserMapper sysUserMapper;
+    private final SysRoleService sysRoleService;
     /**
      * 资产变更+保存日志（CAS乐观锁重试）
      */
@@ -52,8 +54,19 @@ public class BizLogService {
                 if (afterAmount < 0) {
                      throw new BizException("余额不足");
                 }
-                currentAssets.put(assetKey, afterAmount);
-                assetLog.add(Map.of("asset_name", assetKey,"amount", changeAmount,"before", beforeAmount,"after", afterAmount));
+                if(assetKey.equals("vip")){
+                    sysRoleService.insertUserRole(userId,List.of(2l), false,DateUtils.addDays(new Date(), changeAmount));
+                }
+                else if(assetKey.equals("svip")){
+                    sysRoleService.insertUserRole(userId,List.of(3l), false,DateUtils.addDays(new Date(), changeAmount));
+                }
+                else if(assetKey.equals("suvip")){
+                    sysRoleService.insertUserRole(userId,List.of(4l), false,DateUtils.addDays(new Date(), changeAmount));
+                }
+                else{
+                    currentAssets.put(assetKey, afterAmount);
+                    assetLog.add(Map.of("asset_name", assetKey,"amount", changeAmount,"before", beforeAmount,"after", afterAmount));
+                }
             }
             user.setAssets(currentAssets);
             // updateById会检查version

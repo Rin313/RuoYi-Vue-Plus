@@ -9,6 +9,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.xss.Xss;
@@ -84,7 +85,7 @@ public class SysUserBo extends BaseEntity {
      * 角色组
      */
     @Size(min = 1, message = "用户角色不能为空")
-    private Long[] roleIds;
+    private List<Long> roleIds;
 
     /**
      * 数据权限 当前角色ID

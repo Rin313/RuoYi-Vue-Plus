@@ -28,7 +28,9 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
      */
     default String buildRoleByUserSql(Long userId) {
         return """
-                select role_id from sys_user_role where user_id = %d
+                select role_id from sys_user_role 
+                where user_id = %d
+                and (expire_time is null or expire_time > now())
             """.formatted(userId);
     }
 

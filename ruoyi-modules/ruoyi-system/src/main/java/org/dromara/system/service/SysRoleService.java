@@ -4,6 +4,7 @@ import cn.dev33.satoken.exception.NotLoginException;
 import cn.dev33.satoken.stp.StpUtil;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
@@ -45,6 +46,45 @@ public class SysRoleService {
     private final SysRoleMapper baseMapper;
     private final SysRoleMenuMapper roleMenuMapper;
     private final SysUserRoleMapper userRoleMapper;
+
+        /**
+     * 新增用户角色信息
+     *
+     * @param userId  用户ID
+     * @param roleIds 角色组
+     * @param clear   清除已存在的关联数据
+     */
+    public void insertUserRole(Long userId, List<Long> roleIds, boolean clear,Date expiryTime) {
+        if (ArrayUtil.isEmpty(roleIds)) {
+            return;
+        }
+
+        // 非超级管理员，禁止包含超级管理员角色
+        if (!LoginHelper.isSuperAdmin(userId)) {
+            roleIds.remove(SystemConstants.SUPER_ADMIN_ID);
+        }
+
+        // 校验是否有权限访问这些角色（含数据权限控制）
+        if (baseMapper.selectRoleCount(roleIds) != roleIds.size()) {
+            throw new BizException("没有权限访问角色的数据");
+        }
+
+        // 是否清除原有绑定
+        if (clear) {
+            userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getUserId, userId));
+        }
+
+        // 批量插入用户-角色关联
+        List<SysUserRole> list = StreamUtils.toList(roleIds,
+            roleId -> {
+                SysUserRole ur = new SysUserRole();
+                ur.setUserId(userId);
+                ur.setRoleId(roleId);
+                ur.setExpireTime(expiryTime);
+                return ur;
+            });
+        userRoleMapper.insertBatch(list);
+    }
 
     /**
      * 分页查询角色列表
@@ -256,7 +296,7 @@ public class SysRoleService {
      * @return 结果
      */
     public long countUserRoleByRoleId(Long roleId) {
-        return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));
+        return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));//TODO
     }
 
     /**

@@ -313,7 +313,7 @@ public class SysUserController {
     @Log(title = "用户管理", businessType = BizType.GRANT)
     @RepeatSubmit()
     @PutMapping("/authRole")
-    public void insertAuthRole(Long userId, Long[] roleIds) {
+    public void insertAuthRole(Long userId, List<Long> roleIds) {
         userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
     }

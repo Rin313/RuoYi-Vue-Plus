@@ -44,7 +44,6 @@ import org.dromara.system.domain.vo.SysUserExportVo;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.*;
 import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -312,7 +311,7 @@ public class SysUserService {
      * @param roleIds 角色组
      */
     @Transactional(rollbackFor = Exception.class)
-    public void insertUserAuth(Long userId, Long[] roleIds) {
+    public void insertUserAuth(Long userId, List<Long> roleIds) {
         insertUserRole(userId, roleIds, true);
     }
 
@@ -392,20 +391,18 @@ public class SysUserService {
      * @param roleIds 角色组
      * @param clear   清除已存在的关联数据
      */
-    private void insertUserRole(Long userId, Long[] roleIds, boolean clear) {
+    private void insertUserRole(Long userId, List<Long> roleIds, boolean clear) {
         if (ArrayUtil.isEmpty(roleIds)) {
             return;
         }
 
-        List<Long> roleList = new ArrayList<>(Arrays.asList(roleIds));
-
         // 非超级管理员，禁止包含超级管理员角色
         if (!LoginHelper.isSuperAdmin(userId)) {
-            roleList.remove(SystemConstants.SUPER_ADMIN_ID);
+            roleIds.remove(SystemConstants.SUPER_ADMIN_ID);
         }
 
         // 校验是否有权限访问这些角色（含数据权限控制）
-        if (roleMapper.selectRoleCount(roleList) != roleList.size()) {
+        if (roleMapper.selectRoleCount(roleIds) != roleIds.size()) {
             throw new BizException("没有权限访问角色的数据");
         }
 
@@ -415,7 +412,7 @@ public class SysUserService {
         }
 
         // 批量插入用户-角色关联
-        List<SysUserRole> list = StreamUtils.toList(roleList,
+        List<SysUserRole> list = StreamUtils.toList(roleIds,
             roleId -> {
                 SysUserRole ur = new SysUserRole();
                 ur.setUserId(userId);
@@ -464,49 +461,6 @@ public class SysUserService {
             throw new BizException("删除用户失败!");
         }
         return flag;
-    }
-
-    /**
-     * 通过用户ID查询用户账户
-     *
-     * @param userId 用户ID
-     * @return 用户账户
-     */
-    @Cacheable(cacheNames = CacheNames.SYS_USER_NAME, key = "#userId")
-    public String selectUserNameById(Long userId) {
-        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getUserName).eq(SysUser::getUserId, userId));
-        return ObjectUtils.notNullGetter(sysUser, SysUser::getUserName);
-    }
-
-    /**
-     * 通过用户ID查询用户账户
-     *
-     * @param userId 用户ID
-     * @return 用户账户
-     */
-    @Cacheable(cacheNames = CacheNames.SYS_NICKNAME, key = "#userId")
-    public String selectNicknameById(Long userId) {
-        SysUser sysUser = baseMapper.selectOne(new LambdaQueryWrapper<SysUser>()
-            .select(SysUser::getNickName).eq(SysUser::getUserId, userId));
-        return ObjectUtils.notNullGetter(sysUser, SysUser::getNickName);
-    }
-
-    /**
-     * 通过用户ID查询用户账户
-     *
-     * @param userIds 用户ID 多个用逗号隔开
-     * @return 用户账户
-     */
-    public String selectNicknameByIds(String userIds) {
-        List<String> list = new ArrayList<>();
-        for (Long id : StringUtils.splitTo(userIds, Convert::toLong)) {
-            String nickname = SpringUtils.getAopProxy(this).selectNicknameById(id);
-            if (StringUtils.isNotBlank(nickname)) {
-                list.add(nickname);
-            }
-        }
-        return StringUtils.joinComma(list);
     }
 
     /**

@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 import org.dromara.system.domain.SysUserRole;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -22,6 +23,11 @@ public interface SysUserRoleMapper extends BaseMapperPlus<SysUserRole, SysUserRo
     default List<Long> selectUserIdsByRoleId(Long roleId) {
         return this.selectObjs(new LambdaQueryWrapper<SysUserRole>()
             .select(SysUserRole::getUserId).eq(SysUserRole::getRoleId, roleId)
+            .and(wrapper -> wrapper
+                .isNull(SysUserRole::getExpireTime)
+                .or()
+                .gt(SysUserRole::getExpireTime, new Date()) 
+            )
         );
     }
 
