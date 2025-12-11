@@ -15,12 +15,9 @@ import org.dromara.common.core.domain.model.SocialLoginBody;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.json.utils.JsonUtils;
-import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;
 import org.dromara.common.social.config.properties.SocialProperties;
 import org.dromara.common.social.utils.SocialUtils;
-import org.dromara.common.sse.dto.SseMessageDto;
-import org.dromara.common.sse.utils.SseMessageUtils;
 import org.dromara.system.service.SysSocialService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
@@ -29,10 +26,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 认证
@@ -49,7 +43,6 @@ public class AuthController {
     private final SocialProperties socialProperties;
     private final SysLoginService loginService;
     private final SysSocialService socialUserService;
-    private final ScheduledExecutorService scheduledExecutorService;
 
 
     /**
@@ -64,14 +57,6 @@ public class AuthController {
         ValidatorUtils.validate(loginBody);
         String grantType = loginBody.getGrantType();
         LoginVo loginVo = IAuthStrategy.login(body, grantType);
-
-        Long userId = LoginHelper.getUserId();
-        scheduledExecutorService.schedule(() -> {
-            SseMessageDto dto = new SseMessageDto();
-            dto.setMessage("欢迎登录");
-            dto.setUserIds(List.of(userId));
-            SseMessageUtils.publishMessage(dto);
-        }, 5, TimeUnit.SECONDS);
         return loginVo;
     }
 

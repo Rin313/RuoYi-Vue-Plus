@@ -7,7 +7,6 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.sse.utils.SseMessageUtils;
 
 import org.dromara.system.domain.bo.SysNoticeBo;
 import org.dromara.system.domain.vo.SysNoticeVo;
@@ -29,7 +28,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 public class SysNoticeController {
 
     private final SysNoticeService noticeService;
-    private final DictService dictService;
 
     /**
      * 获取通知公告列表
@@ -60,8 +58,6 @@ public class SysNoticeController {
     @PostMapping
     public void add(@Validated @RequestBody SysNoticeBo notice) {
         noticeService.insertNotice(notice);
-        String type = dictService.getDictLabel("sys_notice_type", notice.getNoticeType());
-        SseMessageUtils.publishAll("[" + type + "] " + notice.getNoticeTitle());
     }
 
     /**

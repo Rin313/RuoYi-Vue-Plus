@@ -174,7 +174,7 @@ lock4j:
 
 --- # 默认/推荐使用sse推送
 sse:
-  enabled: true
+  enabled: false
   path: /resource/sse
 
 --- # websocket

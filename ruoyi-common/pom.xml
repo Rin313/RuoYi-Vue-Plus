@@ -26,8 +26,8 @@
         <module>ruoyi-common-web</module>
         <module>ruoyi-common-json</module>
         <module>ruoyi-common-encrypt</module>
-        <module>ruoyi-common-websocket</module>
-        <module>ruoyi-common-sse</module>
+        <!-- <module>ruoyi-common-websocket</module> -->
+        <!-- <module>ruoyi-common-sse</module> -->
     </modules>
 
     <artifactId>ruoyi-common</artifactId>
