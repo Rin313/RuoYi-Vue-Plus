@@ -3,6 +3,8 @@ package org.dromara.system.controller.system;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import lombok.RequiredArgsConstructor;
+
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
@@ -18,6 +20,7 @@ import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.service.SysUserService;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 个人信息 业务处理
@@ -77,13 +80,13 @@ public class SysProfileController {
     //  * @param avatarfile 用户头像
     //  */
     // @RepeatSubmit
-    // @Log(title = "用户头像", businessType = BusinessType.UPDATE)
+    // @Log(title = "用户头像", businessType = BizType.UPDATE)
     // @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    // public R<AvatarVo> avatar(@RequestPart("avatarfile") MultipartFile avatarfile) {
-    //     if (!avatarfile.isEmpty()) {
+    // public AvatarVo avatar(@RequestPart("avatarfile") MultipartFile avatarfile) {
+    //     if (ObjectUtils.isNotEmpty(avatarfile)&&!avatarfile.isEmpty()) {//疑似一个校验长度，一个校验内容，未测试，待询问AI
     //         String extension = FileUtil.extName(avatarfile.getOriginalFilename());
     //         if (!StringUtils.equalsAnyIgnoreCase(extension, MimeTypeUtils.IMAGE_EXTENSION)) {
-    //             return R.fail("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
+    //             throw new BizException("文件格式不正确，请上传" + Arrays.toString(MimeTypeUtils.IMAGE_EXTENSION) + "格式");
     //         }
     //         // SysOssVo oss = ossService.upload(avatarfile);
     //         // String avatar = oss.getUrl();
@@ -92,7 +95,7 @@ public class SysProfileController {
     //         //     return R.ok(new AvatarVo(avatar));
     //         // }
     //     }
-    //     return R.fail("上传图片异常，请联系管理员");
+    //     throw new BizException("上传图片异常，请联系管理员");
     // }
 
     /**
