@@ -125,12 +125,6 @@
                 <version>1.0.0</version>
             </dependency> -->
 
-            <!-- <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-sse</artifactId>
-                <version>1.0.0</version>
-            </dependency> -->
-
         </dependencies>
     </dependencyManagement>
 

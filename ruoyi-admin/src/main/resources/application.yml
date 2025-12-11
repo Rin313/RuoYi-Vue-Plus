@@ -172,11 +172,6 @@ lock4j:
   # 分布式锁的超时时间，默认为 30 秒
   expire: 30000
 
---- # 默认/推荐使用sse推送
-sse:
-  enabled: false
-  path: /resource/sse
-
 --- # websocket
 websocket:
   # 如果关闭 需要和前端开关一起关闭

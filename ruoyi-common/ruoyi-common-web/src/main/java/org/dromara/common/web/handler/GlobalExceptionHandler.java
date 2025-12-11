@@ -10,10 +10,8 @@ import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.SseException;
 import org.dromara.common.core.exception.base.BaseException;
 import org.dromara.common.core.utils.StreamUtils;
-import org.dromara.common.json.utils.JsonUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
@@ -58,18 +56,6 @@ public class GlobalExceptionHandler {
         Integer code = e.getCode();
         return ObjectUtil.isNotNull(code) ? R.fail(code, e.getMessage()) : R.fail(e.getMessage());
     }
-
-    /**
-     * 认证失败
-     */
-    @ResponseStatus(org.springframework.http.HttpStatus.UNAUTHORIZED)
-    @ExceptionHandler(SseException.class)
-    public String handleNotLoginException(SseException e, HttpServletRequest request) {
-        String requestURI = request.getRequestURI();
-        log.debug("请求地址'{}',认证失败'{}',无法访问系统资源", requestURI, e.getMessage());
-        return JsonUtils.toJsonString(R.fail(HttpStatus.HTTP_UNAUTHORIZED, "认证失败，无法访问系统资源"));
-    }
-
     /**
      * servlet异常
      */
@@ -126,18 +112,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(IOException.class)
     public void handleIoException(IOException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
-        if (requestURI.contains("sse")) {
-            // sse 经常性连接中断 例如关闭浏览器 直接屏蔽
-            return;
-        }
         log.error("请求地址'{}',连接中断", requestURI, e);
-    }
-
-    /**
-     * sse 连接超时异常 不需要处理
-     */
-    @ExceptionHandler(AsyncRequestTimeoutException.class)
-    public void handleRuntimeException(AsyncRequestTimeoutException e) {
     }
 
     /**
