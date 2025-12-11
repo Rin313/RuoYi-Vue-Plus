@@ -34,9 +34,4 @@ public class RoleDTO implements Serializable {
      */
     private String roleKey;
 
-    /**
-     * 数据范围（1：全部数据权限 5：仅本人数据权限 ）
-     */
-    private String dataScope;
-
 }

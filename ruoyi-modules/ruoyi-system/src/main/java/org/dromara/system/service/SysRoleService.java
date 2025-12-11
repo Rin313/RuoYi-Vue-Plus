@@ -263,33 +263,6 @@ public class SysRoleService {
     }
 
     /**
-     * 校验角色是否有数据权限
-     *
-     * @param roleId 角色id
-     */
-    public void checkRoleDataScope(Long roleId) {
-        if (ObjectUtil.isNull(roleId)) {
-            return;
-        }
-        this.checkRoleDataScope(Collections.singletonList(roleId));
-    }
-
-    /**
-     * 校验角色是否有数据权限
-     *
-     * @param roleIds 角色ID列表（支持传单个ID）
-     */
-    public void checkRoleDataScope(List<Long> roleIds) {
-        if (CollUtil.isEmpty(roleIds) || LoginHelper.isSuperAdmin()) {
-            return;
-        }
-        long count = baseMapper.selectRoleCount(roleIds);
-        if (count != roleIds.size()) {
-            throw new BizException("没有权限访问部分角色数据！");
-        }
-    }
-
-    /**
      * 通过角色ID查询角色使用数量
      *
      * @param roleId 角色ID
@@ -406,7 +379,6 @@ public class SysRoleService {
      */
     @Transactional(rollbackFor = Exception.class)
     public int deleteRoleByIds(List<Long> roleIds) {
-        this.checkRoleDataScope(roleIds);
         List<SysRole> roles = baseMapper.selectByIds(roleIds);
         for (SysRole role : roles) {
             checkRoleAllowed(BeanUtil.toBean(role, SysRoleBo.class));

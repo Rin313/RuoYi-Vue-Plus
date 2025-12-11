@@ -66,7 +66,6 @@ public class SysRoleController {
     @SaCheckPermission("system:role:query")
     @GetMapping(value = "/{roleId}")
     public SysRoleVo getInfo(@PathVariable Long roleId) {
-        roleService.checkRoleDataScope(roleId);
         return roleService.selectRoleById(roleId);
     }
 
@@ -97,7 +96,6 @@ public class SysRoleController {
     @PutMapping
     public void update(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
         if (!roleService.checkRoleNameUnique(role)) {
             throw new BizException("修改角色'" + role.getRoleName() + "'失败，角色名称已存在");
         } else if (!roleService.checkRoleKeyUnique(role)) {
@@ -111,19 +109,6 @@ public class SysRoleController {
     }
 
     /**
-     * 修改保存数据权限
-     */
-    @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping("/dataScope")
-    public void dataScope(@RequestBody SysRoleBo role) {
-        roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
-        roleService.authDataScope(role);
-    }
-
-    /**
      * 状态修改
      */
     @SaCheckPermission("system:role:edit")
@@ -132,7 +117,6 @@ public class SysRoleController {
     @PutMapping("/changeStatus")
     public void changeStatus(@RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
-        roleService.checkRoleDataScope(role.getRoleId());
         roleService.updateRoleStatus(role.getRoleId(), role.getStatus());
     }
 
@@ -213,7 +197,6 @@ public class SysRoleController {
     @RepeatSubmit()
     @PutMapping("/authUser/selectAll")
     public void selectAuthUserAll(Long roleId, Long[] userIds) {
-        roleService.checkRoleDataScope(roleId);
         roleService.insertAuthUsers(roleId, userIds);
     }
 

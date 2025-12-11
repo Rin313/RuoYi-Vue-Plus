@@ -89,12 +89,6 @@ public class SysOperLogVo implements Serializable {
     private String operIp;
 
     /**
-     * 操作地点
-     */
-    @ExcelProperty(value = "操作地点")
-    private String operLocation;
-
-    /**
      * 请求参数
      */
     @ExcelProperty(value = "请求参数")

@@ -88,7 +88,7 @@ public class SysUserBo extends BaseEntity {
     private List<Long> roleIds;
 
     /**
-     * 数据权限 当前角色ID
+     * 当前角色ID
      */
     private Long roleId;
 

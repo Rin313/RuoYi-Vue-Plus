@@ -18,7 +18,6 @@ import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.log.event.LogininforEvent;
-import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.redis.utils.RedisUtils;
 import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
@@ -154,7 +153,7 @@ public class SysLoginService {
         SysUser sysUser = new SysUser();
         sysUser.setUserId(userId);
         sysUser.setLoginDate(DateUtils.getNowDate());
-        DataPermissionHelper.ignore(() -> userMapper.updateById(sysUser));
+        userMapper.updateById(sysUser);
     }
 
     /**

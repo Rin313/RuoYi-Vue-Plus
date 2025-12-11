@@ -52,11 +52,6 @@ public class SysRoleBo extends BaseEntity {
     private Integer roleSort;
 
     /**
-     * 数据范围（1：全部数据权限 5：仅本人数据权限 ）
-     */
-    private String dataScope;
-
-    /**
      * 菜单树选择项是否关联显示
      */
     private Boolean menuCheckStrictly;

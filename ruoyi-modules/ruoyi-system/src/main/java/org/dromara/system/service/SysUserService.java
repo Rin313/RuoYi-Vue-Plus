@@ -252,23 +252,6 @@ public class SysUserService {
     }
 
     /**
-     * 校验用户是否有数据权限
-     *
-     * @param userId 用户id
-     */
-    public void checkUserDataScope(Long userId) {
-        if (ObjectUtil.isNull(userId)) {
-            return;
-        }
-        if (LoginHelper.isSuperAdmin()) {
-            return;
-        }
-        if (baseMapper.countUserById(userId) == 0) {
-            throw new BizException("没有权限访问用户数据！");
-        }
-    }
-
-    /**
      * 新增保存用户信息
      *
      * @param user 用户信息
@@ -450,7 +433,6 @@ public class SysUserService {
     public int deleteUserByIds(Long[] userIds) {
         for (Long userId : userIds) {
             checkUserAllowed(userId);
-            checkUserDataScope(userId);
         }
         List<Long> ids = List.of(userIds);
         // 删除用户与角色关联

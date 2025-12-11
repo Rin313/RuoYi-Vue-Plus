@@ -5,8 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
-import org.dromara.common.mybatis.annotation.DataColumn;
-import org.dromara.common.mybatis.annotation.DataPermission;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysUserExportVo;
@@ -28,9 +26,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param queryWrapper 查询条件
      * @return 分页的用户信息
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "create_by")
-    })
     default Page<SysUserVo> selectPageUserList(Page<SysUser> page, Wrapper<SysUser> queryWrapper) {
         return this.selectVoPage(page, queryWrapper);
     }
@@ -41,9 +36,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param queryWrapper 查询条件
      * @return 用户信息集合
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "create_by")
-    })
     default List<SysUserVo> selectUserList(Wrapper<SysUser> queryWrapper) {
         return this.selectVoList(queryWrapper);
     }
@@ -54,9 +46,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param queryWrapper 查询条件
      * @return 用户信息集合信息
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "u.create_by")
-    })
     List<SysUserExportVo> selectUserExportList(@Param(Constants.WRAPPER) Wrapper<SysUser> queryWrapper);
 
     /**
@@ -66,9 +55,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param queryWrapper 查询条件
      * @return 用户信息集合信息
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "u.create_by")
-    })
     Page<SysUserVo> selectAllocatedList(@Param("page") Page<SysUser> page, @Param(Constants.WRAPPER) Wrapper<SysUser> queryWrapper);
 
     /**
@@ -77,9 +63,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param queryWrapper 查询条件
      * @return 用户信息集合信息
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "u.create_by")
-    })
     Page<SysUserVo> selectUnallocatedList(@Param("page") Page<SysUser> page, @Param(Constants.WRAPPER) Wrapper<SysUser> queryWrapper);
 
     /**
@@ -88,9 +71,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @param userId 用户ID
      * @return 用户数量
      */
-    @DataPermission({
-        @DataColumn(key = "userName", value = "create_by")
-    })
     default long countUserById(Long userId) {
         return this.selectCount(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserId, userId));
     }
@@ -103,9 +83,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @return 更新操作影响的行数
      */
     @Override
-    @DataPermission({
-        @DataColumn(key = "userName", value = "create_by")
-    })
     int update(@Param(Constants.ENTITY) SysUser user, @Param(Constants.WRAPPER) Wrapper<SysUser> updateWrapper);
 
     /**
@@ -115,9 +92,6 @@ public interface SysUserMapper extends BaseMapperPlus<SysUser, SysUserVo> {
      * @return 更新操作影响的行数
      */
     @Override
-    @DataPermission({
-        @DataColumn(key = "userName", value = "create_by")
-    })
     int updateById(@Param(Constants.ENTITY) SysUser user);
 
 }

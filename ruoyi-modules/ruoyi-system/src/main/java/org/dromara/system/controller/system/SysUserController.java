@@ -17,7 +17,6 @@ import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import org.dromara.system.domain.bo.SysRoleBo;
@@ -161,7 +160,7 @@ public class SysUserController {
     public UserInfoVo getInfo() {
         UserInfoVo userInfoVo = new UserInfoVo();
         LoginUser loginUser = LoginHelper.getLoginUser();
-        SysUserVo user = DataPermissionHelper.ignore(() -> userService.selectUserById(loginUser.getUserId()));
+        SysUserVo user = userService.selectUserById(loginUser.getUserId());
         if (ObjectUtil.isNull(user)) {
             throw new BizException("没有权限访问用户数据!");
         }
@@ -181,7 +180,6 @@ public class SysUserController {
     public SysUserInfoVo getInfo(@PathVariable(value = "userId", required = false) Long userId) {
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
         if (ObjectUtil.isNotNull(userId)) {
-            userService.checkUserDataScope(userId);
             SysUserVo sysUser = userService.selectUserById(userId);
             userInfoVo.setUser(sysUser);
             userInfoVo.setRoleIds(roleService.selectRoleListByUserId(userId));
@@ -222,7 +220,6 @@ public class SysUserController {
     @PutMapping
     public void update(@Validated @RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
         if (!userService.checkUserNameUnique(user)) {
             throw new BizException("修改用户'" + user.getUserName() + "'失败，登录账号已存在");
         } else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user)) {
@@ -268,7 +265,6 @@ public class SysUserController {
     @PutMapping("/resetPwd")
     public void resetPwd(@RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
         user.setPassword(BCrypt.hashpw(user.getPassword()));
         userService.resetUserPwd(user.getUserId(), user.getPassword());
     }
@@ -282,7 +278,6 @@ public class SysUserController {
     @PutMapping("/changeStatus")
     public void changeStatus(@RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
-        userService.checkUserDataScope(user.getUserId());
         userService.updateUserStatus(user.getUserId(), user.getStatus());
     }
 
@@ -294,7 +289,6 @@ public class SysUserController {
     @SaCheckPermission("system:user:query")
     @GetMapping("/authRole/{userId}")
     public SysUserInfoVo authRole(@PathVariable Long userId) {
-        userService.checkUserDataScope(userId);
         SysUserVo user = userService.selectUserById(userId);
         List<SysRoleVo> roles = roleService.selectRolesAuthByUserId(userId);
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
@@ -314,7 +308,6 @@ public class SysUserController {
     @RepeatSubmit()
     @PutMapping("/authRole")
     public void insertAuthRole(Long userId, List<Long> roleIds) {
-        userService.checkUserDataScope(userId);
         userService.insertUserAuth(userId, roleIds);
     }
 }

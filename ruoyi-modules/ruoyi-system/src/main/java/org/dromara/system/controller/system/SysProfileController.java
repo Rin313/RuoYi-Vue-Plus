@@ -8,7 +8,6 @@ import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
-import org.dromara.common.mybatis.helper.DataPermissionHelper;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import org.dromara.system.domain.bo.SysUserBo;
@@ -49,7 +48,7 @@ public class SysProfileController {
         if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user)) {
             throw new BizException("修改用户'" + username + "'失败，邮箱账号已存在");
         }
-        DataPermissionHelper.ignore(() -> userService.updateUserProfile(user));
+        userService.updateUserProfile(user);
     }
 
     /**
@@ -69,7 +68,7 @@ public class SysProfileController {
         if (BCrypt.checkpw(bo.getNewPassword(), password)) {
             throw new BizException("新密码不能与旧密码相同");
         }
-        DataPermissionHelper.ignore(() -> userService.resetUserPwd(user.getUserId(), BCrypt.hashpw(bo.getNewPassword())));
+        userService.resetUserPwd(user.getUserId(), BCrypt.hashpw(bo.getNewPassword()));
     }
 
     // /**
