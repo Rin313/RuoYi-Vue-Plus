@@ -18,12 +18,7 @@ import org.dromara.system.domain.SysNotice;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = SysNotice.class, reverseConvertGenerate = false)
-public class SysNoticeBo extends BaseEntity {
-
-    /**
-     * 公告ID
-     */
-    private Long noticeId;
+public class NoticeQueryBo extends BaseEntity {
 
     /**
      * 公告标题

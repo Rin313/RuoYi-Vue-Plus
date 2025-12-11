@@ -10,22 +10,15 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 /**
  * 通知公告表 sys_notice
  *
- * @author Lion Li
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @TableName
 public class SysNotice extends BaseEntity {
 
-    /**
-     * 公告ID
-     */
-    @TableId(value = "notice_id")
+    @TableId
     private Long noticeId;
 
-    /**
-     * 公告标题
-     */
     private String noticeTitle;
 
     /**
@@ -42,10 +35,5 @@ public class SysNotice extends BaseEntity {
      * 公告状态（0正常 1关闭）
      */
     private String status;
-
-    /**
-     * 备注
-     */
-    private String remark;
 
 }

@@ -1,13 +1,14 @@
 package org.dromara.system.controller.system;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
+import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
-
+import org.dromara.system.domain.bo.NoticeQueryBo;
 import org.dromara.system.domain.bo.SysNoticeBo;
 import org.dromara.system.domain.vo.SysNoticeVo;
 import org.dromara.system.service.SysNoticeService;
@@ -19,7 +20,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 /**
  * 公告 信息操作处理
  *
- * @author Lion Li
  */
 @Validated
 @RequiredArgsConstructor
@@ -28,13 +28,20 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 public class SysNoticeController {
 
     private final SysNoticeService noticeService;
+    @SaIgnore
+    public IPage<SysNoticeVo> listForVisitor(NoticeQueryBo notice, PageQuery pageQuery) {
+        notice.setNoticeType("2");
+        notice.setStatus("1");
+        return noticeService.selectPageNoticeList(notice, pageQuery);
+    }
 
     /**
      * 获取通知公告列表
      */
     @SaCheckPermission("system:notice:list")
     @GetMapping("/list")
-    public IPage<SysNoticeVo> list(SysNoticeBo notice, PageQuery pageQuery) {
+    public IPage<SysNoticeVo> list(NoticeQueryBo notice, PageQuery pageQuery) {
+        notice.setNoticeType("2");
         return noticeService.selectPageNoticeList(notice, pageQuery);
     }
 
@@ -57,6 +64,7 @@ public class SysNoticeController {
     @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysNoticeBo notice) {
+        notice.setNoticeType("2");
         noticeService.insertNotice(notice);
     }
 

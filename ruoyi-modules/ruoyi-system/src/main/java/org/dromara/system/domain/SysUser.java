@@ -72,4 +72,6 @@ public class SysUser extends BaseEntity {
      */
     @Version
     private Integer version;
+    private Date lastNotificationReadTime;
+    private Date lastAnnouncementReadTime;
 }

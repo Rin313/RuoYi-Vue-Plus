@@ -5,20 +5,16 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.utils.MapstructUtils;
-import org.dromara.common.core.utils.ObjectUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.system.domain.SysNotice;
-import org.dromara.system.domain.SysUser;
+import org.dromara.system.domain.bo.NoticeQueryBo;
 import org.dromara.system.domain.bo.SysNoticeBo;
 import org.dromara.system.domain.vo.SysNoticeVo;
-import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysNoticeMapper;
-import org.dromara.system.mapper.SysUserMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * 公告 服务层实现
@@ -30,7 +26,6 @@ import java.util.List;
 public class SysNoticeService {
 
     private final SysNoticeMapper baseMapper;
-    private final SysUserMapper userMapper;
 
     /**
      * 分页查询通知公告列表
@@ -39,8 +34,11 @@ public class SysNoticeService {
      * @param pageQuery 分页参数
      * @return 通知公告分页列表
      */
-    public IPage<SysNoticeVo> selectPageNoticeList(SysNoticeBo notice, PageQuery pageQuery) {
-        LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
+    public IPage<SysNoticeVo> selectPageNoticeList(NoticeQueryBo bo, PageQuery pageQuery) {
+        LambdaQueryWrapper<SysNotice> lqw = Wrappers.lambdaQuery();
+        lqw.like(StringUtils.isNotBlank(bo.getNoticeTitle()), SysNotice::getNoticeTitle, bo.getNoticeTitle());
+        lqw.eq(StringUtils.isNotBlank(bo.getNoticeType()), SysNotice::getNoticeType, bo.getNoticeType());
+        lqw.eq(StringUtils.isNotBlank(bo.getStatus()),SysNotice::getStatus,bo.getStatus());
         return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
 
@@ -52,29 +50,6 @@ public class SysNoticeService {
      */
     public SysNoticeVo selectNoticeById(Long noticeId) {
         return baseMapper.selectVoById(noticeId);
-    }
-
-    /**
-     * 查询公告列表
-     *
-     * @param notice 公告信息
-     * @return 公告集合
-     */
-    public List<SysNoticeVo> selectNoticeList(SysNoticeBo notice) {
-        LambdaQueryWrapper<SysNotice> lqw = buildQueryWrapper(notice);
-        return baseMapper.selectVoList(lqw);
-    }
-
-    private LambdaQueryWrapper<SysNotice> buildQueryWrapper(SysNoticeBo bo) {
-        LambdaQueryWrapper<SysNotice> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getNoticeTitle()), SysNotice::getNoticeTitle, bo.getNoticeTitle());
-        lqw.eq(StringUtils.isNotBlank(bo.getNoticeType()), SysNotice::getNoticeType, bo.getNoticeType());
-        if (StringUtils.isNotBlank(bo.getCreateByName())) {
-            SysUserVo sysUser = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getUserName, bo.getCreateByName()));
-            lqw.eq(SysNotice::getCreateBy, ObjectUtils.notNullGetter(sysUser, SysUserVo::getUserId));
-        }
-        lqw.orderByAsc(SysNotice::getNoticeId);
-        return lqw;
     }
 
     /**
