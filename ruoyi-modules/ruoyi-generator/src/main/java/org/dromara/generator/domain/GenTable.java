@@ -96,12 +96,6 @@ public class GenTable extends BaseEntity {
     private String functionName;
 
     /**
-     * 生成作者
-     */
-    @NotBlank(message = "作者不能为空")
-    private String functionAuthor;
-
-    /**
      * 生成代码方式（0zip压缩包 1自定义路径）
      */
     private String genType;

@@ -105,9 +105,4 @@ public class SysMenuBo extends BaseEntity {
      */
     private String icon;
 
-    /**
-     * 备注
-     */
-    private String remark;
-
 }

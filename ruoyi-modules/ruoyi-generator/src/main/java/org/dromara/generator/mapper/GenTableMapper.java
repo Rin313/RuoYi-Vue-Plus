@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 业务 数据层
  *
- * @author Lion Li
  */
 @InterceptorIgnore(dataPermission = "true")
 public interface GenTableMapper extends BaseMapperPlus<GenTable, GenTable> {
@@ -29,14 +28,6 @@ public interface GenTableMapper extends BaseMapperPlus<GenTable, GenTable> {
      * @return 业务信息
      */
     GenTable selectGenTableById(Long id);
-
-    /**
-     * 查询表名称业务信息
-     *
-     * @param tableName 表名称
-     * @return 业务信息
-     */
-    GenTable selectGenTableByName(String tableName);
 
     /**
      * 查询指定数据源下的所有表名列表

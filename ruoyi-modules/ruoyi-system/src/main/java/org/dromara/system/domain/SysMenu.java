@@ -96,11 +96,6 @@ public class SysMenu extends BaseEntity {
     private String icon;
 
     /**
-     * 备注
-     */
-    private String remark;
-
-    /**
      * 父菜单名称
      */
     @TableField(exist = false)

@@ -28,7 +28,6 @@ public class GenUtils {
         genTable.setModuleName(getModuleName(GenConfig.getPackageName()));
         genTable.setBusinessName(getBusinessName(genTable.getTableName()));
         genTable.setFunctionName(replaceText(genTable.getTableComment()));
-        genTable.setFunctionAuthor(GenConfig.getAuthor());
         genTable.setCreateTime(null);
         genTable.setUpdateTime(null);
     }
