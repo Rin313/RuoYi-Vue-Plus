@@ -106,13 +106,9 @@ public class CaptchaController {
      */
     @GetMapping("/auth/code")
     public CaptchaVo getCode() {
-        boolean captchaEnabled = captchaProperties.getEnable();
-        if (!captchaEnabled) {
-            CaptchaVo captchaVo = new CaptchaVo();
-            captchaVo.setCaptchaEnabled(false);
-            return captchaVo;
-        }
-        return SpringUtils.getAopProxy(this).getCodeImpl();
+        if (captchaProperties.getEnable()) 
+            return SpringUtils.getAopProxy(this).getCodeImpl();
+        return null;
     }
 
     /**

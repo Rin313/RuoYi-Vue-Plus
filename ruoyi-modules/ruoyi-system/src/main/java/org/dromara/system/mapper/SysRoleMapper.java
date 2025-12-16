@@ -69,7 +69,6 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
             r.role_id,
             r.role_name,
             r.role_key,
-            r.role_sort,
             r.status,
             ur.expire_time
         FROM sys_role r

@@ -144,3 +144,4 @@ public class PasswordAuthStrategy implements IAuthStrategy {
     }
 
 }
+//可行的疯狂方案：密码登录只传value和password，使用正则校验value智能判断属于手机、邮箱还是username。添加用户时，必须通过邮箱、手机号正则的严格判断。已问gemini可行。

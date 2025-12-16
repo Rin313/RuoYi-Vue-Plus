@@ -8,7 +8,6 @@ import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.ObjectUtil;
 import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -114,7 +113,7 @@ public class SysRoleService {
             .like(StringUtils.isNotBlank(bo.getRoleKey()), SysRole::getRoleKey, bo.getRoleKey())
             .ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysRole::getCreateTime,bo.getBeginTime())
             .le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysRole::getCreateTime,bo.getEndTime())
-            .orderByAsc(SysRole::getRoleSort).orderByAsc(SysRole::getCreateTime);
+            .orderByAsc(SysRole::getCreateTime);
         return wrapper;
     }
 
@@ -304,23 +303,6 @@ public class SysRoleService {
         // 删除角色与菜单关联
         roleMenuMapper.delete(new LambdaQueryWrapper<SysRoleMenu>().eq(SysRoleMenu::getRoleId, role.getRoleId()));
         return insertRoleMenu(bo);
-    }
-
-    /**
-     * 修改角色状态
-     *
-     * @param roleId 角色ID
-     * @param status 角色状态
-     * @return 结果
-     */
-    public int updateRoleStatus(Long roleId, String status) {
-        if (SystemConstants.DISABLE.equals(status) && this.countUserRoleByRoleId(roleId) > 0) {
-            throw new BizException("角色已分配，不能禁用!");
-        }
-        return baseMapper.update(null,
-            new LambdaUpdateWrapper<SysRole>()
-                .set(SysRole::getStatus, status)
-                .eq(SysRole::getRoleId, roleId));
     }
 
     /**

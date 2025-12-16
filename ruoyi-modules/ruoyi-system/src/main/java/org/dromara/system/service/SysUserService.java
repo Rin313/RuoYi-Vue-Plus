@@ -298,20 +298,6 @@ public class SysUserService {
     }
 
     /**
-     * 修改用户状态
-     *
-     * @param userId 用户ID
-     * @param status 帐号状态
-     * @return 结果
-     */
-    public int updateUserStatus(Long userId, String status) {
-        return baseMapper.update(null,
-            new LambdaUpdateWrapper<SysUser>()
-                .set(SysUser::getStatus, status)
-                .eq(SysUser::getUserId, userId));
-    }
-
-    /**
      * 修改用户基本信息
      *
      * @param user 用户信息

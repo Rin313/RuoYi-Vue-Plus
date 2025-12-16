@@ -23,7 +23,8 @@ import org.dromara.system.domain.bo.SysRoleBo;
 import org.dromara.system.domain.bo.SysUserBo;
 import org.dromara.system.domain.vo.*;
 import org.dromara.system.listener.SysUserImportListener;
-import org.dromara.system.service.*;
+import org.dromara.system.service.SysRoleService;
+import org.dromara.system.service.SysUserService;
 import org.dromara.system.service.SysUserService.TaskVo;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
@@ -166,7 +167,7 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:query")
     @GetMapping(value = {"/", "/{userId}"})
-    public SysUserInfoVo getInfo(@PathVariable(value = "userId", required = false) Long userId) {
+    public SysUserInfoVo getInfo(@PathVariable(required = false) Long userId) {
         SysUserInfoVo userInfoVo = new SysUserInfoVo();
         if (ObjectUtil.isNotNull(userId)) {
             SysUserVo sysUser = userService.selectUserById(userId);
@@ -206,7 +207,7 @@ public class SysUserController {
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping
+    @PostMapping("/update")
     public void update(@Validated @RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
         if (!userService.checkUserNameUnique(user)) {
@@ -218,7 +219,6 @@ public class SysUserController {
         }
         userService.updateUser(user);
     }
-
     /**
      * 删除用户
      *
@@ -226,7 +226,7 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:remove")
     @Log(title = "用户管理", businessType = BizType.DELETE)
-    @DeleteMapping("/{userIds}")
+    @PostMapping("/{userIds}")
     public void delete(@PathVariable Long[] userIds) {
         if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
             throw new BizException("当前用户不能删除");
@@ -240,23 +240,11 @@ public class SysUserController {
     @SaCheckPermission("system:user:resetPwd")
     @Log(title = "用户管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping("/resetPwd")
+    @PostMapping("/resetPwd")
     public void resetPwd(@RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
         user.setPassword(BCrypt.hashpw(user.getPassword()));
         userService.resetUserPwd(user.getUserId(), user.getPassword());
-    }
-
-    /**
-     * 状态修改
-     */
-    @SaCheckPermission("system:user:edit")
-    @Log(title = "用户管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping("/changeStatus")
-    public void changeStatus(@RequestBody SysUserBo user) {
-        userService.checkUserAllowed(user.getUserId());
-        userService.updateUserStatus(user.getUserId(), user.getStatus());
     }
 
     /**
@@ -284,7 +272,7 @@ public class SysUserController {
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BizType.GRANT)
     @RepeatSubmit()
-    @PutMapping("/authRole")
+    @PostMapping("/authRole")
     public void insertAuthRole(Long userId, List<Long> roleIds) {
         userService.insertUserAuth(userId, roleIds);
     }

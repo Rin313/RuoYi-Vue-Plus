@@ -46,7 +46,7 @@ public class ChapterController {
     @SaCheckPermission("system:chapter:add")
     @Log(title = "小说章节", businessType = BizType.INSERT)
     @RepeatSubmit()
-    @PostMapping()
+    @PostMapping("/insert")
     public void add(@Validated(AddGroup.class) @RequestBody ChapterInsertBo bo) {
         chapterService.insertByBo(bo);
     }
@@ -54,14 +54,14 @@ public class ChapterController {
     @SaCheckPermission("system:chapter:edit")
     @Log(title = "小说章节", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping()
+    @PostMapping("/update")
     public void update(@Validated(EditGroup.class) @RequestBody ChapterUpdateBo bo) {
         chapterService.updateByBo(bo);
     }
 
     @SaCheckPermission("system:chapter:remove")
     @Log(title = "小说章节", businessType = BizType.DELETE)
-    @DeleteMapping("/{ids}")
+    @PostMapping("/{ids}")
     public void delete(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         chapterService.deleteByIds(List.of(ids));

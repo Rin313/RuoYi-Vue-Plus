@@ -92,7 +92,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping
+    @PostMapping("/update")
     public void update(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         if (!roleService.checkRoleNameUnique(role)) {
@@ -100,23 +100,10 @@ public class SysRoleController {
         } else if (!roleService.checkRoleKeyUnique(role)) {
             throw new BizException("修改角色'" + role.getRoleName() + "'失败，角色权限已存在");
         }
-
         if (roleService.updateRole(role) > 0) {
             roleService.cleanOnlineUserByRole(role.getRoleId());
         }
-        throw new BizException("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
-    }
-
-    /**
-     * 状态修改
-     */
-    @SaCheckPermission("system:role:edit")
-    @Log(title = "角色管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping("/changeStatus")
-    public void changeStatus(@RequestBody SysRoleBo role) {
-        roleService.checkRoleAllowed(role);
-        roleService.updateRoleStatus(role.getRoleId(), role.getStatus());
+        else throw new BizException("修改角色'" + role.getRoleName() + "'失败，请联系管理员");
     }
 
     /**
@@ -126,7 +113,7 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BizType.DELETE)
-    @DeleteMapping("/{roleIds}")
+    @PostMapping("/{roleIds}")
     public void delete(@PathVariable Long[] roleIds) {
         roleService.deleteRoleByIds(List.of(roleIds));
     }
@@ -166,7 +153,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
-    @PutMapping("/authUser/cancel")
+    @PostMapping("/authUser/cancel")
     public void cancelAuthUser(@RequestBody SysUserRole userRole) {
         roleService.deleteAuthUser(userRole);
     }
@@ -180,7 +167,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
-    @PutMapping("/authUser/cancelAll")
+    @PostMapping("/authUser/cancelAll")
     public void cancelAuthUserAll(Long roleId, Long[] userIds) {
         roleService.deleteAuthUsers(roleId, userIds);
     }
@@ -194,7 +181,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
     @RepeatSubmit()
-    @PutMapping("/authUser/selectAll")
+    @PostMapping("/authUser/selectAll")
     public void selectAuthUserAll(Long roleId, Long[] userIds) {
         roleService.insertAuthUsers(roleId, userIds);
     }

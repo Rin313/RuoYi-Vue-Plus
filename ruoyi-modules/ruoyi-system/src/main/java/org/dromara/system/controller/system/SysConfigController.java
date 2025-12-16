@@ -80,7 +80,7 @@ public class SysConfigController {
     @SaCheckPermission("system:config:add")
     @Log(title = "参数管理", businessType = BizType.INSERT)
     @RepeatSubmit()
-    @PostMapping
+    @PostMapping("/insert")
     public void add(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
             throw new BizException("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
@@ -94,7 +94,7 @@ public class SysConfigController {
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数管理", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping
+    @PostMapping("/update")
     public void update(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
             throw new BizException("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
@@ -109,7 +109,7 @@ public class SysConfigController {
      */
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BizType.DELETE)
-    @DeleteMapping("/{configIds}")
+    @PostMapping("/{configIds}")
     public void delete(@PathVariable Long[] configIds) {
         configService.deleteConfigByIds(Arrays.asList(configIds));
     }
@@ -119,7 +119,7 @@ public class SysConfigController {
      */
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BizType.CLEAN)
-    @DeleteMapping("/refreshCache")
+    @PostMapping("/refreshCache")
     public void refreshCache() {
         configService.resetConfigCache();
     }

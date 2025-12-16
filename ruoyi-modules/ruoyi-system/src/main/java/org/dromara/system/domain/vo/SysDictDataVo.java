@@ -32,12 +32,6 @@ public class SysDictDataVo implements Serializable {
     private Long dictCode;
 
     /**
-     * 字典排序
-     */
-    @ExcelProperty(value = "字典排序")
-    private Integer dictSort;
-
-    /**
      * 字典标签
      */
     @ExcelProperty(value = "字典标签")

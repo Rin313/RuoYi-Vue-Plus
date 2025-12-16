@@ -83,7 +83,7 @@ public class SysUserOnlineController {
     @SaCheckPermission("monitor:online:forceLogout")
     @Log(title = "在线用户", businessType = BizType.FORCE)
     @RepeatSubmit()
-    @DeleteMapping("/{tokenId}")
+    @PostMapping("/{tokenId}")
     public void forceLogout(@PathVariable String tokenId) {
         try {
             StpUtil.kickoutByTokenValue(tokenId);
@@ -116,7 +116,7 @@ public class SysUserOnlineController {
      */
     @Log(title = "在线设备", businessType = BizType.FORCE)
     @RepeatSubmit()
-    @DeleteMapping("/myself/{tokenId}")
+    @PostMapping("/myself/{tokenId}")
     public void delete(@PathVariable String tokenId) {
         try {
             // 获取指定账号 id 的 token 集合

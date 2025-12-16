@@ -24,11 +24,6 @@ public class SysDictData extends BaseEntity {
     private Long dictCode;
 
     /**
-     * 字典排序
-     */
-    private Integer dictSort;
-
-    /**
      * 字典标签
      */
     private String dictLabel;

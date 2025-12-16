@@ -102,7 +102,7 @@ public class SysDictDataController {
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典数据", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping
+    @PostMapping("/update")
     public void update(@Validated @RequestBody SysDictDataBo dict) {
         if (!dictDataService.checkDictDataUnique(dict)) {
             throw new BizException("修改字典数据'" + dict.getDictValue() + "'失败，字典键值已存在");
@@ -117,7 +117,7 @@ public class SysDictDataController {
      */
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BizType.DELETE)
-    @DeleteMapping("/{dictCodes}")
+    @PostMapping("/{dictCodes}")
     public void delete(@PathVariable Long[] dictCodes) {
         dictDataService.deleteDictDataByIds(Arrays.asList(dictCodes));
     }

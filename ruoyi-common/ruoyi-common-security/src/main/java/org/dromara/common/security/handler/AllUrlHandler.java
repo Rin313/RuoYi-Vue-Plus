@@ -34,5 +34,4 @@ public class AllUrlHandler implements InitializingBean {
         });
         urls.addAll(set);
     }
-
 }

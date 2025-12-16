@@ -39,7 +39,7 @@ public class SysProfileController {
      */
     @RepeatSubmit
     @Log(title = "个人信息", businessType = BizType.UPDATE)
-    @PutMapping
+    @PostMapping("/update")
     public void updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
         SysUserBo user = BeanUtil.toBean(profile, SysUserBo.class);
         user.setUserId(LoginHelper.getUserId());
@@ -60,7 +60,7 @@ public class SysProfileController {
      */
     @RepeatSubmit
     @Log(title = "个人信息", businessType = BizType.UPDATE)
-    @PutMapping("/updatePwd")
+    @PostMapping("/updatePwd")
     public void updatePwd(@Validated @RequestBody SysUserPasswordBo bo) {
         SysUserVo user = userService.selectUserById(LoginHelper.getUserId());
         String password = user.getPassword();

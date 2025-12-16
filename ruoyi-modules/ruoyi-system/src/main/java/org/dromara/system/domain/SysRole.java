@@ -36,11 +36,6 @@ public class SysRole extends BaseEntity {
     private String roleKey;
 
     /**
-     * 角色排序
-     */
-    private Integer roleSort;
-
-    /**
      * 菜单树选择项是否关联显示（ 0：父子不互相关联显示 1：父子互相关联显示）
      */
     private Boolean menuCheckStrictly;

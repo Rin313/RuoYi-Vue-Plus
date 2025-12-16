@@ -60,7 +60,7 @@ public class NovelController {
     @SaIgnore
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/view/{id}")
-    public void addViewCount(@PathVariable("id") Long id) {
+    public void addViewCount(@PathVariable Long id) {
         novelService.addViewCount(id);
     }
 
@@ -83,7 +83,7 @@ public class NovelController {
     @SaCheckPermission("system:novel:edit")
     @Log(title = "小说", businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping()
+    @PostMapping("update")
     public void update(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
         novelService.updateByBo(bo);
     }
@@ -95,7 +95,7 @@ public class NovelController {
      */
     @SaCheckPermission("system:novel:remove")
     @Log(title = "小说", businessType = BizType.DELETE)
-    @DeleteMapping("/{ids}")
+    @PostMapping("/{ids}")
     public void delete(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         novelService.deleteByIds(List.of(ids));

@@ -41,7 +41,7 @@ public class ActionController {
     @SaCheckPermission("system:chapter:add")
     @Log(businessType = BizType.INSERT)
     @RepeatSubmit()
-    @PostMapping()
+    @PostMapping("/insert")
     public void add(@Validated(AddGroup.class) @RequestBody ActionInsertBo bo) {
         actionService.insertByBo(bo);
     }
@@ -49,14 +49,14 @@ public class ActionController {
     @SaCheckPermission("system:chapter:edit")
     @Log(businessType = BizType.UPDATE)
     @RepeatSubmit()
-    @PutMapping()
+    @PostMapping("/update")
     public void update(@Validated(EditGroup.class) @RequestBody ActionUpdateBo bo) {
         actionService.updateByBo(bo);
     }
 
     @SaCheckPermission("system:chapter:remove")
     @Log(businessType = BizType.DELETE)
-    @DeleteMapping("/{ids}")
+    @PostMapping("/{ids}")
     public void delete(@NotEmpty(message = "主键不能为空")
                           @PathVariable Long[] ids) {
         actionService.deleteByIds(List.of(ids));

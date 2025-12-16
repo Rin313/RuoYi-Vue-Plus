@@ -44,12 +44,6 @@ public class SysRoleVo implements Serializable {
     private String roleKey;
 
     /**
-     * 显示顺序
-     */
-    @ExcelProperty(value = "角色排序")
-    private Integer roleSort;
-
-    /**
      * 菜单树选择项是否关联显示
      */
     @ExcelProperty(value = "菜单树选择项是否关联显示")

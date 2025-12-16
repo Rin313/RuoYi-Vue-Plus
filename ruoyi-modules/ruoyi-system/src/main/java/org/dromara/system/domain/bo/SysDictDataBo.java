@@ -24,11 +24,6 @@ public class SysDictDataBo extends BaseEntity {
     private Long dictCode;
 
     /**
-     * 字典排序
-     */
-    private Integer dictSort;
-
-    /**
      * 字典标签
      */
     @NotBlank(message = "字典标签不能为空")

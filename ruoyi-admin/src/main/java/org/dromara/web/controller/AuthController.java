@@ -66,7 +66,7 @@ public class AuthController {
      * @return 结果
      */
     @GetMapping("/binding/{source}")
-    public String authBinding(@PathVariable("source") String source, @RequestParam String domain) {
+    public String authBinding(@PathVariable String source, @RequestParam String domain) {
         SocialLoginConfigProperties obj = socialProperties.getType().get(source);
         if (ObjectUtil.isNull(obj))
             throw new BizException(source + "平台账号暂不支持");
@@ -105,7 +105,7 @@ public class AuthController {
      *
      * @param socialId socialId
      */
-    @DeleteMapping(value = "/unlock/{socialId}")
+    @PostMapping(value = "/unlock/{socialId}")
     public void unlockSocial(@PathVariable Long socialId) {
         // 校验token
         StpUtil.checkLogin();
