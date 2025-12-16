@@ -13,14 +13,7 @@ import org.dromara.common.core.domain.model.LoginUser;
 
 /**
  * 登录鉴权助手
- * <p>
- * deivce 为 设备类型 同一个用户类型 可以有 多种设备类型 例如 web,ios
- * 可以组成 用户类型与设备类型多对多的 权限灵活控制
- * <p>
- * 多用户体系 针对 多种用户类型 但权限控制不一致
- * 可以组成 多用户类型表与多设备类型 分别控制权限
  *
- * @author Lion Li
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class LoginHelper {
@@ -30,8 +23,6 @@ public class LoginHelper {
     public static final String USER_NAME_KEY = "userName";
 
     /**
-     * 登录系统 基于 设备类型
-     * 针对相同用户体系不同设备
      *
      * @param loginUser 登录用户信息
      * @param model     配置参数
