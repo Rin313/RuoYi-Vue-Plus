@@ -65,12 +65,6 @@
             <artifactId>ruoyi-system</artifactId>
         </dependency>
 
-        <!-- 代码生成-->
-        <dependency>
-            <groupId>org.dromara</groupId>
-            <artifactId>ruoyi-generator</artifactId>
-        </dependency>
-
     </dependencies>
 
     <build>
