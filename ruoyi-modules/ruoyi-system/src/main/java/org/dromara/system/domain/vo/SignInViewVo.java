@@ -1,5 +1,6 @@
 package org.dromara.system.domain.vo;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -25,6 +26,7 @@ public class SignInViewVo {
     @Data
     public static class DailyRewardInfo {
         private int day;
+        private String date;
         private Map<String, Integer> reward;
         private String status;
     }

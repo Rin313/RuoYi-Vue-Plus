@@ -70,7 +70,7 @@ public class SysUserController {
      */
     @GetMapping("/sign/info")
     public SignInViewVo getSignInfo() {
-        return userService.getSignInView(LoginHelper.getUserId());
+        return userService.getSignInView(LoginHelper.getUserId(),8);
     }
 
     /**

@@ -142,6 +142,5 @@ public class PasswordAuthStrategy implements IAuthStrategy {
             throw new CaptchaException();
         }
     }
-
 }
-//可行的疯狂方案：密码登录只传value和password，使用正则校验value智能判断属于手机、邮箱还是username。添加用户时，必须通过邮箱、手机号正则的严格判断。已问gemini可行。
+//只用username（怎么记忆怎么找回）<username/email/phonenumber分别用不同字段<用正则限制username和email/phonenumber不同格式，查询or匹配三字段（已问gemini可行）<只用email/phonenumber<只用游客登录
