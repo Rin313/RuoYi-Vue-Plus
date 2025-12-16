@@ -32,11 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
@@ -45,7 +43,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 /**
  * 用户信息
  *
- * @author Lion Li
  */
 @Validated
 @RequiredArgsConstructor
@@ -235,17 +232,6 @@ public class SysUserController {
             throw new BizException("当前用户不能删除");
         }
         userService.deleteUserByIds(userIds);
-    }
-
-    /**
-     * 根据用户ID串批量获取用户基础信息
-     *
-     * @param userIds 用户ID串
-     */
-    @SaCheckPermission("system:user:query")
-    @GetMapping("/optionselect")
-    public List<SysUserVo> optionselect(@RequestParam(required = false) Long[] userIds) {
-        return userService.selectUserByIds(ArrayUtil.isEmpty(userIds) ? null : List.of(userIds));
     }
 
     /**

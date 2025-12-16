@@ -6,7 +6,6 @@ import org.dromara.common.core.utils.StringUtils;
 /**
  * 路由显示信息
  *
- * @author ruoyi
  */
 
 @Data

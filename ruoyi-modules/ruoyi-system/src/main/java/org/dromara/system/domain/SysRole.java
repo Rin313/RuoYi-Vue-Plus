@@ -11,7 +11,6 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 /**
  * 角色表 sys_role
  *
- * @author Lion Li
  */
 
 @Data

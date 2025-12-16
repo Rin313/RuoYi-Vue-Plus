@@ -24,7 +24,6 @@ import java.time.Duration;
 /**
  * 用户行为 侦听器的实现
  *
- * @author Lion Li
  */
 @RequiredArgsConstructor
 @Component

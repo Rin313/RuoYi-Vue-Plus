@@ -8,7 +8,6 @@ import org.dromara.common.json.utils.JsonUtils;
 /**
  * JSON 格式校验器
  *
- * @author AprilWind
  */
 public class JsonPatternValidator implements ConstraintValidator<JsonPattern, String> {
 

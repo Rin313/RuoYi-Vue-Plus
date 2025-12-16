@@ -14,7 +14,6 @@ import java.util.Arrays;
 /**
  * 邮件发送案例
  *
- * @author Michelle.Chung
  */
 @Validated
 @RequiredArgsConstructor

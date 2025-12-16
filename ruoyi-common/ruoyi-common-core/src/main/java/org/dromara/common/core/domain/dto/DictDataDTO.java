@@ -9,7 +9,6 @@ import java.io.Serializable;
 /**
  * 字典数据DTO
  *
- * @author AprilWind
  */
 @Data
 @NoArgsConstructor

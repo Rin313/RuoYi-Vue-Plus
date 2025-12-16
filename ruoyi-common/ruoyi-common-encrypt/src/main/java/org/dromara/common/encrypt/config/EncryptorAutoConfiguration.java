@@ -16,7 +16,6 @@ import org.springframework.context.annotation.Bean;
 /**
  * 加解密配置
  *
- * @author 老马
  * @version 4.6.0
  */
 @AutoConfiguration(after = MybatisPlusAutoConfiguration.class)

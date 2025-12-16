@@ -10,8 +10,6 @@ import lombok.Data;
 /**
  * 小说业务对象 novel
  *
- * @author Lion Li
- * @date 2025-12-04
  */
 @Data
 @AutoMapper(target = Novel.class, reverseConvertGenerate = false)

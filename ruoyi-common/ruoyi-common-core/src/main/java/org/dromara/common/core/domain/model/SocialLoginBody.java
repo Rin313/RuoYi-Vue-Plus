@@ -7,7 +7,6 @@ import lombok.EqualsAndHashCode;
 /**
  * 三方登录对象
  *
- * @author Lion Li
  */
 
 @Data

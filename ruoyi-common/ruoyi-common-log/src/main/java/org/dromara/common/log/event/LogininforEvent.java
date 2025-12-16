@@ -9,7 +9,6 @@ import java.io.Serializable;
 /**
  * 登录事件
  *
- * @author Lion Li
  */
 
 @Data

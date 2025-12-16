@@ -11,7 +11,6 @@ import org.dromara.system.domain.SysDictData;
 /**
  * 字典数据业务对象 sys_dict_data
  *
- * @author Michelle.Chung
  */
 
 @Data

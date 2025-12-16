@@ -17,7 +17,6 @@ import static org.dromara.common.websocket.constant.WebSocketConstants.LOGIN_USE
 /**
  * WebSocketHandler 实现类
  *
- * @author zendwang
  */
 @Slf4j
 public class PlusWebSocketHandler extends AbstractWebSocketHandler {

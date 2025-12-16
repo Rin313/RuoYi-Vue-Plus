@@ -12,7 +12,6 @@ import java.util.Date;
 /**
  * 社会化关系视图对象 sys_social
  *
- * @author thiszhc
  */
 @Data
 @AutoMapper(target = SysSocial.class)

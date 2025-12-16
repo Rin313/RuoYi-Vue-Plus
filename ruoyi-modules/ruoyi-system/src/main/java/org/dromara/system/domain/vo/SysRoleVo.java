@@ -16,7 +16,6 @@ import java.util.Date;
 /**
  * 角色信息视图对象 sys_role
  *
- * @author Michelle.Chung
  */
 @Data
 @ExcelIgnoreUnannotated

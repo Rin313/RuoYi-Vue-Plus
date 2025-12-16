@@ -10,7 +10,6 @@ import java.util.Date;
 /**
  * 系统访问记录业务对象 sys_logininfor
  *
- * @author Michelle.Chung
  */
 
 @Data

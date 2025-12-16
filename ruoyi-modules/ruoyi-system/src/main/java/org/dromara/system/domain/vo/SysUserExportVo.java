@@ -13,7 +13,6 @@ import java.util.Date;
 /**
  * 用户对象导出VO
  *
- * @author Lion Li
  */
 
 @Data

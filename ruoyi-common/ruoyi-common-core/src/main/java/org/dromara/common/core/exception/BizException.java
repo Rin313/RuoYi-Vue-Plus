@@ -11,7 +11,6 @@ import java.io.Serial;
 /**
  * 业务异常（支持占位符 {} ）
  *
- * @author ruoyi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * Redis 发布订阅 演示案例
  *
- * @author Lion Li
  */
 @RequiredArgsConstructor
 @RestController

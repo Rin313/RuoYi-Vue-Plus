@@ -17,7 +17,6 @@ import org.springframework.web.socket.server.HandshakeInterceptor;
 /**
  * WebSocket 配置
  *
- * @author zendwang
  */
 @AutoConfiguration
 @ConditionalOnProperty(value = "websocket.enabled", havingValue = "true")

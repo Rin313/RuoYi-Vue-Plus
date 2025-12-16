@@ -7,7 +7,6 @@ import org.dromara.common.core.utils.StringUtils;
 /**
  * 数据库类型
  *
- * @author Lion Li
  */
 @Getter
 @AllArgsConstructor

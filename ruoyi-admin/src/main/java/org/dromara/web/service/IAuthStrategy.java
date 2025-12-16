@@ -8,7 +8,6 @@ import org.dromara.web.domain.vo.LoginVo;
 /**
  * 授权策略
  *
- * @author Michelle.Chung
  */
 public interface IAuthStrategy {
 

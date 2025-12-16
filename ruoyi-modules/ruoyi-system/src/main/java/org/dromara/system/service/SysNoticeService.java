@@ -19,7 +19,6 @@ import java.util.Arrays;
 /**
  * 公告 服务层实现
  *
- * @author Lion Li
  */
 @RequiredArgsConstructor
 @Service

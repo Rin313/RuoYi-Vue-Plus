@@ -6,7 +6,6 @@ import me.zhyd.oauth.request.AuthDefaultRequest;
 /**
  * gitea Oauth2 默认接口说明
  *
- * @author lcry
  */
 public enum AuthGiteaSource implements AuthSource {
 

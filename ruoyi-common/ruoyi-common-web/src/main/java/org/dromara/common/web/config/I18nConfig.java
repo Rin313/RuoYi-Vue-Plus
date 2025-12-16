@@ -9,7 +9,6 @@ import org.springframework.web.servlet.LocaleResolver;
 /**
  * 国际化配置
  *
- * @author Lion Li
  */
 @AutoConfiguration(before = WebMvcAutoConfiguration.class)
 public class I18nConfig {

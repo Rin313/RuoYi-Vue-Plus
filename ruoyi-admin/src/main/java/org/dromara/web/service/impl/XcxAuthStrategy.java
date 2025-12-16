@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 /**
  * 小程序认证策略
  *
- * @author Michelle.Chung
  */
 @Slf4j
 @Service("xcx" + IAuthStrategy.BASE_NAME)

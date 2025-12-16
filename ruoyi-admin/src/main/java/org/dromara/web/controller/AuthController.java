@@ -31,7 +31,6 @@ import java.util.Map;
 /**
  * 认证
  *
- * @author Lion Li
  */
 @Slf4j
 @SaIgnore

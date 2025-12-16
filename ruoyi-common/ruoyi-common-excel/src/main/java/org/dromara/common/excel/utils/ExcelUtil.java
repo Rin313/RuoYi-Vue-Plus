@@ -32,7 +32,6 @@ import java.util.function.Consumer;
 /**
  * Excel相关处理
  *
- * @author Lion Li
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ExcelUtil {

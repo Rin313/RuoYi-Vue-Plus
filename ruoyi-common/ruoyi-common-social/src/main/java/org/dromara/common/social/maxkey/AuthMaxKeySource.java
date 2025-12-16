@@ -6,7 +6,6 @@ import me.zhyd.oauth.request.AuthDefaultRequest;
 /**
  * Oauth2 默认接口说明
  *
- * @author 长春叭哥 2023年03月26日
  *
  */
 public enum AuthMaxKeySource implements AuthSource {

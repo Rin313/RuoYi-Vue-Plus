@@ -59,7 +59,6 @@ public class MailUtils {
      * @param content 正文
      * @param files   附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String sendText(String to, String subject, String content, File... files) {
         return send(to, subject, content, false, files);
@@ -74,7 +73,6 @@ public class MailUtils {
      * @param content 正文
      * @param files   附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String sendHtml(String to, String subject, String content, File... files) {
         return send(to, subject, content, true, files);
@@ -107,7 +105,6 @@ public class MailUtils {
      * @param isHtml  是否为HTML
      * @param files   附件列表
      * @return message-id
-     * @since 4.0.3
      */
     public static String send(String to, String cc, String bcc, String subject, String content, boolean isHtml, File... files) {
         return send(splitAddress(to), splitAddress(cc), splitAddress(bcc), subject, content, isHtml, files);
@@ -134,7 +131,6 @@ public class MailUtils {
      * @param content 正文
      * @param files   附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String sendHtml(Collection<String> tos, String subject, String content, File... files) {
         return send(tos, subject, content, true, files);
@@ -165,7 +161,6 @@ public class MailUtils {
      * @param isHtml  是否为HTML
      * @param files   附件列表
      * @return message-id
-     * @since 4.0.3
      */
     public static String send(Collection<String> tos, Collection<String> ccs, Collection<String> bccs, String subject, String content, boolean isHtml, File... files) {
         return send(getMailAccount(), true, tos, ccs, bccs, subject, content, null, isHtml, files);
@@ -183,7 +178,6 @@ public class MailUtils {
      * @param isHtml      是否为HTML格式
      * @param files       附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String send(MailAccount mailAccount, String to, String subject, String content, boolean isHtml, File... files) {
         return send(mailAccount, splitAddress(to), subject, content, isHtml, files);
@@ -216,7 +210,6 @@ public class MailUtils {
      * @param isHtml      是否为HTML格式
      * @param files       附件列表
      * @return message-id
-     * @since 4.0.3
      */
     public static String send(MailAccount mailAccount, Collection<String> tos, Collection<String> ccs, Collection<String> bccs, String subject, String content, boolean isHtml, File... files) {
         return send(mailAccount, false, tos, ccs, bccs, subject, content, null, isHtml, files);
@@ -232,7 +225,6 @@ public class MailUtils {
      * @param imageMap 图片与占位符，占位符格式为cid:$IMAGE_PLACEHOLDER
      * @param files    附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String sendHtml(String to, String subject, String content, Map<String, InputStream> imageMap, File... files) {
         return send(to, subject, content, imageMap, true, files);
@@ -267,7 +259,6 @@ public class MailUtils {
      * @param isHtml   是否为HTML
      * @param files    附件列表
      * @return message-id
-     * @since 4.0.3
      */
     public static String send(String to, String cc, String bcc, String subject, String content, Map<String, InputStream> imageMap, boolean isHtml, File... files) {
         return send(splitAddress(to), splitAddress(cc), splitAddress(bcc), subject, content, imageMap, isHtml, files);
@@ -282,7 +273,6 @@ public class MailUtils {
      * @param imageMap 图片与占位符，占位符格式为cid:$IMAGE_PLACEHOLDER
      * @param files    附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String sendHtml(Collection<String> tos, String subject, String content, Map<String, InputStream> imageMap, File... files) {
         return send(tos, subject, content, imageMap, true, files);
@@ -315,7 +305,6 @@ public class MailUtils {
      * @param isHtml   是否为HTML
      * @param files    附件列表
      * @return message-id
-     * @since 4.0.3
      */
     public static String send(Collection<String> tos, Collection<String> ccs, Collection<String> bccs, String subject, String content, Map<String, InputStream> imageMap, boolean isHtml, File... files) {
         return send(getMailAccount(), true, tos, ccs, bccs, subject, content, imageMap, isHtml, files);
@@ -334,7 +323,6 @@ public class MailUtils {
      * @param isHtml      是否为HTML格式
      * @param files       附件列表
      * @return message-id
-     * @since 3.2.0
      */
     public static String send(MailAccount mailAccount, String to, String subject, String content, Map<String, InputStream> imageMap, boolean isHtml, File... files) {
         return send(mailAccount, splitAddress(to), subject, content, imageMap, isHtml, files);
@@ -351,7 +339,6 @@ public class MailUtils {
      * @param isHtml      是否为HTML格式
      * @param files       附件列表
      * @return message-id
-     * @since 4.6.3
      */
     public static String send(MailAccount mailAccount, Collection<String> tos, String subject, String content, Map<String, InputStream> imageMap, boolean isHtml, File... files) {
         return send(mailAccount, tos, null, null, subject, content, imageMap, isHtml, files);
@@ -370,7 +357,6 @@ public class MailUtils {
      * @param isHtml      是否为HTML格式
      * @param files       附件列表
      * @return message-id
-     * @since 4.6.3
      */
     public static String send(MailAccount mailAccount, Collection<String> tos, Collection<String> ccs, Collection<String> bccs, String subject, String content, Map<String, InputStream> imageMap,
                               boolean isHtml, File... files) {
@@ -383,7 +369,6 @@ public class MailUtils {
      * @param mailAccount 邮件账户配置
      * @param isSingleton 是否单例（全局共享会话）
      * @return {@link Session}
-     * @since 5.5.7
      */
     public static Session getSession(MailAccount mailAccount, boolean isSingleton) {
         Authenticator authenticator = null;
@@ -411,7 +396,6 @@ public class MailUtils {
      * @param isHtml           是否为HTML格式
      * @param files            附件列表
      * @return message-id
-     * @since 4.6.3
      */
     private static String send(MailAccount mailAccount, boolean useGlobalSession, Collection<String> tos, Collection<String> ccs, Collection<String> bccs, String subject, String content,
                                Map<String, InputStream> imageMap, boolean isHtml, File... files) {

@@ -20,7 +20,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 /**
  * 权限安全配置
  *
- * @author Lion Li
  */
 
 @Slf4j

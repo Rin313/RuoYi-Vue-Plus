@@ -24,8 +24,6 @@ import static org.dromara.common.social.topiam.AuthTopIamSource.TOPIAM;
 /**
  * TopIAM 认证请求
  *
- * @author xlsea
- * @since 2024-01-06
  */
 @Slf4j
 public class AuthTopIamRequest extends AuthDefaultRequest {

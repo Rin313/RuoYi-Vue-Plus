@@ -17,7 +17,6 @@ import org.dromara.common.social.topiam.AuthTopIamRequest;
 /**
  * 认证授权工具类
  *
- * @author thiszhc
  */
 public class SocialUtils  {
 

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RestController;
 /**
  * WebSocket 演示案例
  *
- * @author zendwang
  */
 @RequiredArgsConstructor
 @RestController

@@ -12,7 +12,6 @@ import java.util.concurrent.ConcurrentHashMap;
 /**
  * WebSocketSession 用于保存当前所有在线的会话信息
  *
- * @author zendwang
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class WebSocketSessionHolder {

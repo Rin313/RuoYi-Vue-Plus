@@ -7,7 +7,6 @@ import org.dromara.common.core.utils.StringUtils;
 /**
  * sql操作工具类
  *
- * @author ruoyi
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class SqlUtil {

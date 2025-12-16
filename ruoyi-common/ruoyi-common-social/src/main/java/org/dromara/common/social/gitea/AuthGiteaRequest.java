@@ -14,9 +14,6 @@ import me.zhyd.oauth.request.AuthDefaultRequest;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.json.utils.JsonUtils;
 
-/**
- * @author lcry
- */
 @Slf4j
 public class AuthGiteaRequest extends AuthDefaultRequest {
 

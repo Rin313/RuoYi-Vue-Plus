@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 /**
  * JavaMail 配置
  *
- * @author Michelle.Chung
  */
 @AutoConfiguration
 @EnableConfigurationProperties(MailProperties.class)

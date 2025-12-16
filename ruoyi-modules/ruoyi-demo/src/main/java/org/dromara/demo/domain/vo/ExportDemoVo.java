@@ -19,7 +19,6 @@ import java.io.Serializable;
 /**
  * 带有下拉选的Excel导出
  *
- * @author Emil.Zhang
  */
 @Data
 @ExcelIgnoreUnannotated

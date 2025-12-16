@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Primary;
 /**
  * 短信配置类
  *
- * @author Feng
  */
 @AutoConfiguration(after = {RedisAutoConfiguration.class})
 public class SmsAutoConfiguration {

@@ -16,8 +16,6 @@ import java.util.List;
 /**
  * 社会化关系Service业务层处理
  *
- * @author thiszhc
- * @date 2023-06-12
  */
 @RequiredArgsConstructor
 @Service

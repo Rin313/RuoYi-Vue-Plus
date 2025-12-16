@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit;
  * <p>
  * SaTokenDaoBySessionFollowObject 是 SaTokenDao 子集简化了session方法处理
  *
- * @author Lion Li
  */
 public class PlusSaTokenDao implements SaTokenDaoBySessionFollowObject {
 

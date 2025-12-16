@@ -7,7 +7,6 @@ import org.dromara.common.core.constant.RegexConstants;
 /**
  * 正则相关工具类
  *
- * @author Feng
  */
 public final class RegexUtils extends ReUtil {
 

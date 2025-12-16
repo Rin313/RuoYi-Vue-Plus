@@ -15,7 +15,6 @@ import java.util.Set;
 /**
  * 菜单表 数据层
  *
- * @author Lion Li
  */
 public interface SysMenuMapper extends BaseMapperPlus<SysMenu, SysMenuVo> {
 

@@ -9,7 +9,6 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 /**
  * 参数配置表 sys_config
  *
- * @author Lion Li
  */
 
 @Data

@@ -20,8 +20,6 @@ import java.util.Map;
 /**
  * web的调用时间统计拦截器//傻逼，会把敏感参数也写进日志里，修复的相关提交就是继续if叠屎山
  *
- * @author Lion Li
- * @since 3.3.0
  */
 @Slf4j
 public class PlusWebInvokeTimeInterceptor implements HandlerInterceptor {

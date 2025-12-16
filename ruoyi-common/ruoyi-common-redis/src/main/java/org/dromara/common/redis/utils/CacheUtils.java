@@ -9,7 +9,6 @@ import org.springframework.cache.CacheManager;
 /**
  * 缓存操作工具类
  *
- * @author Michelle.Chung
  */
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @SuppressWarnings(value = {"unchecked"})

@@ -25,7 +25,6 @@ import java.util.List;
 /**
  * 操作日志 服务层处理
  *
- * @author Lion Li
  */
 @RequiredArgsConstructor
 @Service

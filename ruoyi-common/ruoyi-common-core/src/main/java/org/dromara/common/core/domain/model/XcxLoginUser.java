@@ -9,7 +9,6 @@ import java.io.Serial;
 /**
  * 小程序登录用户身份权限
  *
- * @author Lion Li
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

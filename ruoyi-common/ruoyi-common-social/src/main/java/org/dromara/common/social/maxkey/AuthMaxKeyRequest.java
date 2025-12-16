@@ -11,9 +11,6 @@ import me.zhyd.oauth.request.AuthDefaultRequest;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.json.utils.JsonUtils;
 
-/**
- *  @author 长春叭哥 2023年03月26日
- */
 public class AuthMaxKeyRequest extends AuthDefaultRequest {
 
     public static final String SERVER_URL = SpringUtils.getProperty("justauth.type.maxkey.server-url");

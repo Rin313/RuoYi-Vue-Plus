@@ -11,7 +11,6 @@ import java.util.Date;
 /**
  * 角色
  *
- * @author Lion Li
  */
 
 @Data

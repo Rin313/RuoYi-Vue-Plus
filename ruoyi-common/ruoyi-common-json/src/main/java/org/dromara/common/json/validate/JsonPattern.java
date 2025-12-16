@@ -8,7 +8,6 @@ import java.lang.annotation.*;
 /**
  * JSON 格式校验注解
  *
- * @author AprilWind
  */
 @Documented
 @Target({ElementType.METHOD, ElementType.FIELD})

@@ -14,8 +14,6 @@ import java.io.Serializable;
 /**
  * 小说章节视图对象 chapter
  *
- * @author Lion Li
- * @date 2025-12-04
  */
 @Data
 @ExcelIgnoreUnannotated

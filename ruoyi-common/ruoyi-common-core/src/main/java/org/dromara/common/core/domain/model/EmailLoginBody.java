@@ -10,7 +10,6 @@ import lombok.EqualsAndHashCode;
 /**
  * 邮件登录对象
  *
- * @author Lion Li
  */
 
 @Data

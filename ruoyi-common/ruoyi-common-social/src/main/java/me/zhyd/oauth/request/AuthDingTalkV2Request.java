@@ -21,8 +21,6 @@ import java.util.Map;
 /**
  * 新版钉钉二维码登录
  *
- * @author yadong.zhang (yadong.zhang0415(a)gmail.com)
- * @since 1.16.7
  */
 public class AuthDingTalkV2Request extends AuthDefaultRequest {
 

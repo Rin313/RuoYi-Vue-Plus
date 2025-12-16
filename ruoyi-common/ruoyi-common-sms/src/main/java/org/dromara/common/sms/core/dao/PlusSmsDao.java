@@ -10,7 +10,6 @@ import java.time.Duration;
  * SmsDao缓存配置 (使用框架自带RedisUtils实现 协议统一)
  * <p>主要用于短信重试和拦截的缓存
  *
- * @author Feng
  */
 public class PlusSmsDao implements SmsDao {
 
@@ -54,7 +53,6 @@ public class PlusSmsDao implements SmsDao {
      *
      * @param key 缓存键
      * @return 被删除的value
-     * @author :Wind
      */
     @Override
     public Object remove(String key) {

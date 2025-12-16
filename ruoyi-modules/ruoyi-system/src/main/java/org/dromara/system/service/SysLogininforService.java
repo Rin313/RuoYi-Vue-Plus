@@ -24,14 +24,12 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 /**
  * 系统访问日志情况信息 服务层处理
  *
- * @author Lion Li
  */
 @RequiredArgsConstructor
 @Slf4j

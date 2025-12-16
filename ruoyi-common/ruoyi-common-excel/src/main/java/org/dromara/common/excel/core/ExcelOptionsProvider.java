@@ -5,7 +5,6 @@ import java.util.Set;
 /**
  * Excel下拉选项数据提供接口
  *
- * @author Angus
  */
 public interface ExcelOptionsProvider {
 

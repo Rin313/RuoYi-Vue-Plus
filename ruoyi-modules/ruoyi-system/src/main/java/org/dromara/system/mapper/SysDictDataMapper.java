@@ -10,7 +10,6 @@ import java.util.List;
 /**
  * 字典表 数据层
  *
- * @author Lion Li
  */
 public interface SysDictDataMapper extends BaseMapperPlus<SysDictData, SysDictDataVo> {
 

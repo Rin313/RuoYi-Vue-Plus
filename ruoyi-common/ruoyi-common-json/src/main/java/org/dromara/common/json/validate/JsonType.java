@@ -6,7 +6,6 @@ import lombok.Getter;
 /**
  * JSON 类型枚举
  *
- * @author AprilWind
  */
 @Getter
 @AllArgsConstructor

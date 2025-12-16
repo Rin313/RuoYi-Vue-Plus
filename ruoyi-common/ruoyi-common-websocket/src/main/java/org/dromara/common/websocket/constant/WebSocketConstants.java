@@ -3,7 +3,6 @@ package org.dromara.common.websocket.constant;
 /**
  * websocket的常量配置
  *
- * @author zendwang
  */
 public interface WebSocketConstants {
 

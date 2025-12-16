@@ -16,7 +16,6 @@ import static org.dromara.common.websocket.constant.WebSocketConstants.LOGIN_USE
 /**
  * WebSocket握手请求的拦截器
  *
- * @author zendwang
  */
 @Slf4j
 public class PlusWebSocketInterceptor implements HandshakeInterceptor {

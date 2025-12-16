@@ -9,7 +9,6 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 /**
  * 字典类型表 sys_dict_type
  *
- * @author Lion Li
  */
 
 @Data

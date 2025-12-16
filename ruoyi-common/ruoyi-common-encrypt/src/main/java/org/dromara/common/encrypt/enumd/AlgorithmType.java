@@ -7,7 +7,6 @@ import org.dromara.common.encrypt.core.encryptor.*;
 /**
  * 算法名称
  *
- * @author 老马
  * @version 4.6.0
  */
 @Getter

@@ -12,8 +12,6 @@ import java.util.Date;
 /**
  * 操作日志记录业务对象 sys_oper_log
  *
- * @author Michelle.Chung
- * @date 2023-02-07
  */
 
 @Data

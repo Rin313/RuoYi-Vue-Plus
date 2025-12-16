@@ -30,7 +30,6 @@ import java.util.TimeZone;
 /**
  * redis配置
  *
- * @author Lion Li
  */
 @Slf4j
 @AutoConfiguration

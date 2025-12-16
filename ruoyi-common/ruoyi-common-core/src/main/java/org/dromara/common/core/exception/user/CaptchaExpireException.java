@@ -5,7 +5,6 @@ import java.io.Serial;
 /**
  * 验证码失效异常类
  *
- * @author ruoyi
  */
 public class CaptchaExpireException extends UserException {
 

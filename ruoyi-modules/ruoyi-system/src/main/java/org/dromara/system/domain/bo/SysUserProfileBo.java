@@ -11,7 +11,6 @@ import org.dromara.common.core.xss.Xss;
 /**
  * 个人信息业务处理
  *
- * @author Michelle.Chung
  */
 
 @Data

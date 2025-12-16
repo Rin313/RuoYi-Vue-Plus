@@ -6,8 +6,6 @@ import me.zhyd.oauth.request.AuthDefaultRequest;
 /**
  * Oauth2 默认接口说明
  *
- * @author xlsea
- * @since 2024-01-06
  */
 public enum AuthTopIamSource implements AuthSource {
 

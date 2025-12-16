@@ -18,7 +18,6 @@ import java.nio.charset.StandardCharsets;
 /**
  * 解密请求参数工具类
  *
- * @author wdhcr
  */
 public class DecryptRequestBodyWrapper extends HttpServletRequestWrapper {
 

@@ -3,7 +3,6 @@ package org.dromara.common.core.constant;
 /**
  * 系统常量信息
  *
- * @author Lion Li
  */
 public interface SystemConstants {
 
