@@ -118,7 +118,7 @@ public class SysUserOnlineController {
     @Log(title = "在线设备", businessType = BizType.FORCE)
     @RepeatSubmit()
     @DeleteMapping("/myself/{tokenId}")
-    public void delete(@PathVariable("tokenId") String tokenId) {
+    public void delete(@PathVariable String tokenId) {
         try {
             // 获取指定账号 id 的 token 集合
             List<String> keys = StpUtil.getTokenValueListByLoginId(StpUtil.getLoginIdAsString());

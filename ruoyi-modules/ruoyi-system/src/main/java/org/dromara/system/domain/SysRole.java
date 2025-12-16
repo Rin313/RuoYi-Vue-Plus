@@ -57,11 +57,6 @@ public class SysRole extends BaseEntity {
     @TableLogic
     private String delFlag;
 
-    /**
-     * 备注
-     */
-    private String remark;
-
     public SysRole(Long roleId) {
         this.roleId = roleId;
     }

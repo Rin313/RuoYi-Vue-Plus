@@ -133,21 +133,4 @@ public class SysLogininforService {
             .le(ObjectUtils.isNotEmpty(logininfor.getEndTime()), SysLogininfor::getLoginTime,logininfor.getEndTime())
             .orderByDesc(SysLogininfor::getInfoId));
     }
-
-    /**
-     * 批量删除系统登录日志
-     *
-     * @param infoIds 需要删除的登录日志ID
-     * @return 结果
-     */
-    public int deleteLogininforByIds(Long[] infoIds) {
-        return baseMapper.deleteByIds(Arrays.asList(infoIds));
-    }
-
-    /**
-     * 清空系统登录日志
-     */
-    public void cleanLogininfor() {
-        baseMapper.delete(new LambdaQueryWrapper<>());
-    }
 }

@@ -8,17 +8,10 @@
         <version>1.0.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <modules>
         <module>ruoyi-generator</module>
         <module>ruoyi-system</module>
     </modules>
-
     <artifactId>ruoyi-modules</artifactId>
     <packaging>pom</packaging>
-
-    <description>
-        ruoyi-modules 业务模块
-    </description>
-
 </project>

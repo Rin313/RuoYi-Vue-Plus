@@ -62,11 +62,6 @@ public class SysRoleBo extends BaseEntity {
     private String status;
 
     /**
-     * 备注
-     */
-    private String remark;
-
-    /**
      * 菜单组
      */
     private Long[] menuIds;

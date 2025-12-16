@@ -101,16 +101,6 @@ public class SysOperLogService {
     }
 
     /**
-     * 批量删除系统操作日志
-     *
-     * @param operIds 需要删除的操作日志ID
-     * @return 结果
-     */
-    public int deleteOperLogByIds(Long[] operIds) {
-        return baseMapper.deleteByIds(Arrays.asList(operIds));
-    }
-
-    /**
      * 查询操作日志详细
      *
      * @param operId 操作ID
@@ -118,12 +108,5 @@ public class SysOperLogService {
      */
     public SysOperLogVo selectOperLogById(Long operId) {
         return baseMapper.selectVoById(operId);
-    }
-
-    /**
-     * 清空操作日志
-     */
-    public void cleanOperLog() {
-        baseMapper.delete(new LambdaQueryWrapper<>());
     }
 }

@@ -4,11 +4,9 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.dromara.common.core.constant.RegexConstants;
 import org.dromara.common.core.xss.Xss;
-import org.dromara.common.mybatis.core.domain.BaseEntity;
 
 /**
  * 个人信息业务处理
@@ -18,8 +16,7 @@ import org.dromara.common.mybatis.core.domain.BaseEntity;
 
 @Data
 @NoArgsConstructor
-@EqualsAndHashCode(callSuper = true)
-public class SysUserProfileBo extends BaseEntity {
+public class SysUserProfileBo {
 
     /**
      * 用户昵称

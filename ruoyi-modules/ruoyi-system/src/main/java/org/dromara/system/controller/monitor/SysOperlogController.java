@@ -51,26 +51,4 @@ public class SysOperlogController {
         List<SysOperLogVo> list = operLogService.selectOperLogList(operLog);
         ExcelUtil.exportExcel(list, "操作日志", SysOperLogVo.class, response);
     }
-
-    /**
-     * 批量删除操作日志记录
-     * @param operIds 日志ids
-     */
-    @Log(title = "操作日志", businessType = BizType.DELETE)
-    @SaCheckPermission("monitor:operlog:remove")
-    @DeleteMapping("/{operIds}")
-    public void delete(@PathVariable Long[] operIds) {
-        operLogService.deleteOperLogByIds(operIds);
-    }
-
-    /**
-     * 清理操作日志记录
-     */
-    @Log(title = "操作日志", businessType = BizType.CLEAN)
-    @SaCheckPermission("monitor:operlog:remove")
-    @Lock4j
-    @DeleteMapping("/clean")
-    public void clean() {
-        operLogService.cleanOperLog();
-    }
 }

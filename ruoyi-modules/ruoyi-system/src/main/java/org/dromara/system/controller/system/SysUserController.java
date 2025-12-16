@@ -144,14 +144,6 @@ public class SysUserController {
     }
 
     /**
-     * 获取导入模板
-     */
-    @PostMapping("/importTemplate")
-    public void importTemplate(HttpServletResponse response) {
-        ExcelUtil.exportExcel(new ArrayList<>(), "用户数据", SysUserImportVo.class, response);
-    }
-
-    /**
      * 获取用户信息
      *
      * @return 用户信息

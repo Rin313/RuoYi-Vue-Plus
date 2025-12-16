@@ -55,33 +55,11 @@ public class SysLogininforController {
         ExcelUtil.exportExcel(list, "登录日志", SysLogininforVo.class, response);
     }
 
-    /**
-     * 批量删除登录日志
-     * @param infoIds 日志ids
-     */
-    @SaCheckPermission("monitor:logininfor:remove")
-    @Log(title = "登录日志", businessType = BizType.DELETE)
-    @DeleteMapping("/{infoIds}")
-    public void delete(@PathVariable Long[] infoIds) {
-        logininforService.deleteLogininforByIds(infoIds);
-    }
-
-    /**
-     * 清理系统访问记录
-     */
-    @SaCheckPermission("monitor:logininfor:remove")
-    @Log(title = "登录日志", businessType = BizType.CLEAN)
-    @Lock4j
-    @DeleteMapping("/clean")
-    public void clean() {
-        logininforService.cleanLogininfor();
-    }
-
     @SaCheckPermission("monitor:logininfor:unlock")
     @Log(title = "账户解锁", businessType = BizType.OTHER)
     @RepeatSubmit()
     @GetMapping("/unlock/{userName}")
-    public void unlock(@PathVariable("userName") String userName) {
+    public void unlock(@PathVariable String userName) {
         String loginName = CacheConstants.PWD_ERR_CNT_KEY + userName;
         if (RedisUtils.hasKey(loginName)) {
             RedisUtils.deleteObject(loginName);
