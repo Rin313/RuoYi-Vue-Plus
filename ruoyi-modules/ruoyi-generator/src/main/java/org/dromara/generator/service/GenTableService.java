@@ -200,15 +200,6 @@ public class GenTableService {
     }
 
     /**
-     * 查询所有表信息
-     *
-     * @return 表信息集合
-     */
-    public List<GenTable> selectGenTableAll() {
-        return baseMapper.selectGenTableAll();
-    }
-
-    /**
      * 删除业务对象
      *
      * @param tableIds 需要删除的数据ID

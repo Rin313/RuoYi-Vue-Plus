@@ -83,5 +83,7 @@ public class SysRoleVo implements Serializable {
     public boolean isSuperAdmin() {
         return SystemConstants.SUPER_ADMIN_ID.equals(this.roleId);
     }
+    
+    private Date expireTime;
 
 }

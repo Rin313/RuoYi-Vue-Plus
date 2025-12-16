@@ -20,7 +20,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,25 +43,6 @@ public class GenController {
     @GetMapping("/list")
     public IPage<GenTable> genList(GenTable genTable, PageQuery pageQuery) {
         return genTableService.selectPageGenTableList(genTable, pageQuery);
-    }
-
-    /**
-     * 修改代码生成业务
-     *
-     * @param tableId 表ID
-     */
-    @RepeatSubmit()
-    @SaCheckPermission("tool:gen:query")
-    @GetMapping(value = "/{tableId}")
-    public Map<String, Object> getInfo(@PathVariable Long tableId) {
-        GenTable table = genTableService.selectGenTableById(tableId);
-        List<GenTable> tables = genTableService.selectGenTableAll();
-        List<GenTableColumn> list = genTableService.selectGenTableColumnListByTableId(tableId);
-        Map<String, Object> map = new HashMap<>(3);
-        map.put("info", table);
-        map.put("rows", list);
-        map.put("tables", tables);
-        return map;
     }
 
     /**
@@ -136,17 +116,6 @@ public class GenController {
     public void download(HttpServletResponse response, @PathVariable("tableId") Long tableId) throws IOException {
         byte[] data = genTableService.downloadCode(tableId);
         genCode(response, data);
-    }
-
-    /**
-     * 生成代码（自定义路径）
-     *
-     * @param tableId 表ID
-     */
-    @SaCheckPermission("tool:gen:code")
-    @GetMapping("/genCode/{tableId}")
-    public void genCode(@PathVariable("tableId") Long tableId) {
-        genTableService.generatorCode(tableId);
     }
 
     /**

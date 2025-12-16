@@ -722,7 +722,7 @@ public class SysUserService {
     * 如果用户第一天签到，第二天没有签到，那么第三天签到时，应该获得的是第三天的奖励
     * 允许补签错过的日期，不能补签该周期前的日期，也不能补签未来的日期
     * 如果不存在特定天数的奖励，获取default奖励，连续签到的奖励则不循环
-    * 返回签到视图，包括整个周期的签到奖励、签到状态（未签到/已签到）、连续签到奖励、连续签到状态（未领取/已领取/可领取）
+    * 返回签到视图，包括整个周期的签到奖励、签到状态（SIGNED/CLAIMABLE/MISSED/FUTURE）、连续签到奖励、连续签到状态
     */
     private static final String KEY_DAILY_RULE = "sign.daily.rule";
     private static final String KEY_STREAK_RULE = "sign.streak.rule";
@@ -741,19 +741,6 @@ public class SysUserService {
     }
 
     // ================= 签到视图 =================
-
-    private List<String> buildRetroDates(CycleInfo cycle, Set<LocalDate> signedDates, LocalDate today) {
-        if (cycle.getCycleStartDate() == null) {
-            return List.of();
-        }
-        List<String> retroDates = new ArrayList<>();
-        for (LocalDate d = cycle.getCycleStartDate(); d.isBefore(today); d = d.plusDays(1)) {
-            if (!signedDates.contains(d)) {
-                retroDates.add(d.toString());
-            }
-        }
-        return retroDates;
-    }
 
     private List<SignInViewVo.StreakRewardInfo> buildStreakRewards(Long userId, CycleInfo cycle) {
         List<SignInViewVo.StreakRewardInfo> list = new ArrayList<>();
@@ -809,7 +796,6 @@ public class SysUserService {
 
         CycleInfo cycle = getCycleInfo(signedDates, false);
         
-        // 【修复】基于日期差计算，而非累计签到天数
         int todayIndex;
         if (cycle.getCycleStartDate() == null) {
             // 新周期，今天是第1天
@@ -839,16 +825,19 @@ public class SysUserService {
         view.setCycleStartDate(Optional.ofNullable(cycle.getCycleStartDate())
                 .map(LocalDate::toString).orElse(null));
 
-        // 传入完整参数
         view.setDailyRewards(buildDailyRewards(cycle.getCycleStartDate(), signedDates, today));
-        view.setRetroDates(buildRetroDates(cycle, signedDates, today));
         view.setStreakRewards(buildStreakRewards(userId, cycle));
 
         return view;
     }
 
     /**
-     * 根据实际日期判断签到状态，而非简单的 day <= signedDays
+     * 根据实际日期判断签到状态
+     * 状态说明:
+     *   - SIGNED: 已签到
+     *   - CLAIMABLE: 可签到（今天且未签到）
+     *   - MISSED: 已错过（周期内过去的日期且未签到）
+     *   - FUTURE: 未来的日期
      */
     private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(
             LocalDate cycleStartDate, Set<LocalDate> signedDates, LocalDate today) {
@@ -865,8 +854,20 @@ public class SysUserService {
             
             SignInViewVo.DailyRewardInfo info = new SignInViewVo.DailyRewardInfo();
             info.setDay(day);
+            //info.setDate(dateForDay.toString());
             info.setReward(getDailyReward(day));
-            info.setSigned(signedDates.contains(dateForDay));
+            
+            // 根据日期判断状态
+            if (signedDates.contains(dateForDay)) {
+                info.setStatus("SIGNED");
+            } else if (dateForDay.equals(today)) {
+                info.setStatus("CLAIMABLE");
+            } else if (dateForDay.isBefore(today)) {
+                info.setStatus("MISSED");
+            } else {
+                info.setStatus("FUTURE");
+            }
+            
             list.add(info);
         }
         return list;
@@ -945,14 +946,14 @@ public class SysUserService {
             return new CycleInfo(null, 0, 0);
         }
 
-        // 2. 【修复】断签判断：实际断签天数 = between - 1
+        // 2. 断签判断：实际断签天数 = between - 1
         long daysSinceLastSign = ChronoUnit.DAYS.between(lastSigned, today);
         int missedDays = (int) daysSinceLastSign - 1; // 不含今天
         if (!isSignedToday && missedDays > maxBreakDays) {
             return new CycleInfo(null, 0, 0); // 开启新周期
         }
 
-        // 3. 【修复】从lastSigned往前遍历计算周期
+        // 3. 从lastSigned往前遍历计算周期
         int signedDaysInCycle = 0;
         int consecutiveMissed = 0;
         LocalDate cycleStart = null;
@@ -989,7 +990,7 @@ public class SysUserService {
 
     private Set<LocalDate> getSignedDateSet(Long userId) {
         return bizLogMapper.selectList(Wrappers.<BizLog>lambdaQuery()
-                .select(BizLog::getBizKey) // 直接取日期
+                .select(BizLog::getBizKey)
                 .eq(BizLog::getCreateBy, userId)
                 .eq(BizLog::getBizType, BIZ_TYPE_SIGN)
                 .orderByDesc(BizLog::getCreateTime)

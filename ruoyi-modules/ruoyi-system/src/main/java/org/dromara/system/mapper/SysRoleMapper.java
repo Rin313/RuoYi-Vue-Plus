@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Constants;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
 import org.dromara.common.mybatis.core.mapper.BaseMapperPlus;
 import org.dromara.system.domain.SysRole;
 import org.dromara.system.domain.vo.SysRoleVo;
@@ -17,20 +18,6 @@ import java.util.List;
  * @author Lion Li
  */
 public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
-
-    /**
-     * 构建根据用户ID查询角色ID的SQL子查询
-     *
-     * @param userId 用户ID
-     * @return 查询用户对应角色ID的SQL语句字符串
-     */
-    default String buildRoleByUserSql(Long userId) {
-        return """
-                select role_id from sys_user_role 
-                where user_id = %d
-                and (expire_time is null or expire_time > now())
-            """.formatted(userId);
-    }
 
     /**
      * 分页查询角色列表
@@ -72,18 +59,25 @@ public interface SysRoleMapper extends BaseMapperPlus<SysRole, SysRoleVo> {
     default SysRoleVo selectRoleById(Long roleId) {
         return this.selectVoById(roleId);
     }
-
     /**
-     * 根据用户ID查询角色
+     * 根据用户ID查询角色（包含过期时间）
      *
      * @param userId 用户ID
-     * @return 角色列表
+     * @return 角色列表（包含expire_time）
      */
-    default List<SysRoleVo> selectRolesByUserId(Long userId) {
-        return this.selectVoList(new LambdaQueryWrapper<SysRole>()
-            .select(SysRole::getRoleId, SysRole::getRoleName, SysRole::getRoleKey,
-                SysRole::getRoleSort, SysRole::getStatus)
-            .inSql(SysRole::getRoleId, this.buildRoleByUserSql(userId)));
-    }
+    @Select("""
+        SELECT 
+            r.role_id,
+            r.role_name,
+            r.role_key,
+            r.role_sort,
+            r.status,
+            ur.expire_time
+        FROM sys_role r
+        INNER JOIN sys_user_role ur ON r.role_id = ur.role_id
+        WHERE ur.user_id = #{userId}
+        AND (ur.expire_time IS NULL OR ur.expire_time > NOW())
+        """)
+    List<SysRoleVo> selectRolesByUserId(@Param("userId") Long userId);
 
 }

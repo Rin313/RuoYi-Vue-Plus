@@ -15,13 +15,6 @@ import java.util.List;
 public interface GenTableMapper extends BaseMapperPlus<GenTable, GenTable> {
 
     /**
-     * 查询所有表信息
-     *
-     * @return 表信息集合
-     */
-    List<GenTable> selectGenTableAll();
-
-    /**
      * 查询表ID业务信息
      *
      * @param id 业务ID

@@ -36,11 +36,6 @@ public class LoginVo {
     private Long refreshExpireIn;
 
     /**
-     * 令牌权限
-     */
-    private String scope;
-
-    /**
      * 用户 openid
      */
     private String openid;

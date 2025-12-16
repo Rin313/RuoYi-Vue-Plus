@@ -73,7 +73,7 @@ public class PasswordAuthStrategy implements IAuthStrategy {
             userVo=userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, loginBody.getEmail()));
             sysUser.setEmail(loginBody.getEmail());
         }
-        else if(ObjectUtil.isNotNull(loginBody.getPassword())){
+        else if(ObjectUtil.isNotNull(loginBody.getPhonenumber())){
             userVo=userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, loginBody.getPhonenumber()));
             sysUser.setPhonenumber(loginBody.getPhonenumber());
         }

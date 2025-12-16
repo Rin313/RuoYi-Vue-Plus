@@ -26,7 +26,7 @@ public class SignInViewVo {
     public static class DailyRewardInfo {
         private int day;
         private Map<String, Integer> reward;
-        private boolean signed;
+        private String status;
     }
 
     @Data

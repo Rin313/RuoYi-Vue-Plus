@@ -26,11 +26,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where t.table_id = #{tableId} order by c.sort
     </select>
 
-    <select id="selectGenTableAll" parameterType="String" resultMap="GenTableResult">
-        <include refid="genSelect"/>
-        order by c.sort
-    </select>
-
     <select id="selectTableNameList" resultType="java.lang.String">
         select table_name from gen_table where data_name = #{dataName,jdbcType=VARCHAR}
     </select>

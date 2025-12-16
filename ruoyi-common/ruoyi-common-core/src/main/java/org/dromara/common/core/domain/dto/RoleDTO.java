@@ -5,6 +5,8 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * 角色
@@ -33,5 +35,6 @@ public class RoleDTO implements Serializable {
      * 角色权限
      */
     private String roleKey;
+    private Date expireTime;
 
 }
