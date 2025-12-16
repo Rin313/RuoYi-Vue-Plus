@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-mybatis</artifactId>
 
-    <description>
-        ruoyi-common-mybatis 数据库服务
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

@@ -6,6 +6,7 @@
     <groupId>org.dromara</groupId>
     <artifactId>ruoyi-vue-plus</artifactId>
     <version>1.0.0</version>
+    <packaging>pom</packaging>
     <name>RuoYi-Vue-Plus</name>
     <properties>
         <spring-boot.version>3.5.8</spring-boot.version>
@@ -163,46 +164,47 @@
         <module>ruoyi-common</module>
         <module>ruoyi-modules</module>
     </modules>
-    <packaging>pom</packaging>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven-compiler-plugin.version}</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                    <annotationProcessorPaths>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                            <version>${lombok.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.springframework.boot</groupId>
-                            <artifactId>spring-boot-configuration-processor</artifactId>
-                            <version>${spring-boot.version}</version>
-                        </path>
-                        <path>
-                            <groupId>io.github.linpeilie</groupId>
-                            <artifactId>mapstruct-plus-processor</artifactId>
-                            <version>${mapstruct-plus.version}</version>
-                        </path>
-                        <path>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok-mapstruct-binding</artifactId>
-                            <version>${mapstruct-plus.lombok.version}</version>
-                        </path>
-                    </annotationProcessorPaths>
-                    <compilerArgs>
-                        <arg>-parameters</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>${java.version}</source>
+                        <target>${java.version}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok-mapstruct-binding</artifactId>
+                                <version>${mapstruct-plus.lombok.version}</version>
+                            </path>
+                            <path>
+                                <groupId>org.springframework.boot</groupId>
+                                <artifactId>spring-boot-configuration-processor</artifactId>
+                                <version>${spring-boot.version}</version>
+                            </path>
+                            <path>
+                                <groupId>io.github.linpeilie</groupId>
+                                <artifactId>mapstruct-plus-processor</artifactId>
+                                <version>${mapstruct-plus.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                        <compilerArgs>
+                            <arg>-parameters</arg>
+                        </compilerArgs>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>        
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
@@ -234,6 +236,9 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
     </repositories>
     <pluginRepositories>

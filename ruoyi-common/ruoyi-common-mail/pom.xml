@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-mail</artifactId>
 
-    <description>
-        ruoyi-common-mail 邮件模块
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

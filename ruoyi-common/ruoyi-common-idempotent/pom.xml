@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-idempotent</artifactId>
 
-    <description>
-        ruoyi-common-idempotent 幂等功能
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

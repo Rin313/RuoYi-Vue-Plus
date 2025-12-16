@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-security</artifactId>
 
-    <description>
-        ruoyi-common-security 安全模块
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

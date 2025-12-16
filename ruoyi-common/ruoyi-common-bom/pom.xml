@@ -9,10 +9,6 @@
     <version>1.0.0</version>
     <packaging>pom</packaging>
 
-    <description>
-        ruoyi-common-bom common依赖项
-    </description>
-
     <dependencyManagement>
         <dependencies>
             <!-- 核心模块 -->

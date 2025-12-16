@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-core</artifactId>
 
-    <description>
-        ruoyi-common-core 核心模块
-    </description>
-
     <dependencies>
         <!-- Spring框架基本的核心工具 -->
         <dependency>

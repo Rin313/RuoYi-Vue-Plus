@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-log</artifactId>
 
-    <description>
-        ruoyi-common-log 日志记录
-    </description>
-
     <dependencies>
 
         <dependency>

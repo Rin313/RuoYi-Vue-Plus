@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-web</artifactId>
 
-    <description>
-        ruoyi-common-web web服务
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

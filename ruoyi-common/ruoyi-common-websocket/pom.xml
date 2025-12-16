@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-websocket</artifactId>
 
-    <description>
-        ruoyi-common-websocket 模块
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

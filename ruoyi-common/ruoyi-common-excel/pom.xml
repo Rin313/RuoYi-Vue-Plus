@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-excel</artifactId>
 
-    <description>
-        ruoyi-common-excel
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

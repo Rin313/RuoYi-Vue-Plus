@@ -11,10 +11,6 @@
 
     <artifactId>ruoyi-common-ratelimiter</artifactId>
 
-    <description>
-        ruoyi-common-ratelimiter 限流功能
-    </description>
-
     <dependencies>
         <dependency>
             <groupId>org.dromara</groupId>

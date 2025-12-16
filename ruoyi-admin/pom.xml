@@ -11,10 +11,6 @@
     <packaging>jar</packaging>
     <artifactId>ruoyi-admin</artifactId>
 
-    <description>
-        web服务入口
-    </description>
-
     <dependencies>
 
         <!-- Mysql驱动包 -->
