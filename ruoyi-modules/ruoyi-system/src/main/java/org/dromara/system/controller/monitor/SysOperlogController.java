@@ -1,7 +1,6 @@
 package org.dromara.system.controller.monitor;
 
 import cn.dev33.satoken.annotation.SaCheckPermission;
-import com.baomidou.lock.annotation.Lock4j;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import jakarta.servlet.http.HttpServletResponse;

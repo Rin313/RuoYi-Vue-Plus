@@ -96,7 +96,6 @@ public class SysConfigService implements ConfigService {
     private LambdaQueryWrapper<SysConfig> buildQueryWrapper(SysConfigBo bo) {
         LambdaQueryWrapper<SysConfig> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getConfigName()), SysConfig::getConfigName, bo.getConfigName());
-        lqw.eq(StringUtils.isNotBlank(bo.getConfigType()), SysConfig::getConfigType, bo.getConfigType());
         lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfig::getConfigKey, bo.getConfigKey());
         lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysConfig::getCreateTime,bo.getBeginTime());
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysConfig::getCreateTime,bo.getEndTime());
@@ -148,9 +147,6 @@ public class SysConfigService implements ConfigService {
     public void deleteConfigByIds(List<Long> configIds) {
         List<SysConfig> list = baseMapper.selectByIds(configIds);
         list.forEach(config -> {
-            if (StringUtils.equals(SystemConstants.YES, config.getConfigType())) {
-                throw new BizException("内置参数【{}】不能删除", config.getConfigKey());
-            }
             CacheUtils.evict(CacheNames.SYS_CONFIG, config.getConfigKey());
         });
         baseMapper.deleteByIds(configIds);

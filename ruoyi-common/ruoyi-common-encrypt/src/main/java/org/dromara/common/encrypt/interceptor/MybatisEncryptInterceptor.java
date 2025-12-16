@@ -25,7 +25,6 @@ import java.util.*;
 /**
  * 入参加密拦截器
  *
- * @version 4.6.0
  */
 @Slf4j
 @Intercepts({@Signature(

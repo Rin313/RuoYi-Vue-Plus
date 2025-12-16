@@ -8,7 +8,6 @@ import org.dromara.common.encrypt.utils.EncryptUtils;
 /**
  * sm4算法实现
  *
- * @version 4.6.0
  */
 public class Sm4Encryptor extends AbstractEncryptor {
 

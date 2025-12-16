@@ -103,17 +103,6 @@ public class SysConfigController {
     }
 
     /**
-     * 根据参数键名修改参数配置
-     */
-    @SaCheckPermission("system:config:edit")
-    @Log(title = "参数管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
-    @PutMapping("/updateByKey")
-    public void updateByKey(@RequestBody SysConfigBo config) {
-        configService.updateConfig(config);
-    }
-
-    /**
      * 删除参数配置
      *
      * @param configIds 参数ID串

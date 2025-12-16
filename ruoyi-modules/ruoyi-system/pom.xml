@@ -11,54 +11,39 @@
 
     <artifactId>ruoyi-system</artifactId>
 
-    <description>
-        system系统模块
-    </description>
-
     <dependencies>
-        <!-- 通用工具-->
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-core</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-mybatis</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-log</artifactId>
         </dependency>
-
-        <!-- excel-->
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-excel</artifactId>
         </dependency>
-
-        <!-- SMS功能模块 -->
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-sms</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-security</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-idempotent</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.dromara</groupId>
             <artifactId>ruoyi-common-encrypt</artifactId>
@@ -72,7 +57,5 @@
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
-
     </dependencies>
-
 </project>

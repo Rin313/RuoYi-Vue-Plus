@@ -2,8 +2,6 @@ package org.dromara.system.domain.vo;
 
 import cn.idev.excel.annotation.ExcelIgnoreUnannotated;
 import cn.idev.excel.annotation.ExcelProperty;
-import org.dromara.common.excel.annotation.ExcelDictFormat;
-import org.dromara.common.excel.convert.ExcelDictConvert;
 import org.dromara.system.domain.SysConfig;
 import io.github.linpeilie.annotations.AutoMapper;
 import lombok.Data;
@@ -48,13 +46,6 @@ public class SysConfigVo implements Serializable {
      */
     @ExcelProperty(value = "参数键值")
     private String configValue;
-
-    /**
-     * 系统内置（Y是 N否）
-     */
-    @ExcelProperty(value = "系统内置", converter = ExcelDictConvert.class)
-    @ExcelDictFormat(dictType = "sys_yes_no")
-    private String configType;
 
     /**
      * 备注

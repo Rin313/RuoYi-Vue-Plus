@@ -6,7 +6,6 @@ import org.dromara.common.encrypt.core.IEncryptor;
 /**
  * 所有加密执行者的基类
  *
- * @version 4.6.0
  */
 public abstract class AbstractEncryptor implements IEncryptor {
 

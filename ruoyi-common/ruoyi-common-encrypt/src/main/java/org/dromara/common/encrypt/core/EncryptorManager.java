@@ -28,7 +28,6 @@ import java.util.stream.Collectors;
 /**
  * 加密管理类
  *
- * @version 4.6.0
  */
 @Slf4j
 @NoArgsConstructor

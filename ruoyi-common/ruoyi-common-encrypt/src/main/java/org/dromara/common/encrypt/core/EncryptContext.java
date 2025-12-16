@@ -7,7 +7,6 @@ import org.dromara.common.encrypt.enumd.EncodeType;
 /**
  * 加密上下文 用于encryptor传递必要的参数。
  *
- * @version 4.6.0
  */
 @Data
 public class EncryptContext {

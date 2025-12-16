@@ -23,7 +23,6 @@ import java.util.*;
 /**
  * 出参解密拦截器
  *
- * @version 4.6.0
  */
 @Slf4j
 @Intercepts({@Signature(

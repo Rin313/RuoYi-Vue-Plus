@@ -104,12 +104,4 @@ public class SysProfileController {
      */
     public record AvatarVo(String imgUrl) {}
 
-    /**
-     * 用户个人信息
-     *
-     * @param user      用户信息
-     * @param roleGroup 用户所属角色组
-     */
-    public record ProfileVo(ProfileUserVo user, String roleGroup) {}
-
 }

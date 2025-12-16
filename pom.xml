@@ -3,15 +3,10 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>org.dromara</groupId>
     <artifactId>ruoyi-vue-plus</artifactId>
     <version>1.0.0</version>
-
     <name>RuoYi-Vue-Plus</name>
-    <url>https://gitee.com/dromara/RuoYi-Vue-Plus</url>
-    <description>Dromara RuoYi-Vue-Plus管理系统</description>
-
     <properties>
         <spring-boot.version>3.5.8</spring-boot.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,24 +27,14 @@
         <lombok.version>1.18.40</lombok.version>
         <bouncycastle.version>1.80</bouncycastle.version>
         <justauth.version>1.16.7</justauth.version>
-        <!-- SMS 配置 -->
         <sms4j.version>3.3.5</sms4j.version>
-        <!-- 限制框架中的fastjson版本 -->
-        <fastjson.version>1.2.83</fastjson.version>
-        <!-- 面向运行时的D-ORM依赖 -->
-        <anyline.version>8.7.2-20250603</anyline.version>
-
         <!-- 插件版本 -->
         <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
         <!-- 打包默认跳过测试 -->
         <skipTests>true</skipTests>
     </properties>
-
-    <!-- 依赖声明 -->
     <dependencyManagement>
         <dependencies>
-
-            <!-- SpringBoot的依赖配置-->
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -57,8 +42,6 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
-            <!-- hutool 的依赖配置-->
             <dependency>
                 <groupId>cn.hutool</groupId>
                 <artifactId>hutool-bom</artifactId>
@@ -66,14 +49,12 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <!-- JustAuth 的依赖配置-->
             <dependency>
                 <groupId>me.zhyd.oauth</groupId>
                 <artifactId>JustAuth</artifactId>
                 <version>${justauth.version}</version>
             </dependency>
-
             <!-- common 的依赖配置-->
             <dependency>
                 <groupId>org.dromara</groupId>
@@ -82,32 +63,27 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
-
             <dependency>
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
                 <version>${springdoc.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>cn.idev.excel</groupId>
                 <artifactId>fastexcel</artifactId>
                 <version>${fastexcel.version}</version>
             </dependency>
-
             <!-- Sa-Token 权限认证, 在线文档：http://sa-token.dev33.cn/ -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-spring-boot3-starter</artifactId>
                 <version>${satoken.version}</version>
             </dependency>
-            <!-- Sa-Token 整合 jwt -->
             <dependency>
                 <groupId>cn.dev33</groupId>
                 <artifactId>sa-token-jwt</artifactId>
@@ -124,83 +100,61 @@
                 <artifactId>sa-token-core</artifactId>
                 <version>${satoken.version}</version>
             </dependency>
-
-            <!-- dynamic-datasource 多数据源-->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
                 <version>${dynamic-ds.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>org.mybatis</groupId>
                 <artifactId>mybatis</artifactId>
                 <version>${mybatis.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-spring-boot3-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-jsqlparser</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-annotation</artifactId>
                 <version>${mybatis-plus.version}</version>
             </dependency>
-
-            <!-- sql性能分析插件 -->
             <dependency>
                 <groupId>p6spy</groupId>
                 <artifactId>p6spy</artifactId>
                 <version>${p6spy.version}</version>
             </dependency>
-            <!--短信sms4j-->
             <dependency>
                 <groupId>org.dromara.sms4j</groupId>
                 <artifactId>sms4j-spring-boot-starter</artifactId>
                 <version>${sms4j.version}</version>
             </dependency>
-
-            <!--redisson-->
             <dependency>
                 <groupId>org.redisson</groupId>
                 <artifactId>redisson-spring-boot-starter</artifactId>
                 <version>${redisson.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>lock4j-redisson-spring-boot-starter</artifactId>
                 <version>${lock4j.version}</version>
             </dependency>
-
-            <!-- 加密包引入 -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk15to18</artifactId>
                 <version>${bouncycastle.version}</version>
             </dependency>
-
             <dependency>
                 <groupId>io.github.linpeilie</groupId>
                 <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
                 <version>${mapstruct-plus.version}</version>
             </dependency>
-
-            <dependency>
-                <groupId>com.alibaba</groupId>
-                <artifactId>fastjson</artifactId>
-                <version>${fastjson.version}</version>
-            </dependency>
-
             <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>ruoyi-system</artifactId>
@@ -278,7 +232,6 @@
             </resource>
         </resources>
     </build>
-
     <repositories>
         <repository>
             <id>public</id>
@@ -289,7 +242,6 @@
             </releases>
         </repository>
     </repositories>
-
     <pluginRepositories>
         <pluginRepository>
             <id>public</id>
@@ -303,7 +255,4 @@
             </snapshots>
         </pluginRepository>
     </pluginRepositories>
-
 </project>
-
-

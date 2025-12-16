@@ -32,8 +32,4 @@
     <artifactId>ruoyi-common</artifactId>
     <packaging>pom</packaging>
 
-    <description>
-        common 通用模块
-    </description>
-
 </project>
