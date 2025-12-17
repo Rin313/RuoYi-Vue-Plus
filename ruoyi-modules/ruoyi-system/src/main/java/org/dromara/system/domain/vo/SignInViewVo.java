@@ -17,11 +17,10 @@ public class SignInViewVo {
     private boolean signedToday;
     /** 累计签到奖励进度 */
     private List<DailyRewardInfo> dailyRewards;
-    /** 可补签日期列表 */
-    private List<String> retroDates;
     /** 连续签到奖励列表 */
     private List<StreakRewardInfo> streakRewards;
     private Map<String,Integer> nextDayReward;
+    private Map<String, Integer> retroCost;
 
     @Data
     public static class DailyRewardInfo {

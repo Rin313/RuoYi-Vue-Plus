@@ -707,17 +707,19 @@ public class SysUserService {
     * 允许补签错过的日期，不能补签该周期前的日期，也不能补签未来的日期
     * 如果用户第一天签到，第二天没有签到，那么第三天签到时，应该获得的是第三天的奖励
     * 如果不存在特定天数的奖励，获取default奖励，连续签到的奖励不循环
-    * 返回签到视图，包括整个周期的签到奖励、签到状态（SIGNED/CLAIMABLE/MISSED/FUTURE）、连续签到奖励、连续签到状态、当前连续签到天数、下一天的签到奖励（下一天的签到奖励应该独立设置，不干扰视图逻辑）
+    * 返回签到视图，包括整个周期的签到奖励、签到状态（SIGNED/CLAIMABLE/MISSED/FUTURE）、连续签到奖励、连续签到状态、当前连续签到天数、下一天的签到奖励
     * 对于给定的视图大小，返回的签到视图除了包含当天日期，应该尽可能以日期最早的状态为"SIGNED"的已签到记录为起点
     * 设置最大断签日期时，最大值应该小于预期的视图大小，比如说视图大小为7，最大断签日期也为7，第一天签到，第八天的时候断签日期为6，此时7天内没有签到记录，于是返回以第8天为起点的7天视图而不是重开一个周期，不合常理。
     */
     private static final String KEY_DAILY_RULE = "sign.daily.rule";
     private static final String KEY_STREAK_RULE = "sign.streak.rule";
     private static final String KEY_MAX_BREAK_DAYS = "sign.max.break.days";
+    private static final String KEY_RETRO_COST = "sign.retro.cost";
 
     // bizType 中文标识
     private static final String BIZ_TYPE_SIGN = "签到";
     private static final String BIZ_TYPE_STREAK = "连续签到奖励";
+    private static final String BIZ_TYPE_RETRO = "补签";
 
     @Data
     @AllArgsConstructor
@@ -820,7 +822,7 @@ public class SysUserService {
         view.setDailyRewards(buildDailyRewards(cycle.getCycleStartDate(), signedDates, today, viewSize));
         view.setStreakRewards(buildStreakRewards(userId, cycle));
         view.setNextDayReward(calculateNextDayReward(cycle.getCycleStartDate(), today));
-
+        view.setRetroCost(getRetroCost());
         return view;
     }
     /**
@@ -938,8 +940,25 @@ public class SysUserService {
             throw new BizException("不能补签当前周期之前的日期");
         }
 
-        Map<String, Integer> reward = getDailyReward(-1); // 补签用default
-        bizLogService.updateAssets(userId, dateStr, BIZ_TYPE_SIGN, reward);
+        // 计算目标日期相对于周期起点的天数索引
+        int dayIndex = (int) ChronoUnit.DAYS.between(cycle.getCycleStartDate(), targetDate) + 1;
+        
+        // 获取该日期对应的签到奖励
+        Map<String, Integer> reward = getDailyReward(dayIndex);
+        
+        // 获取补签消耗
+        Map<String, Integer> retroCost = getRetroCost();
+        
+        // ========== 整合资源变化：奖励 - 消耗，合并为一条记录 ==========
+        Map<String, Integer> netChange = new HashMap<>(reward);
+        retroCost.forEach((resourceKey, costValue) -> 
+            netChange.merge(resourceKey, -costValue, Integer::sum)
+        );
+        // 移除净变化为0的资源项
+        netChange.entrySet().removeIf(entry -> entry.getValue() == 0);
+        
+        // 只产生一条业务记录，bizKey 使用日期字符串，bizType 使用补签类型
+        bizLogService.updateAssets(userId, dateStr, BIZ_TYPE_RETRO, netChange);
     }
 
     @Transactional(rollbackFor = Exception.class)
@@ -1051,7 +1070,7 @@ public class SysUserService {
         return bizLogMapper.selectList(Wrappers.<BizLog>lambdaQuery()
                 .select(BizLog::getBizKey)
                 .eq(BizLog::getCreateBy, userId)
-                .eq(BizLog::getBizType, BIZ_TYPE_SIGN)
+                .in(BizLog::getBizType, BIZ_TYPE_SIGN, BIZ_TYPE_RETRO)
                 .orderByDesc(BizLog::getCreateTime)
                 .last("LIMIT 366")
         ).stream()
@@ -1097,7 +1116,17 @@ public class SysUserService {
         
         return getDailyReward(tomorrowIndex);
     }
-
+    /**
+     * 获取补签消耗配置
+     * 配置格式示例: {"coin": 50, "diamond": 10}
+     */
+    private Map<String, Integer> getRetroCost() {
+        String val = configService.selectConfigByKey(KEY_RETRO_COST);
+        if (StrUtil.isNotBlank(val)) {
+            return toIntMap(JSONUtil.parseObj(val));
+        }
+        return new HashMap<>();
+    }
     private Map<String, Integer> toIntMap(JSONObject json) {
         Map<String, Integer> map = new HashMap<>();
         json.forEach((k, v) -> map.put(k, Convert.toInt(v)));
