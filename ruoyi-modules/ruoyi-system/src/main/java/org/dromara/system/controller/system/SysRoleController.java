@@ -74,7 +74,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:add")
     @Log(title = "角色管理", businessType = BizType.INSERT)
     @RepeatSubmit()
-    @PostMapping
+    @PostMapping("/insert")
     public void add(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
         if (!roleService.checkRoleNameUnique(role)) {

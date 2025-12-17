@@ -1,9 +1,9 @@
 package org.dromara.common.mybatis.handler;
 
-import cn.hutool.http.HttpStatus;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
+import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -27,7 +27,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
                 this.strictInsertFill(metaObject, "createBy", Long.class, userId);
             }
         } catch (Exception e) {
-            throw new BizException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
+            throw new BizException("自动注入异常 => " + e.getMessage(),BizStatus.ERROR);
         }
     }
 
@@ -37,7 +37,7 @@ public class InjectionMetaObjectHandler implements MetaObjectHandler {
             // 更新时间 - 始终覆盖
             this.setFieldValByName("updateTime", new Date(), metaObject);
         } catch (Exception e) {
-            throw new BizException("自动注入异常 => " + e.getMessage(), HttpStatus.HTTP_UNAUTHORIZED);
+            throw new BizException("自动注入异常 => " + e.getMessage(), BizStatus.ERROR);
         }
     }
 }

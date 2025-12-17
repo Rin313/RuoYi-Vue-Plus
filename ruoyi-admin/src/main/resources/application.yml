@@ -30,7 +30,7 @@ logging:
     org.dromara: info
     org.springframework: warn
     org.mybatis.spring.mapper: error
-    org.apache.fury: warn
+    org.apache.fory: warn
   config: classpath:logback-plus.xml
 
 # 用户配置

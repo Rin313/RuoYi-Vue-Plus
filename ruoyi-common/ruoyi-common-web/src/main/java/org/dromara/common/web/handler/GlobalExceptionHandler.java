@@ -1,13 +1,14 @@
 package org.dromara.common.web.handler;
 
 import cn.hutool.core.util.ObjectUtil;
-import cn.hutool.http.HttpStatus;
 import com.fasterxml.jackson.core.JsonParseException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+
+import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.exception.base.BaseException;
@@ -42,7 +43,7 @@ public class GlobalExceptionHandler {
                                                                 HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',不支持'{}'请求", requestURI, e.getMethod());
-        return R.fail(HttpStatus.HTTP_BAD_METHOD, e.getMessage());
+        return R.fail(BizStatus.ERROR, e.getMessage());
     }
 
     /**
@@ -100,7 +101,7 @@ public class GlobalExceptionHandler {
     public R<Void> handleNoHandlerFoundException(NoHandlerFoundException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}'不存在.", requestURI);
-        return R.fail(HttpStatus.HTTP_NOT_FOUND, e.getMessage());
+        return R.fail(BizStatus.ERROR, e.getMessage());
     }
 
     /**
@@ -171,7 +172,7 @@ public class GlobalExceptionHandler {
     public R<Void> handleJsonParseException(JsonParseException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}' 发生 JSON 解析异常: {}", requestURI, e.getMessage());
-        return R.fail(HttpStatus.HTTP_BAD_REQUEST, "请求数据格式错误（JSON 解析失败）：" + e.getMessage());
+        return R.fail(BizStatus.ERROR, "请求数据格式错误（JSON 解析失败）：" + e.getMessage());
     }
 
     /**
@@ -180,7 +181,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public R<Void> handleHttpMessageNotReadableException(HttpMessageNotReadableException e, HttpServletRequest request) {
         log.error("请求地址'{}', 参数解析失败: {}", request.getRequestURI(), e.getMessage());
-        return R.fail(HttpStatus.HTTP_BAD_REQUEST, "请求参数格式错误：" + e.getMostSpecificCause().getMessage());
+        return R.fail(BizStatus.ERROR, "请求参数格式错误：" + e.getMostSpecificCause().getMessage());
     }
 
 }
