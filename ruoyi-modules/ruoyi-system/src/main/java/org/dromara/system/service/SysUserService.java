@@ -706,8 +706,10 @@ public class SysUserService {
     * 当用户未签到的天数超过断签日期，或者是从未签到过，应该开启一个新的签到周期
     * 允许补签错过的日期，不能补签该周期前的日期，也不能补签未来的日期
     * 如果用户第一天签到，第二天没有签到，那么第三天签到时，应该获得的是第三天的奖励
-    * 如果不存在特定天数的奖励，获取default奖励，连续签到的奖励则不循环
-    * 返回签到视图，包括整个周期的签到奖励、签到状态（SIGNED/CLAIMABLE/MISSED/FUTURE）、连续签到奖励、连续签到状态
+    * 如果不存在特定天数的奖励，获取default奖励，连续签到的奖励不循环
+    * 返回签到视图，包括整个周期的签到奖励、签到状态（SIGNED/CLAIMABLE/MISSED/FUTURE）、连续签到奖励、连续签到状态、当前连续签到天数、下一天的签到奖励（下一天的签到奖励应该独立设置，不干扰视图逻辑）
+    * 对于给定的视图大小，返回的签到视图除了包含当天日期，应该尽可能以日期最早的状态为"SIGNED"的已签到记录为起点
+    * 设置最大断签日期时，最大值应该小于预期的视图大小，比如说视图大小为7，最大断签日期也为7，第一天签到，第八天的时候断签日期为6，此时7天内没有签到记录，于是返回以第8天为起点的7天视图而不是重开一个周期，不合常理。
     */
     private static final String KEY_DAILY_RULE = "sign.daily.rule";
     private static final String KEY_STREAK_RULE = "sign.streak.rule";
@@ -817,17 +819,12 @@ public class SysUserService {
                 .map(LocalDate::toString).orElse(null));
         view.setDailyRewards(buildDailyRewards(cycle.getCycleStartDate(), signedDates, today, viewSize));
         view.setStreakRewards(buildStreakRewards(userId, cycle));
+        view.setNextDayReward(calculateNextDayReward(cycle.getCycleStartDate(), today));
 
         return view;
     }
-
     /**
      * 构建每日奖励视图
-     * 
-     * 视图起点选择逻辑：
-     * 1. 尽可能以周期内最早的已签到日期(SIGNED)为起点
-     * 2. 但必须确保今天在视图范围内
-     * 3. 起点不能早于周期起点
      *
      * 状态说明:
      *   - SIGNED: 已签到
@@ -841,9 +838,7 @@ public class SysUserService {
      * @param size           视图固定大小
      * @return 每日奖励信息列表
      */
-    private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(
-            LocalDate cycleStartDate, Set<LocalDate> signedDates, LocalDate today, int size) {
-
+    private List<SignInViewVo.DailyRewardInfo> buildDailyRewards(LocalDate cycleStartDate, Set<LocalDate> signedDates, LocalDate today, int size) {
         List<SignInViewVo.DailyRewardInfo> list = new ArrayList<>();
 
         // 确定周期的有效起点（新周期则以今天为起点）
@@ -888,60 +883,95 @@ public class SysUserService {
 
         return list;
     }
+    /**
+     * 计算视图的显示起点
+     * 
+     * @param effectiveCycleStart 有效周期起点
+     * @param firstSignedInCycle  周期内最早签到日期
+     * @param today               今天
+     * @param size                视图大小
+     * @return 视图显示的起始日期
+     */
+    private LocalDate calculateDisplayStart(
+            LocalDate effectiveCycleStart, LocalDate firstSignedInCycle,
+            LocalDate today, int size) {
 
-        @Transactional(rollbackFor = Exception.class)
-        public void doRetroSign(Long userId, String dateStr) {
-            LocalDate targetDate = LocalDate.parse(dateStr);
-            LocalDate today = LocalDate.now();
+        LocalDate displayStart;
 
-            if (!targetDate.isBefore(today)) {
-                throw new BizException("只能补签过去的日期");
-            }
+        if (firstSignedInCycle != null) {
+            // 为确保今天在视图内，起点最晚只能是 today - (size - 1)
+            LocalDate latestAllowedStart = today.minusDays(size - 1);
 
-            Set<LocalDate> signedDates = getSignedDateSet(userId);
-            if (signedDates.contains(targetDate)) {
-                throw new BizException("该日期已签到");
-            }
-
-            CycleInfo cycle = getCycleInfo(signedDates, signedDates.contains(today));
-            if (cycle.getCycleStartDate() == null || targetDate.isBefore(cycle.getCycleStartDate())) {
-                throw new BizException("不能补签当前周期之前的日期");
-            }
-
-            Map<String, Integer> reward = getDailyReward(-1); // 补签用default
-            bizLogService.updateAssets(userId, dateStr, BIZ_TYPE_SIGN, reward);
+            // 优先以最早签到日期为起点，但不能让今天落在视图外
+            displayStart = firstSignedInCycle.isAfter(latestAllowedStart)
+                    ? firstSignedInCycle
+                    : latestAllowedStart;
+        } else {
+            // 没有签到记录，使用周期起点
+            displayStart = effectiveCycleStart;
         }
 
-        @Transactional(rollbackFor = Exception.class)
-        public void claimStreakReward(Long userId, Integer days) {
-            LocalDate today = LocalDate.now();
-            Set<LocalDate> signedDates = getSignedDateSet(userId);
-            CycleInfo cycle = getCycleInfo(signedDates, signedDates.contains(today));
-
-            if (cycle.getMaxStreakInCycle() < days) {
-                throw new BizException("连续签到天数不足，当前" + cycle.getMaxStreakInCycle() + "天");
-            }
-
-            JSONObject ruleJson = getStreakRuleJson();
-            JSONObject rewardJson = ruleJson.getJSONObject(String.valueOf(days));
-            if (rewardJson == null) {
-                throw new BizException("不存在" + days + "天的连续签到奖励");
-            }
-
-            String cycleKey = Optional.ofNullable(cycle.getCycleStartDate())
-                    .map(LocalDate::toString).orElse("none");
-            String bizKey = cycleKey + ":" + days;
-
-            boolean claimed = bizLogMapper.exists(Wrappers.<BizLog>lambdaQuery()
-                    .eq(BizLog::getCreateBy, userId)
-                    .eq(BizLog::getBizType, BIZ_TYPE_STREAK)
-                    .eq(BizLog::getBizKey, bizKey));
-            if (claimed) {
-                throw new BizException("本周期已领取该奖励");
-            }
-
-            bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_STREAK, toIntMap(rewardJson));
+        // 确保不早于周期起点
+        if (displayStart.isBefore(effectiveCycleStart)) {
+            displayStart = effectiveCycleStart;
         }
+
+        return displayStart;
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void doRetroSign(Long userId, String dateStr) {
+        LocalDate targetDate = LocalDate.parse(dateStr);
+        LocalDate today = LocalDate.now();
+
+        if (!targetDate.isBefore(today)) {
+            throw new BizException("只能补签过去的日期");
+        }
+
+        Set<LocalDate> signedDates = getSignedDateSet(userId);
+        if (signedDates.contains(targetDate)) {
+            throw new BizException("该日期已签到");
+        }
+
+        CycleInfo cycle = getCycleInfo(signedDates, signedDates.contains(today));
+        if (cycle.getCycleStartDate() == null || targetDate.isBefore(cycle.getCycleStartDate())) {
+            throw new BizException("不能补签当前周期之前的日期");
+        }
+
+        Map<String, Integer> reward = getDailyReward(-1); // 补签用default
+        bizLogService.updateAssets(userId, dateStr, BIZ_TYPE_SIGN, reward);
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void claimStreakReward(Long userId, Integer days) {
+        LocalDate today = LocalDate.now();
+        Set<LocalDate> signedDates = getSignedDateSet(userId);
+        CycleInfo cycle = getCycleInfo(signedDates, signedDates.contains(today));
+
+        if (cycle.getMaxStreakInCycle() < days) {
+            throw new BizException("连续签到天数不足，当前" + cycle.getMaxStreakInCycle() + "天");
+        }
+
+        JSONObject ruleJson = getStreakRuleJson();
+        JSONObject rewardJson = ruleJson.getJSONObject(String.valueOf(days));
+        if (rewardJson == null) {
+            throw new BizException("不存在" + days + "天的连续签到奖励");
+        }
+
+        String cycleKey = Optional.ofNullable(cycle.getCycleStartDate())
+                .map(LocalDate::toString).orElse("none");
+        String bizKey = cycleKey + ":" + days;
+
+        boolean claimed = bizLogMapper.exists(Wrappers.<BizLog>lambdaQuery()
+                .eq(BizLog::getCreateBy, userId)
+                .eq(BizLog::getBizType, BIZ_TYPE_STREAK)
+                .eq(BizLog::getBizKey, bizKey));
+        if (claimed) {
+            throw new BizException("本周期已领取该奖励");
+        }
+
+        bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_STREAK, toIntMap(rewardJson));
+    }
 
     // ================= 核心周期计算 =================
 
@@ -1051,45 +1081,26 @@ public class SysUserService {
         }
         return node != null ? toIntMap(node) : Map.of("coin", 10);
     }
+    /**
+     * @param cycleStartDate 当前周期起始日期
+     * @param today          今天的日期
+     * @return 明天签到可获得的奖励
+     */
+    private Map<String, Integer> calculateNextDayReward(LocalDate cycleStartDate, LocalDate today) {
+        LocalDate tomorrow = today.plusDays(1);
+        
+        // 确定有效周期起点：如果没有周期，假设今天是新周期的第1天（与 buildDailyRewards 逻辑一致）
+        LocalDate effectiveCycleStart = (cycleStartDate != null) ? cycleStartDate : today;
+        
+        // 计算明天相对于周期起点的天数索引
+        int tomorrowIndex = (int) ChronoUnit.DAYS.between(effectiveCycleStart, tomorrow) + 1;
+        
+        return getDailyReward(tomorrowIndex);
+    }
 
     private Map<String, Integer> toIntMap(JSONObject json) {
         Map<String, Integer> map = new HashMap<>();
         json.forEach((k, v) -> map.put(k, Convert.toInt(v)));
         return map;
-    }
-    /**
-     * 计算视图的显示起点
-     * 
-     * @param effectiveCycleStart 有效周期起点
-     * @param firstSignedInCycle  周期内最早签到日期
-     * @param today               今天
-     * @param size                视图大小
-     * @return 视图显示的起始日期
-     */
-    private LocalDate calculateDisplayStart(
-            LocalDate effectiveCycleStart, LocalDate firstSignedInCycle,
-            LocalDate today, int size) {
-
-        LocalDate displayStart;
-
-        if (firstSignedInCycle != null) {
-            // 为确保今天在视图内，起点最晚只能是 today - (size - 1)
-            LocalDate latestAllowedStart = today.minusDays(size - 1);
-
-            // 优先以最早签到日期为起点，但不能让今天落在视图外
-            displayStart = firstSignedInCycle.isAfter(latestAllowedStart)
-                    ? firstSignedInCycle
-                    : latestAllowedStart;
-        } else {
-            // 没有签到记录，使用周期起点
-            displayStart = effectiveCycleStart;
-        }
-
-        // 确保不早于周期起点
-        if (displayStart.isBefore(effectiveCycleStart)) {
-            displayStart = effectiveCycleStart;
-        }
-
-        return displayStart;
     }
 }

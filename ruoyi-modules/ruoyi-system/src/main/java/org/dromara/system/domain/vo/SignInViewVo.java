@@ -1,6 +1,5 @@
 package org.dromara.system.domain.vo;
 
-import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +21,7 @@ public class SignInViewVo {
     private List<String> retroDates;
     /** 连续签到奖励列表 */
     private List<StreakRewardInfo> streakRewards;
+    private Map<String,Integer> nextDayReward;
 
     @Data
     public static class DailyRewardInfo {
