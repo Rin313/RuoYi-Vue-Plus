@@ -523,33 +523,35 @@ public class SysUserService {
         }
         return null;
     }
-    private static final String BIZ_TYPE_TASK = "TASK";
     /*
     * 任务状态包括未领取、已领取、可领取
     * 日常任务每天都能领取，成长任务只能领取一次
-    * 需要的接口：显示包含状态和任务说明的任务视图、领取奖励
-    * 每项任务的具体逻辑我会自行实现，返回值都为boolean表示当前是否满足条件 
+    * 每项任务的具体逻辑由开发者自行实现，返回值都为boolean表示当前是否满足条件 
     */
+    private static final String BIZ_TYPE_TASK = "TASK";
+
+    // ========== 任务状态常量 ==========
+    private static final String STATUS_INCOMPLETE = "incomplete";  // 未完成
+    private static final String STATUS_CLAIMABLE = "claimable";    // 可领取
+    private static final String STATUS_COMPLETED = "completed";    // 已领取
+
     /**
      * 任务定义枚举
-     * 每个任务都需要具体业务逻辑，没有必要额外加表允许改描述
      */
     @Getter
     @AllArgsConstructor
     public enum TaskDef {
-        // ID, 标题, 类型(Daily/Growth), 描述说明
-        DAILY_READ("read", "阅读30分钟", "Daily", "阅读三十分钟完成任务"),
-        DAILY_LIKE("like", "评论5次/点赞10次", "Daily", "任选一篇小说去评论/点赞"),
-        DAILY_SIGN("sign", "签到1次", "Daily", "点击按钮去签到"),
-        GROWTH_INVITE("invite", "邀请好友", "Growth", "邀请1人领取书币"),
-        GROWTH_AINOVEL("ainovel", "发布AI小说", "Growth", "发布1次AI创作"),
-        GROWTH_TOPUP("topup", "首次充值", "Growth", "首次充值领取书币"),
+        DAILY_READ("read", "阅读30分钟", "Daily"),
+        DAILY_SIGN("sign", "签到1次", "Daily"),
+        DAILY_LIKE("like", "评论5次/点赞10次", "Daily"),
+        GROWTH_INVITE("invite", "邀请好友", "Growth"),
+        GROWTH_AINOVEL("ainovel", "发布AI小说", "Growth"),
+        GROWTH_TOPUP("topup", "首次充值", "Growth"),
         ;
         public final String key;
         public final String name;
         public final String type;
-        public final String description;
-        // 根据ID查找枚举的便捷方法
+
         public static TaskDef getById(String key) {
             return Arrays.stream(values())
                     .filter(t -> t.key.equals(key))
@@ -559,7 +561,7 @@ public class SysUserService {
     }
 
     /**
-     * 1. 获取任务列表视图
+     * 获取任务列表视图
      */
     public List<TaskVo> getTaskListView(Long userId) {
         Date now = new Date();
@@ -573,35 +575,51 @@ public class SysUserService {
 
         // 批量查询已领取的日志（一次IO）
         List<BizLog> logs = bizLogMapper.selectList(new LambdaQueryWrapper<BizLog>()
-            .select(BizLog::getBizKey) // 稍微优化，只查需要的字段
+            .select(BizLog::getBizKey)
             .eq(BizLog::getCreateBy, userId)
             .eq(BizLog::getBizType, BIZ_TYPE_TASK)
             .in(BizLog::getBizKey, taskKeyMap.values()));
         
-        Set<String> claimedKeys = logs.stream().map(BizLog::getBizKey).collect(Collectors.toSet());
+        Set<String> claimedKeys = logs.stream()
+            .map(BizLog::getBizKey)
+            .collect(Collectors.toSet());
 
         List<TaskVo> result = new ArrayList<>(tasks.length);
         for (TaskDef task : tasks) {
             String bizKey = taskKeyMap.get(task.key);
-            int status;
+            String status;
 
             if (claimedKeys.contains(bizKey)) {
-                status = 2; // 已领取
+                status = STATUS_COMPLETED;
             } else {
-                // 没领过，才去跑逻辑判断
                 boolean isMet = checkTaskCondition(userId, task.key);
-                status = isMet ? 1 : 0; // 1:可领取, 0:未完成
+                status = isMet ? STATUS_CLAIMABLE : STATUS_INCOMPLETE;
             }
+
+            // ========== 获取任务奖励配置 ==========
+            Map<String, Integer> rewards = getTaskRewards(task.key);
 
             result.add(TaskVo.builder()
                 .taskKey(task.key)
                 .name(task.name)
-                .desc(task.description)
-                .type(task.type)        // 前端可能需要区分显示
+                .type(task.type)
                 .status(status)
+                .rewards(rewards)  // ========== 返回奖励信息 ==========
                 .build());
         }
         return result;
+    }
+
+    /**
+     * ========== 获取任务奖励配置 ==========
+     */
+    private Map<String, Integer> getTaskRewards(String taskKey) {
+        String configKey = "task.reward." + taskKey;
+        String rewardJson = configService.selectConfigByKey(configKey);
+        if (StrUtil.isBlank(rewardJson)) {
+            return Collections.emptyMap();
+        }
+        return JsonUtils.parseObject(rewardJson, new TypeReference<>() {});
     }
 
     /**
@@ -612,7 +630,6 @@ public class SysUserService {
         Date now = new Date();
         String bizKey = buildBizKey(task, now);
 
-        // 这里的查库必不可少，防止并发或直接调接口
         boolean exists = bizLogMapper.exists(new LambdaQueryWrapper<BizLog>()
             .eq(BizLog::getCreateBy, userId)
             .eq(BizLog::getBizType, BIZ_TYPE_TASK)
@@ -626,14 +643,12 @@ public class SysUserService {
             throw new BizException("未满足领取条件");
         }
 
-        // 动态读取奖励配置，方便运营随时调整数值
-        String configKey = "task.reward." + taskKey;
-        String rewardJson = configService.selectConfigByKey(configKey);
-        Map<String, Integer> rewards = JSONUtil.toBean(rewardJson, Map.class);
+        // ========== 修改：使用提取的公共方法 ==========
+        Map<String, Integer> rewards = getTaskRewards(taskKey);
 
-        // 核心：发放资产 + 记日志
         bizLogService.updateAssets(userId, bizKey, BIZ_TYPE_TASK, rewards);
     }
+
     /**
      * 任务具体的判断逻辑
      */
@@ -642,7 +657,7 @@ public class SysUserService {
             case "sign":
                 return isSignedToday(userId);
             case "read":
-                return true;//没必要为这点垃圾奖励和前端协调什么心跳机制 
+                return true;
             case "like":
                 return false;
             case "invite":
@@ -657,23 +672,26 @@ public class SysUserService {
     }
 
     private String buildBizKey(TaskDef task, Date date) {
-        // Growth任务Key固定，Daily任务Key带日期
         if ("Daily".equals(task.type)) {
             return StrUtil.format("TASK:{}:{}", task.key, DateUtil.format(date, "yyyyMMdd"));
         }
         return "TASK:" + task.key;
     }
 
+    /**
+     * ========== 修改：TaskVo ==========
+     */
     @Data
     @Builder
     public static class TaskVo {
         private String taskKey;
         private String name;
-        private String desc;
         private String type;
-        private Integer status; // 0:未完成, 1:可领取, 2:已领取
+        private String status;              // 修改：改为 String 类型，值为 'incomplete'/'claimable'/'completed'
+        private Map<String, Integer> rewards; // 新增：任务奖励，如 {"coin": 100, "exp": 50}
     }
-    private boolean isSignedToday(Long userId){
+
+    private boolean isSignedToday(Long userId) {
         LocalDate today = LocalDate.now();
         Set<LocalDate> signedDates = getSignedDateSet(userId);
         return signedDates.contains(today);

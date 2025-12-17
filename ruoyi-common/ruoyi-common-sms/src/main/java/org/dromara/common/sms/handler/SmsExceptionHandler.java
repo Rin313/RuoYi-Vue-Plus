@@ -1,8 +1,9 @@
 package org.dromara.common.sms.handler;
 
-import cn.hutool.http.HttpStatus;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+
+import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.R;
 import org.dromara.sms4j.comm.exception.SmsBlendException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,7 +24,7 @@ public class SmsExceptionHandler {
     public R<Void> handleSmsBlendException(SmsBlendException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生sms短信异常.", requestURI, e);
-        return R.fail(HttpStatus.HTTP_INTERNAL_ERROR, "短信发送失败，请稍后再试...");
+        return R.fail(BizStatus.ERROR, "短信发送失败，请稍后再试...");
     }
 
 }
