@@ -28,10 +28,12 @@ public class SysNoticeController {
 
     private final SysNoticeService noticeService;
     @SaIgnore
-    public IPage<SysNoticeVo> listForVisitor(NoticeQueryBo notice, PageQuery pageQuery) {
-        notice.setNoticeType("2");
-        notice.setStatus("1");
-        return noticeService.selectPageNoticeList(notice, pageQuery);
+    @GetMapping("/list/visitor")
+    public IPage<SysNoticeVo> listForVisitor(PageQuery pageQuery) {
+        NoticeQueryBo bo=new NoticeQueryBo();
+        bo.setNoticeType("2");
+        bo.setStatus("0");
+        return noticeService.selectPageNoticeList(bo, pageQuery);
     }
 
     /**
@@ -42,17 +44,6 @@ public class SysNoticeController {
     public IPage<SysNoticeVo> list(NoticeQueryBo notice, PageQuery pageQuery) {
         notice.setNoticeType("2");
         return noticeService.selectPageNoticeList(notice, pageQuery);
-    }
-
-    /**
-     * 根据通知公告编号获取详细信息
-     *
-     * @param noticeId 公告ID
-     */
-    @SaCheckPermission("system:notice:query")
-    @GetMapping(value = "/{noticeId}")
-    public SysNoticeVo getInfo(@PathVariable Long noticeId) {
-        return noticeService.selectNoticeById(noticeId);
     }
 
     /**
@@ -81,12 +72,11 @@ public class SysNoticeController {
     /**
      * 删除通知公告
      *
-     * @param noticeIds 公告ID串
      */
     @SaCheckPermission("system:notice:remove")
     @Log(title = "通知公告", businessType = BizType.DELETE)
-    @PostMapping("/{noticeIds}")
-    public void delete(@PathVariable Long[] noticeIds) {
-        noticeService.deleteNoticeByIds(noticeIds);
+    @PostMapping("/{ids}")
+    public void delete(@PathVariable Long[] ids) {
+        noticeService.deleteNoticeByIds(ids);
     }
 }

@@ -5,6 +5,9 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
 import org.dromara.common.core.constant.RegexConstants;
 import org.dromara.common.core.xss.Xss;
 
@@ -16,7 +19,6 @@ import org.dromara.common.core.xss.Xss;
 @Data
 @NoArgsConstructor
 public class SysUserProfileBo {
-
     /**
      * 用户昵称
      */
@@ -41,5 +43,6 @@ public class SysUserProfileBo {
      * 用户性别（0男 1女 2未知）
      */
     private String sex;
-
+    private Date lastNotificationReadTime;
+    private Date lastAnnouncementReadTime;
 }

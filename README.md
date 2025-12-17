@@ -4,3 +4,25 @@
 TODO
 - 移植xml
 - 
+
+model,output price,通用能力，指令遵从
+qwen-turbo-2025-07-15,0.6￥,48.5,59.8，不再更新
+Doubao-1.5-lite-32k-250115,0.6￥,48.3,64.0
+qwen-flash-2025-07-28,1.5￥,53.8,62.8
+
+hunyuan-turbos-20250926,2￥,61.6,71.7
+qwen-plus-2025-07-28,2￥,64.7,70.1
+doubao-seed-1-6-lite-251015，2.4￥,61.0,70.6
+DeepSeek-V3.2-Think,3￥,68.4,74.7
+DeepSeek-V3.2-Exp-Think,3￥,68.5,77.2
+gemini-2.5-flash,18.125￥,60.0,65.0
+https://huggingface.co/Tongyi-Zhiwen/QwenLong-L1.5-30B-A3B 最近更新过，大概有gemini-2.5-pro的水平 ![alt text](image-1.png)
+
+
+
+
+
+
+
+
+❌hunyuan-2.0-instruct-20251111,2￥,63.1,57.8

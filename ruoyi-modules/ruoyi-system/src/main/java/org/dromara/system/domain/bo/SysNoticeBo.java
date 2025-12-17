@@ -9,11 +9,6 @@ import org.dromara.common.core.xss.Xss;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.system.domain.SysNotice;
 
-/**
- * 通知公告业务对象 sys_notice
- *
- */
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AutoMapper(target = SysNotice.class, reverseConvertGenerate = false)

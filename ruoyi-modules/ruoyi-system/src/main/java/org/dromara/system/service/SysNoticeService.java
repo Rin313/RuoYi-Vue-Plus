@@ -38,17 +38,8 @@ public class SysNoticeService {
         lqw.like(StringUtils.isNotBlank(bo.getNoticeTitle()), SysNotice::getNoticeTitle, bo.getNoticeTitle());
         lqw.eq(StringUtils.isNotBlank(bo.getNoticeType()), SysNotice::getNoticeType, bo.getNoticeType());
         lqw.eq(StringUtils.isNotBlank(bo.getStatus()),SysNotice::getStatus,bo.getStatus());
+        lqw.orderByDesc(SysNotice::getCreateTime);
         return baseMapper.selectVoPage(pageQuery.build(), lqw);
-    }
-
-    /**
-     * 查询公告信息
-     *
-     * @param noticeId 公告ID
-     * @return 公告信息
-     */
-    public SysNoticeVo selectNoticeById(Long noticeId) {
-        return baseMapper.selectVoById(noticeId);
     }
 
     /**
@@ -76,20 +67,16 @@ public class SysNoticeService {
     /**
      * 删除公告对象
      *
-     * @param noticeId 公告ID
-     * @return 结果
      */
-    public int deleteNoticeById(Long noticeId) {
-        return baseMapper.deleteById(noticeId);
+    public int deleteNoticeById(Long id) {
+        return baseMapper.deleteById(id);
     }
 
     /**
      * 批量删除公告信息
      *
-     * @param noticeIds 需要删除的公告ID
-     * @return 结果
      */
-    public int deleteNoticeByIds(Long[] noticeIds) {
-        return baseMapper.deleteByIds(Arrays.asList(noticeIds));
+    public int deleteNoticeByIds(Long[] ids) {
+        return baseMapper.deleteByIds(Arrays.asList(ids));
     }
 }
