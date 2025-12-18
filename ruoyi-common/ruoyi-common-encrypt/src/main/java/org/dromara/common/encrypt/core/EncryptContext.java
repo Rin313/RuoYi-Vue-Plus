@@ -1,7 +1,6 @@
 package org.dromara.common.encrypt.core;
 
 import lombok.Data;
-import org.dromara.common.encrypt.enumd.AlgorithmType;
 import org.dromara.common.encrypt.enumd.EncodeType;
 
 /**
@@ -10,11 +9,6 @@ import org.dromara.common.encrypt.enumd.EncodeType;
  */
 @Data
 public class EncryptContext {
-
-    /**
-     * 默认算法
-     */
-    private AlgorithmType algorithm;
 
     /**
      * 安全秘钥
