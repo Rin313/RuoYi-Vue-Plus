@@ -108,13 +108,6 @@
                 <version>1.0.0</version>
             </dependency>
 
-            <!-- 数据库加解密模块 -->
-            <dependency>
-                <groupId>org.dromara</groupId>
-                <artifactId>ruoyi-common-encrypt</artifactId>
-                <version>1.0.0</version>
-            </dependency>
-
             <!-- <dependency>
                 <groupId>org.dromara</groupId>
                 <artifactId>ruoyi-common-websocket</artifactId>

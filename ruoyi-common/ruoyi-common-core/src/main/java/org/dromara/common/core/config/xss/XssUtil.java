@@ -10,10 +10,7 @@ import org.jsoup.safety.Safelist;
 public final class XssUtil {
     
     // ✅ 使用 Jsoup 预设的 relaxed 白名单，无需手动维护
-    private static final Safelist SAFELIST = Safelist.relaxed()
-        .preserveRelativeLinks(true);  // 保留相对链接
-    
-    private XssUtil() {}
+    private static final Safelist SAFELIST = Safelist.relaxed().preserveRelativeLinks(true);  // 保留相对链接
     
     public static String clean(String content) {
         // 空值快速返回
