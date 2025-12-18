@@ -25,7 +25,6 @@ public class SysConfigBo {
     /**
      * 参数名称
      */
-    @NotBlank(message = "参数名称不能为空")
     @Size(min = 0, max = 100, message = "参数名称不能超过{max}个字符")
     private String configName;
 

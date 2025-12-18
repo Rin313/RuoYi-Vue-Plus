@@ -97,7 +97,7 @@ public class SysConfigService implements ConfigService {
         lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfig::getConfigKey, bo.getConfigKey());
         lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysConfig::getCreateTime,bo.getBeginTime());
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysConfig::getCreateTime,bo.getEndTime());
-        lqw.orderByAsc(SysConfig::getConfigId);
+        lqw.orderByAsc(SysConfig::getCreateTime);
         return lqw;
     }
 
