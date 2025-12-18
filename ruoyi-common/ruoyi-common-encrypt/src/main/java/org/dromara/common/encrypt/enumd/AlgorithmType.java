@@ -18,11 +18,6 @@ public enum AlgorithmType {
     DEFAULT(null),
 
     /**
-     * base64
-     */
-    BASE64(Base64Encryptor.class),
-
-    /**
      * aes
      */
     AES(AesEncryptor.class),
@@ -30,17 +25,7 @@ public enum AlgorithmType {
     /**
      * rsa
      */
-    RSA(RsaEncryptor.class),
-
-    /**
-     * sm2
-     */
-    SM2(Sm2Encryptor.class),
-
-    /**
-     * sm4
-     */
-    SM4(Sm4Encryptor.class);
+    RSA(RsaEncryptor.class);
 
     private final Class<? extends AbstractEncryptor> clazz;
 }
