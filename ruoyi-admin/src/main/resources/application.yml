@@ -43,8 +43,10 @@ user:
 
 # Spring配置
 spring:
-  application:
-    name: RuoYi-Vue-Plus
+  web:
+    resources:
+      add-mappings: true
+      static-locations: classpath:/static/
   threads:
     # 开启虚拟线程 仅jdk21可用
     virtual:
@@ -148,14 +150,10 @@ springdoc:
     enabled: true
   #这里定义了两个分组，可定义多个，也可以不定义
   group-configs:
-    - group: 1.演示模块
-      packages-to-scan: org.dromara.demo
-    - group: 2.通用模块
+    - group: 通用模块
       packages-to-scan: org.dromara.web
-    - group: 3.系统模块
+    - group: 系统模块
       packages-to-scan: org.dromara.system
-    - group: 4.代码生成模块
-      packages-to-scan: org.dromara.generator
 
 # 防止XSS攻击
 xss:
@@ -180,3 +178,5 @@ websocket:
   path: /resource/websocket
   # 设置访问源地址
   allowedOrigins: '*'
+gemini:
+  api-key: AIzaSyCWAu7hjRiH0FaS8IqusRYhNTUakdZJ2zU

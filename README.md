@@ -16,7 +16,7 @@ doubao-seed-1-6-lite-251015，2.4￥,61.0,70.6
 DeepSeek-V3.2-Think,3￥,68.4,74.7
 DeepSeek-V3.2-Exp-Think,3￥,68.5,77.2
 gemini-2.5-flash,18.125￥,60.0,65.0
-https://huggingface.co/Tongyi-Zhiwen/QwenLong-L1.5-30B-A3B 最近更新过，大概有gemini-2.5-pro的水平 ![alt text](image-1.png)
+https://huggingface.co/Tongyi-Zhiwen/QwenLong-L1.5-30B-A3B 最近更新过，看huggingface的图，大概有gemini-2.5-pro的水平
 
 
 

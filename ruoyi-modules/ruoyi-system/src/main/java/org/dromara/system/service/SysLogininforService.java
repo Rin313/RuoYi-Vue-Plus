@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * 系统访问日志情况信息 服务层处理
+ * 系统访问日志
  *
  */
 @RequiredArgsConstructor

@@ -83,6 +83,11 @@
             <groupId>io.github.linpeilie</groupId>
             <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
         </dependency>
+        <dependency>
+                <groupId>com.google.genai</groupId>
+                <artifactId>google-genai</artifactId>
+                <version>1.32.0</version>
+        </dependency>
 
     </dependencies>
 
