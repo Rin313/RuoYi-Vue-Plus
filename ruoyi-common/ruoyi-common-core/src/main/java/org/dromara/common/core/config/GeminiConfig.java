@@ -3,7 +3,6 @@ package org.dromara.common.core.config;
 import com.google.genai.Client;
 import com.google.genai.types.ClientOptions;
 import com.google.genai.types.HttpOptions;
-//import com.google.genai.types.HttpRetryOptions;
 import com.google.genai.types.ProxyOptions;
 import com.google.genai.types.ProxyType;
 
@@ -39,9 +38,9 @@ public class GeminiConfig {
             // ✅ 添加代理配置
             .proxyOptions(
                 ProxyOptions.builder()
-                    .type(ProxyType.Known.HTTP) 
+                    .type(ProxyType.Known.SOCKS) 
                     .host("127.0.0.1")
-                    .port(10809)
+                    .port(10808)
                     .build()
             )
             .build();

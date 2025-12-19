@@ -26,10 +26,11 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.dto.UserDTO;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;

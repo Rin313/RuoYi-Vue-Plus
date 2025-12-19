@@ -4,7 +4,8 @@ import cn.hutool.core.convert.Convert;
 import com.baomidou.dynamic.datasource.DynamicRoutingDataSource;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.exception.BizException;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.common.mybatis.enums.DataBaseType;
 

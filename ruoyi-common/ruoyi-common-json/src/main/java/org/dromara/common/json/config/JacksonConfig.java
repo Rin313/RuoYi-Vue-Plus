@@ -28,7 +28,7 @@ public class JacksonConfig {
     public Module registerJavaTimeModule() {
         // 全局配置序列化返回 JSON 处理
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);//LONG如果不转成 String，会出现精度丢失。但非ID的LONG变量需要前端额外处理成数字，副作用很大
+        javaTimeModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);
         javaTimeModule.addSerializer(Long.TYPE, BigNumberSerializer.INSTANCE);
         javaTimeModule.addSerializer(BigInteger.class, BigNumberSerializer.INSTANCE);
         javaTimeModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
@@ -48,3 +48,10 @@ public class JacksonConfig {
     }
 
 }
+/* js中json parse的历史包袱：无法处理超过安全范围的整数，会丢精度。
+方案：
+前端手动处理特定参数
+后端注解处理特定参数
+前端在json parse前，统一用正则预处理超出安全范围的整数
+后端统一将Long类型转为字符串。
+*/

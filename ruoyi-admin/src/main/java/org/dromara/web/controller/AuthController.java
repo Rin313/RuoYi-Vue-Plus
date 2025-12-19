@@ -10,9 +10,10 @@ import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.utils.AuthStateUtils;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.domain.model.LoginBody;
 import org.dromara.common.core.domain.model.SocialLoginBody;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.json.utils.JsonUtils;
 import org.dromara.common.social.config.properties.SocialLoginConfigProperties;

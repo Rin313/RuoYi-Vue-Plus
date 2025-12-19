@@ -1,6 +1,6 @@
 package org.dromara.common.core.config;
 
-//自定义的业务常量硬编码，密钥、环境敏感变量（数据库连接、功能开关）、内置变量写yml + record + @ConfigurationProperties + @ConfigurationPropertiesScan
+//自定义的业务常量硬编码，需要即时调控的配置用config表，密钥、环境敏感变量（数据库连接、功能开关）、内置变量写yml + record + @ConfigurationProperties + @ConfigurationPropertiesScan
 public class BizProperties {
     public static final Boolean autoRegister=false;
 }

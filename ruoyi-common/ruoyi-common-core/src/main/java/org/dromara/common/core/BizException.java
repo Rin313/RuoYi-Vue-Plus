@@ -1,4 +1,4 @@
-package org.dromara.common.core.exception;
+package org.dromara.common.core;
 
 import cn.hutool.core.text.StrFormatter;
 import lombok.AllArgsConstructor;

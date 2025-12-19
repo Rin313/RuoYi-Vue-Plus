@@ -20,7 +20,7 @@ public class GeminiProperties {
     private int maxConnectionsPerHost = 16;
     
     // 生成配置
-    private int maxOutputTokens = 512;
+    private int maxOutputTokens = 256;
     private float temperature = 0.8f;   // 创意写作适合较高温度
     private float topP = 0.95f;
 }

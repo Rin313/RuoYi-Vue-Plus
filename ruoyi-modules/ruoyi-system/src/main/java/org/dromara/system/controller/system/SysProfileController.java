@@ -5,7 +5,7 @@ import cn.hutool.crypto.digest.BCrypt;
 import lombok.RequiredArgsConstructor;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.dromara.common.core.exception.BizException;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;

@@ -1,8 +1,8 @@
 package org.dromara.common.core.utils;
 
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.enums.FormatsType;
-import org.dromara.common.core.exception.BizException;
 
 import cn.hutool.core.date.DateUnit;
 import cn.hutool.core.date.DateUtil;

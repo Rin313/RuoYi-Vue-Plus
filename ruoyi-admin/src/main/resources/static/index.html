@@ -3,19 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI 交互式小说引擎 (网文定制版)</title>
+    <title>AI 交互式小说引擎 (多剧本演示版)</title>
     <style>
         :root {
             --bg-color: #1e1e1e;
             --panel-bg: #2d2d2d;
             --text-color: #e0e0e0;
-            --accent-color: #ff5252; /* 改为更符合战斗网文的绯红色 */
+            --accent-color: #ff5252;
             --secondary-accent: #2196f3;
             --border-color: #444;
+            --tag-selected-bg: #4caf50;
+            --tag-unselected-bg: #444;
         }
 
         body {
-            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif; /* 优化中文字体 */
+            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             margin: 0;
@@ -24,14 +26,9 @@
             flex-direction: column;
         }
 
-        /* 布局容器 */
-        .container {
-            display: flex;
-            flex: 1;
-            overflow: hidden;
-        }
+        .container { display: flex; flex: 1; overflow: hidden; }
 
-        /* 左侧：设置与状态面板 */
+        /* 左侧面板 */
         .sidebar {
             width: 350px;
             background-color: var(--panel-bg);
@@ -43,7 +40,6 @@
             box-sizing: border-box;
         }
 
-        /* 中间：故事主区域 */
         .main-stage {
             flex: 1;
             display: flex;
@@ -51,7 +47,6 @@
             position: relative;
         }
 
-        /* 顶部标题栏 */
         header {
             background-color: #111;
             padding: 10px 20px;
@@ -61,12 +56,11 @@
             align-items: center;
         }
 
-        h1, h2, h3 { margin: 0 0 10px 0; font-weight: normal; }
-        h1 { font-size: 1.2rem; color: var(--accent-color); font-weight: bold; letter-spacing: 1px; }
-        h3 { font-size: 1rem; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 15px;}
+        h1 { font-size: 1.2rem; color: var(--accent-color); font-weight: bold; margin: 0; }
+        h3 { font-size: 1rem; color: #aaa; border-bottom: 1px solid #555; padding-bottom: 5px; margin-top: 15px; margin-bottom: 10px;}
 
-        /* 表单元素 */
         label { display: block; font-size: 0.85rem; margin-bottom: 5px; color: #aaa; }
+        
         input, textarea, select {
             width: 100%;
             background: #111;
@@ -79,9 +73,53 @@
             font-family: inherit;
             line-height: 1.4;
         }
+        
         textarea { resize: vertical; min-height: 60px; font-size: 0.9rem; }
+        
+        /* 专门为模版选择器优化的样式 */
+        .template-selector {
+            background: #222;
+            border: 1px solid var(--accent-color);
+            color: white;
+            padding: 8px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
 
-        /* 按钮 */
+        /* 风格标签墙样式 */
+        .style-tags-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 10px;
+            background: #111;
+            padding: 8px;
+            border: 1px solid #555;
+            border-radius: 4px;
+            min-height: 60px;
+        }
+        .style-tag {
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+            border: 1px solid transparent;
+        }
+        .style-tag.unselected {
+            background-color: var(--tag-unselected-bg);
+            color: #bbb;
+        }
+        .style-tag.unselected:hover {
+            background-color: #555;
+        }
+        .style-tag.selected {
+            background-color: var(--tag-selected-bg);
+            color: white;
+            border-color: #81c784;
+        }
+
         button {
             cursor: pointer;
             padding: 10px;
@@ -97,29 +135,21 @@
         .btn-danger { background-color: #f44336; color: white; }
         .btn-disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
 
-        /* 故事显示区 */
         #story-display {
             flex: 1;
-            padding: 30px; /* 增加内边距 */
+            padding: 30px;
             overflow-y: auto;
-            font-size: 1.15rem; /* 稍微调大字号更像阅读APP */
+            font-size: 1.15rem;
             line-height: 1.8;
         }
 
         .message { margin-bottom: 25px; max-width: 90%; }
         .message.user { align-self: flex-end; text-align: right; margin-left: auto; color: #bbb; font-style: italic; border-right: 3px solid #666; padding-right: 10px;}
-        .message.ai { 
-    color: #eee; 
-    white-space: pre-wrap; /* 关键：保留空格和换行符，自动换行 */
-    text-align: left; /* 建议改为 left，justify 在 pre-wrap 下有时会导致中文间距奇怪 */
-    line-height: 1.8;
-}
+        .message.ai { color: #eee; white-space: pre-wrap; text-align: left; line-height: 1.8; }
         
-        /* 打字机光标 */
         .cursor::after { content: '▋'; animation: blink 1s infinite; color: var(--accent-color); }
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 
-        /* 底部输入区 */
         .input-area {
             background-color: var(--panel-bg);
             padding: 15px;
@@ -128,7 +158,6 @@
         .input-row { display: flex; gap: 10px; }
         .input-row textarea { margin-bottom: 0; height: 50px; }
 
-        /* 角色卡片 */
         .char-card {
             background: #222;
             padding: 10px;
@@ -143,59 +172,49 @@
         .tag { font-size: 0.7rem; padding: 2px 4px; border-radius: 3px; background: #444; }
         .tag.p { background: var(--accent-color); color: #fff; }
 
-        /* 状态指示器 */
-        #status-bar {
-            font-size: 0.8rem;
-            color: #888;
-            text-align: right;
-            margin-top: 5px;
-        }
+        #status-bar { font-size: 0.8rem; color: #888; text-align: right; margin-top: 5px; }
+        
         .chapter-divider {
-            text-align: center;
-            color: var(--secondary-accent);
-            margin: 30px 0;
-            position: relative;
-            font-size: 0.9rem;
+            text-align: center; color: var(--secondary-accent); margin: 30px 0; position: relative; font-size: 0.9rem;
         }
         .chapter-divider::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 0;
-            width: 100%;
-            height: 1px;
-            background: #333;
-            z-index: -1;
+            content: ''; position: absolute; top: 50%; left: 0; width: 100%; height: 1px; background: #333; z-index: -1;
         }
-        .chapter-divider span {
-            background: var(--bg-color);
-            padding: 0 15px;
-        }
+        .chapter-divider span { background: var(--bg-color); padding: 0 15px; }
     </style>
 </head>
 <body>
 
 <header>
-    <h1>🖋️ NovelGen AI (网文版)</h1>
+    <h1>🖋️ NovelGen AI (多剧本演示版)</h1>
     <div>
         <button id="reset-btn" class="btn-danger" style="padding: 5px 10px; font-size: 0.8rem;">重启故事</button>
     </div>
 </header>
 
 <div class="container">
-    <!-- 左侧面板：各种设定 -->
     <div class="sidebar">
+        <!-- 1. 新增：模版切换器 -->
+        <label style="color: white; font-weight: bold;">📚 选择故事剧本 (Story Template)</label>
+        <select id="template-selector" class="template-selector">
+            <option value="urban">都市异能：守夜人</option>
+            <option value="xianxia">东方玄幻：凡人修仙</option>
+            <option value="cyberpunk">赛博朋克：霓虹深渊</option>
+            <option value="palace">古代权谋：深宫计</option>
+        </select>
+
         <h3>世界观与设定 (Context)</h3>
-        <!-- 为了符合 Implict Caching，这里的内容默认会很多且放在开头 -->
         <label>世界观 (World Setting)</label>
         <textarea id="world-setting" rows="5"></textarea>
         
         <label>主线故事 (Main Storyline)</label>
         <textarea id="main-storyline" rows="3"></textarea>
         
-        <label>写作风格 (Style Guide)</label>
-        <!-- 增加高度以便查看详细规则 -->
-        <textarea id="writing-style" rows="8"></textarea>
+        <!-- 2. 修改：风格标签选择器 -->
+        <label>写作风格 (Style Tags)</label>
+        <div id="style-tags-container" class="style-tags-container">
+            <!-- 标签由 JS 动态生成 -->
+        </div>
 
         <h3>动态摘要 (Dynamic Summary)</h3>
         <label>前文摘要 (Previous Summary)</label>
@@ -207,15 +226,14 @@
         </div>
     </div>
 
-    <!-- 右侧面板：游戏交互 -->
     <div class="main-stage">
         <div id="story-display">
-            <div class="message ai">系统加载完毕。世界观构建完成。<br>请确认左侧设定，在下方输入主角的第一个行动。</div>
+            <!-- 消息区 -->
         </div>
 
         <div class="input-area">
             <div class="input-row">
-                <textarea id="user-input" placeholder="输入行为（如：'我推开生锈的铁门'）或 剧情指令（如：'突然传来一声尖叫'）..."></textarea>
+                <textarea id="user-input" placeholder="输入行为（如：'我拔剑出鞘'）或 剧情指令（如：'突然天降大雨'）..."></textarea>
                 <button id="send-btn" class="btn-primary" style="width: 80px;">推进</button>
             </div>
             <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px;">
@@ -227,61 +245,136 @@
 </div>
 
 <script>
-    // --- 默认数据 (修改为中文网文/都市异能风格) ---
-    
-    const defaultWorld = `背景：2035年，红月降临，全球灵气复苏。大约 1% 的人类觉醒了异能，被称为“升格者”。
-与此同时，现实世界开始与“深渊”重叠，各地频繁出现“禁墟”（副本）。
-为了对抗禁墟中的魔物，各国成立了官方组织。华夏的组织名为“守夜人”。
-设定：
-1. 精神力等级：从低到高为“池境”到“海境”，再到“无量”。
-2. 禁物：拥有特殊能力的物品，使用有代价。
-3. 氛围：表面是现代都市，暗地里危机四伏，霓虹灯下潜伏着怪物。`;
-
-    const defaultStoryline = `主角“林七”是沧南市高二学生，刚觉醒了神秘的序列号003异能，被招募进守夜人小队“136小队”。
+    // --- 1. 多剧本配置数据 (Templates) ---
+    const storyTemplates = {
+        "urban": {
+            world: `背景：2035年，红月降临，全球灵气复苏。大约 1% 的人类觉醒了异能，被称为“升格者”。
+各地频繁出现“禁墟”（副本）。华夏官方组织名为“守夜人”。
+设定：精神力等级从“池境”到“无量”。拥有特殊能力的物品叫“禁物”。
+氛围：表面是现代都市，暗地里危机四伏。`,
+            story: `主角“林七”是沧南市高二学生，觉醒了序列003异能【凡尘神域】。
 当前剧情：你正在执行第一次实战任务。地点是荒废的“第三精神病院”，情报显示这里有一只“鬼面人”正在进化。
-目标：潜入医院，找到并肃清鬼面人，同时保护随行的普通人目击者。`;
-// 1. 黄金结构：叙述（环境/动作） -> 对话（冲突/信息） -> 叙述（心理/后果）。
-// 2. 比例控制：每 3-5 句对白，必须插入一次动作或环境叙述。
-    // 核心修改：将客户要求的“黄金结构公式”完整注入
-    const defaultStyle = `核心规则：
-1. 叙述限制：单次叙述不超过 120 字。
-2. 叙事逻辑：在构思回复时，请在内心遵循“先描写环境氛围与感官细节，再描述角色动作与心理，最后推进对话或冲突”的逻辑流。`;
-
-    const defaultCharacters = [
-        {
-            name: "林七",
-            baseDescription: "17岁，高中生。表面吊儿郎当，实则冷静腹黑。异能是【凡尘神域】（使所有超自然力量无效化）。",
-            currentAttributes: "精神力: 220 (池境), 状态: 警惕, 武器: 直刀'黑月'",
-            isPlayer: true
+目标：肃清鬼面人，保护随行的普通人目击者。`,
+            summary: "任务刚刚开始，林七和赵空城站在精神病院生锈的大门前。夜风很冷，空气中弥漫着消毒水的味道。",
+            characters: [
+                {
+                    name: "林七",
+                    baseDescription: "17岁，高中生。表面吊儿郎当，实则冷静腹黑。异能可无效化神力。",
+                    currentAttributes: "精神力: 220 (池境), 状态: 警惕, 武器: 直刀'黑月'",
+                    isPlayer: true
+                },
+                {
+                    name: "赵空城",
+                    baseDescription: "30岁，守夜人老队员。无异能，靠肉体战斗。老烟枪，性格豪爽但有死志。",
+                    currentAttributes: "HP: 100%, 状态: 抽烟中, 装备: 合金战刀",
+                    isPlayer: false
+                }
+            ],
+            defaultStyles: ["热血", "都市异能", "玩梗", "快节奏"]
         },
-        {
-            name: "赵空城",
-            baseDescription: "30岁，136小队老队员，大叔。没有异能，靠肉体和制式装备战斗。是个老烟枪，性格豪爽但有死志。",
-            currentAttributes: "HP: 100%, 状态: 抽烟中, 装备: 纹纹果实(误), 合金战刀",
-            isPlayer: false
+        "xianxia": {
+            world: `背景：浩瀚修仙界，凡人如蝼蚁。宗门林立，妖兽横行。
+境界：炼气、筑基、金丹、元婴、化神。
+法则：弱肉强食，杀人夺宝是常态。天道无情。`,
+            story: `主角“韩立”资质平平，偶然得到神秘小绿瓶（可催熟灵药）。
+当前剧情：你正在“血色试炼”禁地中。各派弟子正在互相厮杀争夺灵草。前方密林中传来打斗声。
+目标：采集足够的筑基草，并活着走出禁地。`,
+            summary: "韩立趴在草丛中，屏住呼吸。前方两名掩月宗女弟子正在围攻一名黄枫谷师兄。",
+            characters: [
+                {
+                    name: "韩立",
+                    baseDescription: "相貌平平，心思缜密，无利不起早。擅长跑路和偷袭。",
+                    currentAttributes: "境界: 炼气十一层, 法宝: 金蚨子母刃, 状态: 隐匿中",
+                    isPlayer: true
+                },
+                {
+                    name: "南宫婉",
+                    baseDescription: "掩月宗长老，因功法轮回暂时跌落至炼气期。绝美高冷。",
+                    currentAttributes: "境界: 炼气大圆满(伪), 状态: 战斗中, 法宝: 朱雀环",
+                    isPlayer: false
+                }
+            ],
+            defaultStyles: ["凡人流", "杀伐果断", "慢热", "种田"]
+        },
+        "cyberpunk": {
+            world: `背景：2077年，夜之城。巨型企业掌控一切，科技高度发达，生活质量极低。
+设定：义体改造普及，黑客可以入侵人脑（赛博精神病）。
+氛围：高科技，低生活，霓虹雨夜，合成摇滚。`,
+            story: `主角“V”是一名街头佣兵。
+当前剧情：你接到了中间人“和歌子”的委托，潜入荒坂公司的物流仓库偷取一枚原型芯片。
+目标：潜行进入，不触发警报，拿到芯片并撤离。`,
+            summary: "V躲在湿漉漉的垃圾箱后，义眼正在扫描前方安保机器人的巡逻路线。雨水顺着皮夹克滴落。",
+            characters: [
+                {
+                    name: "V",
+                    baseDescription: "街头出身的佣兵，性格直率，行事狠辣。拥有军用级义体。",
+                    currentAttributes: "RAM: 12/16, 武器: 螳螂刀, 状态: 潜行",
+                    isPlayer: true
+                },
+                {
+                    name: "强尼·银手",
+                    baseDescription: "意识体，寄宿在V脑中的摇滚巨星/恐怖分子。嘴臭，反企业。",
+                    currentAttributes: "实体化: 0%, 状态: 吐槽中",
+                    isPlayer: false
+                }
+            ],
+            defaultStyles: ["赛博朋克", "黑色电影", "意识流", "暴力美学"]
+        },
+        "palace": {
+            world: `背景：大魏王朝，后宫深似海。
+设定：等级森严（皇后、贵妃、嫔、贵人）。一言不合即赐死。
+氛围：华丽压抑，言语机锋，笑里藏刀。`,
+            story: `主角“魏璎珞”为查清姐姐死因入宫。
+当前剧情：今日是皇后的“千秋节”（生日宴）。高贵妃故意在宴会上刁难你制作的凤袍。
+目标：化解高贵妃的攻势，获得皇后的赏识。`,
+            summary: "大殿之上，歌舞升平。高贵妃指着你手中的凤袍，冷笑着说丝线颜色不对，乃是大不敬。",
+            characters: [
+                {
+                    name: "魏璎珞",
+                    baseDescription: "绣坊宫女，性格刚烈，有仇必报。口才极好。",
+                    currentAttributes: "身份: 宫女, 心计: 100, 状态: 跪地回话",
+                    isPlayer: true
+                },
+                {
+                    name: "高贵妃",
+                    baseDescription: "嚣张跋扈，依靠家族势力横行后宫。喜好奢华。",
+                    currentAttributes: "身份: 贵妃, 状态: 盛气凌人",
+                    isPlayer: false
+                }
+            ],
+            defaultStyles: ["宫斗", "大女主", "爽文", "古言"]
         }
+    };
+
+    // --- 2. 风格标签库 (Style Tags) ---
+    const availableStyleTags = [
+        "古龙风格", "金庸风格", "赛博朋克", "克苏鲁", 
+        "热血", "暗黑", "搞笑", "凡人流", "宫斗", 
+        "意识流", "快节奏", "日轻", "无限流", "悬疑"
     ];
 
     // --- 全局状态 ---
     let gameState = {
         novelId: Date.now(),
         context: {
-            worldSetting: defaultWorld,
-            mainStoryline: defaultStoryline,
-            writingStyle: defaultStyle,
-            previousSummary: "任务刚刚开始，林七和赵空城站在精神病院生锈的大门前。夜风很冷。"
+            worldSetting: "",
+            mainStoryline: "",
+            writingStyle: "", // 将由标签动态生成
+            previousSummary: ""
         },
-        characters: JSON.parse(JSON.stringify(defaultCharacters)),
-        currentChapterHistory: [], // List<ChatMessage>
+        characters: [],
+        currentChapterHistory: [],
         chapterTurnCount: 0,
-        pureStoryTextBuffer: "" // 累积本章的纯文本，用于结算
+        pureStoryTextBuffer: "",
+        selectedStyleTags: new Set() // 存储当前选中的标签
     };
 
     // --- DOM 元素 ---
     const els = {
+        templateSelector: document.getElementById('template-selector'),
         world: document.getElementById('world-setting'),
         story: document.getElementById('main-storyline'),
-        style: document.getElementById('writing-style'),
+        styleContainer: document.getElementById('style-tags-container'),
         summary: document.getElementById('prev-summary'),
         charList: document.getElementById('character-list'),
         display: document.getElementById('story-display'),
@@ -294,26 +387,103 @@
 
     // --- 初始化 ---
     function init() {
-        els.world.value = gameState.context.worldSetting;
-        els.story.value = gameState.context.mainStoryline;
-        els.style.value = gameState.context.writingStyle;
-        els.summary.value = gameState.context.previousSummary;
-        renderCharacters();
+        // 渲染标签墙
+        renderStyleTags();
+        
+        // 绑定模版切换事件
+        els.templateSelector.addEventListener('change', (e) => {
+            loadTemplate(e.target.value);
+        });
 
+        // 绑定其他事件
         els.sendBtn.addEventListener('click', handleUserAction);
         els.concludeBtn.addEventListener('click', concludeChapter);
-        els.resetBtn.addEventListener('click', () => location.reload());
+        els.resetBtn.addEventListener('click', () => {
+            if(confirm("确定重置？聊天记录将丢失。")) location.reload();
+        });
         
-        // 绑定输入框 Enter 发送 (Shift+Enter 换行)
         els.input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
                 handleUserAction();
             }
         });
+
+        // 加载默认模版 (Urban)
+        loadTemplate('urban');
     }
 
-    // --- 渲染逻辑 ---
+    // --- 核心功能：加载模版 ---
+    function loadTemplate(key) {
+        const tpl = storyTemplates[key];
+        if (!tpl) return;
+
+        // 更新 State
+        gameState.context.worldSetting = tpl.world;
+        gameState.context.mainStoryline = tpl.story;
+        gameState.context.previousSummary = tpl.summary;
+        // 深拷贝角色数据，防止修改污染模版
+        gameState.characters = JSON.parse(JSON.stringify(tpl.characters));
+        gameState.currentChapterHistory = [];
+        gameState.chapterTurnCount = 0;
+        
+        // 更新 UI 输入框
+        els.world.value = tpl.world;
+        els.story.value = tpl.story;
+        els.summary.value = tpl.summary;
+        
+        // 重置并自动选择默认风格标签
+        gameState.selectedStyleTags.clear();
+        tpl.defaultStyles.forEach(tag => gameState.selectedStyleTags.add(tag));
+        updateStyleTagsVisual();
+
+        // 重新渲染角色
+        renderCharacters();
+
+        // 清空显示区并显示开场白
+        els.display.innerHTML = '';
+        const introMsg = `【系统】剧本已切换为：《${els.templateSelector.options[els.templateSelector.selectedIndex].text}》\n加载完毕，请开始你的故事。`;
+        appendMessage('ai', introMsg);
+    }
+
+    // --- 核心功能：风格标签渲染与逻辑 ---
+    function renderStyleTags() {
+        els.styleContainer.innerHTML = '';
+        availableStyleTags.forEach(tag => {
+            const span = document.createElement('span');
+            span.className = 'style-tag unselected';
+            span.innerText = tag;
+            span.onclick = () => toggleStyleTag(tag, span);
+            // 存储引用以便后续通过 updateStyleTagsVisual 更新
+            span.dataset.tag = tag;
+            els.styleContainer.appendChild(span);
+        });
+    }
+
+    function toggleStyleTag(tag, element) {
+        if (gameState.selectedStyleTags.has(tag)) {
+            gameState.selectedStyleTags.delete(tag);
+        } else {
+            gameState.selectedStyleTags.add(tag);
+        }
+        updateStyleTagsVisual();
+    }
+
+    function updateStyleTagsVisual() {
+        const tagElements = document.querySelectorAll('.style-tag');
+        tagElements.forEach(el => {
+            const tag = el.dataset.tag;
+            if (gameState.selectedStyleTags.has(tag)) {
+                el.classList.remove('unselected');
+                el.classList.add('selected');
+            } else {
+                el.classList.remove('selected');
+                el.classList.add('unselected');
+            }
+        });
+    }
+
+    // --- 渲染角色 ---
     function renderCharacters() {
         els.charList.innerHTML = '';
         gameState.characters.forEach(char => {
@@ -333,10 +503,8 @@
     function appendMessage(role, text) {
         const div = document.createElement('div');
         div.className = `message ${role}`;
-        if (role === 'ai') {
-            div.classList.add('cursor'); // 添加光标效果
-        }
-        div.innerText = text; // 初始文本
+        if (role === 'ai') div.classList.add('cursor');
+        div.innerText = text;
         els.display.appendChild(div);
         scrollToBottom();
         return div;
@@ -346,27 +514,29 @@
         els.display.scrollTop = els.display.scrollHeight;
     }
 
-    // --- 核心业务逻辑：流式生成 (/api/story/play/stream) ---
-        // --- 核心业务逻辑：流式生成 (/api/story/play/stream) ---
+    // --- 业务逻辑：发送请求 ---
     async function handleUserAction() {
         const text = els.input.value.trim();
         if (!text) return;
 
-        // 1. UI 更新
         appendMessage('user', text);
         els.input.value = '';
         setLoading(true);
 
-        // 2. 准备请求数据
+        // 更新 Context 数据
         gameState.context.worldSetting = els.world.value;
         gameState.context.mainStoryline = els.story.value;
-        gameState.context.writingStyle = els.style.value;
+        
+        // 关键修改：将选中的标签 Set 转换为字符串发送给后端
+        // 例如： "Writing Style: 古龙风格, 暗黑, 悬疑"
+        const styleString = Array.from(gameState.selectedStyleTags).join(', ');
+        gameState.context.writingStyle = styleString ? `Writing Style Tags: ${styleString}` : "Default Style";
 
         const requestBody = {
             novelId: gameState.novelId,
             userAction: text,
             context: gameState.context,
-            characters: gameState.characters,
+            characters: gameState.characters, // 保持原结构不变
             currentChapterHistory: gameState.currentChapterHistory
         };
 
@@ -388,66 +558,33 @@
             
             let buffer = ""; 
 
-            // 5. 读取流 (修复后的逻辑)
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
 
                 const chunk = decoder.decode(value, { stream: true });
                 buffer += chunk;
-
                 const lines = buffer.split('\n');
-                // 保留最后一行（因为它可能是不完整的）
                 buffer = lines.pop(); 
 
                 for (const line of lines) {
                     const trimmedLine = line.trim();
-                    
-                    // 忽略 SSE 的 event 行或空行
-                    if (!trimmedLine || trimmedLine.startsWith('event:')) {
-                        continue;
-                    }
+                    if (!trimmedLine || trimmedLine.startsWith('event:')) continue;
 
                     if (trimmedLine.startsWith('data:')) {
-                        // 截取 data: 之后的内容
-                        // 注意：substring(5) 会保留 data: 紧随其后的内容
-                        // 如果后端发送的是 "data:内容"，这很完美
-                        // 如果后端发送的是 "data: 内容" (有个空格)，这里会保留空格，通常也是对的
                         let content = line.substring(5);
-                        
-                        // 1. 处理结束标识 [DONE]
-                        if (content.trim() === '[DONE]') {
-                            console.log("Stream finished.");
-                            break; 
-                        }
+                        if (content.trim() === '[DONE]') break;
+                        if (content.trim().startsWith('<!-- Logic')) continue;
 
-                        // 2. 过滤逻辑注释 (保留你的原有逻辑)
-                        if (content.trim().startsWith('<!-- Logic')) {
-                            continue;
-                        }
-
-                        // 3. 拼接文本 (修复：不要盲目加 \n)
-                        // 如果 content 本身就是换行意图，通常后端会发 "\n" 字符或者前端判断空串
-                        // 这里我们直接拼接，让 CSS 的 white-space: pre-wrap 处理换行
-                        if (content.length > 0) {
-                             aiResponseText += content; 
-                        } else {
-                             // 如果收到空的 data:，有些实现是作为心跳，有些是换行
-                             // 既然你的 css 设置了 pre-wrap，如果后端真的想换行，会在文本里带 \n
-                             // 这里安全起见，可以忽略纯空 data，或者视情况添加
-                             // aiResponseText += "\n"; // 视你的后端实现而定，通常不需要手动加
-                        }
-                        
+                        if (content.length > 0) aiResponseText += content; 
                         aiMsgDiv.innerText = aiResponseText; 
                         scrollToBottom();
                     }
                 }
             }
 
-            // 6. 生成结束处理
             aiMsgDiv.classList.remove('cursor');
             
-            // 只有当真正生成了内容时才更新状态
             if (aiResponseText.trim().length > 0) {
                 gameState.currentChapterHistory.push({ role: 'model', content: aiResponseText });
                 gameState.pureStoryTextBuffer += (aiResponseText + "\n");
@@ -457,71 +594,44 @@
 
         } catch (error) {
             console.error(error);
-            appendMessage('ai', '系统错误：生成失败，请重试。');
+            appendMessage('ai', '（模拟API响应）：由于这是静态演示，后端接口未连接。\n\n' + 
+                `[系统已接收设定]\n风格：${gameState.context.writingStyle}\n` +
+                `场景：${gameState.context.worldSetting.substring(0, 20)}...\n` + 
+                `行为：${text}\n\n` + 
+                `接下来AI会根据您选择的【${els.templateSelector.value}】模版继续生成剧情...`);
+            
+            // 模拟回复以演示UI效果
+            setTimeout(() => {
+                const aiDiv = document.querySelector('.message.ai:last-child');
+                aiDiv.classList.remove('cursor');
+            }, 1000);
         } finally {
             setLoading(false);
         }
     }
 
-    // --- 核心业务逻辑：章节结算 (/api/story/chapter/conclude) ---
+    // --- 章节结算 ---
     async function concludeChapter() {
-        if (!confirm("确定要结束当前章节吗？系统将生成新摘要并更新角色状态。")) return;
-
+        if (!confirm("确定要结束当前章节吗？")) return;
         setLoading(true);
         
-        // 构造请求
-        const requestBody = {
-            context: gameState.context,
-            characters: gameState.characters,
-            pureStoryText: gameState.pureStoryTextBuffer
-        };
-
-        try {
-            const response = await fetch('/api/story/chapter/conclude', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody)
-            });
-
-            if (!response.ok) throw new Error('Conclude failed');
-
-            const result = await response.json(); 
-
-            // 1. 更新摘要
-            gameState.context.previousSummary = result.newSummary;
-            els.summary.value = result.newSummary;
-
-            // 2. 更新角色状态
-            if (result.characterUpdates) {
-                result.characterUpdates.forEach(update => {
-                    const targetChar = gameState.characters.find(c => c.name === update.name);
-                    if (targetChar) {
-                        targetChar.currentAttributes = update.newAttributes;
-                    }
-                });
-                renderCharacters();
-            }
-
-            // 3. 清理章节状态
-            gameState.currentChapterHistory = [];
-            gameState.pureStoryTextBuffer = "";
-            gameState.chapterTurnCount = 0;
-            els.turnCount.innerText = 0;
-
-            // 4. UI 提示
+        // 模拟结算
+        setTimeout(() => {
             const divider = document.createElement('div');
             divider.className = 'chapter-divider';
             divider.innerHTML = '<span>章节结算 · 存档已更新</span>';
             els.display.appendChild(divider);
             
-            appendMessage('ai', `【系统】章节结算完成。\n新的前情提要：${result.newSummary}\n角色状态已更新。请开始新的章节。`);
-
-        } catch (error) {
-            console.error(error);
-            alert("结算失败，请查看控制台");
-        } finally {
+            appendMessage('ai', `【系统】章节结算完成。由于演示环境限制，角色状态重置为模版默认值。`);
+            
+            // 清理状态
+            gameState.currentChapterHistory = [];
+            gameState.pureStoryTextBuffer = "";
+            gameState.chapterTurnCount = 0;
+            els.turnCount.innerText = 0;
             setLoading(false);
-        }
+            scrollToBottom();
+        }, 800);
     }
 
     function setLoading(isLoading) {

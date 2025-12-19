@@ -1,7 +1,7 @@
 package org.dromara.system.service;
 
 import org.apache.commons.lang3.ObjectUtils;
-import org.dromara.common.core.exception.BizException;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;

@@ -153,7 +153,17 @@ public class StoryEngineService {
 
         // --- SECTION 4: STYLE GUIDELINES (Static) ---
         sb.append("<writing_rules>\n");
-        sb.append(ctx.getWritingStyle()).append("\n");
+        sb.append("### CORE WRITING STANDARDS\n");
+        sb.append("1. **Show, Don't Tell**: Use sensory details (sight, sound, smell) to imply emotion.\n");
+        sb.append("2. **Dynamic Structure**: Mix [Action/Environment] -> [Dialogue] -> [Reaction]. Break long dialogue with action beats.\n");
+        sb.append("3. **Dialogue Reality**: Keep speech colloquial and fragmented. High information density.\n");
+        sb.append("4. **Adaptive Pacing**: Response length must match the context. \n");
+        sb.append("   - User Action -> Immediate Consequence.\n");
+        sb.append("   - User Directive (Plot change) -> Scene setting + Hook.\n");
+        // 如果 ctx中有特定的风格要求（比如：克苏鲁风格、古龙风格），可以追加在后面
+        if (ctx.getWritingStyle() != null) {
+             sb.append("\n### SPECIFIC TONE SETTINGS\n").append(ctx.getWritingStyle()).append("\n");
+        }
         sb.append("</writing_rules>\n\n");
 
         // --- SECTION 5: DYNAMIC CONTEXT (Changes per Chapter) ---
@@ -180,12 +190,11 @@ public class StoryEngineService {
         }
         sb.append("--- OUTPUT FORMAT REQUIREMENTS ---\n");
         sb.append("1. OUTPUT ONLY THE STORY CONTENT. Do not include any explanations, mental notes, or labels.\n");
-        sb.append("2. DO NOT use Markdown headers (like # Chapter 1, ## Scene, ### Action). Just plain paragraphs.\n");
-        sb.append("3. DO NOT output structure labels like '[Environment]', '[Dialogue]'.\n");
-        sb.append("4. Keep the response pacing natural. If the user input is short, the response should be proportional, not forcing a full chapter structure every turn.\n");
+        sb.append("2. DO NOT output structure labels like '[Environment]', '[Dialogue]'.\n");
+        sb.append("3. Keep the response pacing natural. If the user input is short, the response should be proportional, not forcing a full chapter structure every turn.\n");
+        log.info(sb.toString());
         return sb.toString();
     }
-
     /**
      * 包装用户输入
      */

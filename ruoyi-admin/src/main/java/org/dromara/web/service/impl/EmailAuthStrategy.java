@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.config.BizProperties;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
@@ -18,7 +19,6 @@ import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.EmailLoginBody;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.enums.LoginType;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;

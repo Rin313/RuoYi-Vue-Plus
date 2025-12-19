@@ -6,9 +6,10 @@ import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.excel.core.ExcelResult;

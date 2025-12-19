@@ -8,10 +8,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import me.zhyd.oauth.model.AuthResponse;
 import me.zhyd.oauth.model.AuthUser;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SocialLoginBody;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.core.utils.ip.AddressUtils;

@@ -8,9 +8,9 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.R;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.StreamUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;

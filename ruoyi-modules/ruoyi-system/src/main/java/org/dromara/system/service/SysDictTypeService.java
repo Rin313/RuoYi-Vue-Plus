@@ -8,10 +8,11 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.CacheNames;
 import org.dromara.common.core.domain.dto.DictDataDTO;
 import org.dromara.common.core.domain.dto.DictTypeDTO;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.service.DictService;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.ObjectUtils;

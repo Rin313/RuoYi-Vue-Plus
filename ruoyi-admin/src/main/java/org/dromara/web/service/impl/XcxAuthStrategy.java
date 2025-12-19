@@ -12,10 +12,11 @@ import me.zhyd.oauth.model.AuthToken;
 import me.zhyd.oauth.model.AuthUser;
 import me.zhyd.oauth.request.AuthRequest;
 import me.zhyd.oauth.request.AuthWechatMiniProgramRequest;
+
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.XcxLoginBody;
 import org.dromara.common.core.domain.model.XcxLoginUser;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.core.utils.ip.AddressUtils;
 import org.dromara.common.json.utils.JsonUtils;

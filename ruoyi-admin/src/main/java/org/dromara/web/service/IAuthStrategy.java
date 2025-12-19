@@ -1,7 +1,7 @@
 package org.dromara.web.service;
 
 
-import org.dromara.common.core.exception.BizException;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.utils.SpringUtils;
 import org.dromara.web.domain.vo.LoginVo;
 

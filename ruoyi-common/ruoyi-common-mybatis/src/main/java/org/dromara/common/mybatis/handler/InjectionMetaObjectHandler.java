@@ -3,9 +3,9 @@ package org.dromara.common.mybatis.handler;
 import com.baomidou.mybatisplus.core.handlers.MetaObjectHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.reflection.MetaObject;
+import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.model.LoginUser;
-import org.dromara.common.core.exception.BizException;
 import org.dromara.common.satoken.utils.LoginHelper;
 
 import java.util.Date;
