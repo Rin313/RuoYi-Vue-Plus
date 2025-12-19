@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.dromara.common.core.constant.BizStatus;
 import org.dromara.common.core.domain.R;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.base.BaseException;
 import org.dromara.common.core.utils.StreamUtils;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -62,15 +61,6 @@ public class GlobalExceptionHandler {
     public R<Void> handleServletException(ServletException e, HttpServletRequest request) {
         String requestURI = request.getRequestURI();
         log.error("请求地址'{}',发生未知异常.", requestURI, e);
-        return R.fail(e.getMessage());
-    }
-
-    /**
-     * 业务异常
-     */
-    @ExceptionHandler(BaseException.class)
-    public R<Void> handleBaseException(BaseException e, HttpServletRequest request) {
-        log.error(e.getMessage());
         return R.fail(e.getMessage());
     }
 

@@ -26,5 +26,6 @@ public class LoginBody implements Serializable {
      * 邀请码
      */
     private String InviteCode;
-
+    
+    private Boolean register;//当前端设计想要拆分出两个页面时，登录时自动注册不是预期的行为，应该明确指示
 }

@@ -3,7 +3,8 @@
 
 TODO
 - 移植xml
-- 
+- LONG类型我草泥马，怎么前端处理不了的
+
 
 model,output price,通用能力，指令遵从
 qwen-turbo-2025-07-15,0.6￥,48.5,59.8，不再更新

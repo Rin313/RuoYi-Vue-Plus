@@ -23,9 +23,5 @@ public class PasswordLoginBody extends LoginBody {
      */
     private String code;
     private String uuid;
-    // /**
-    //  * 注册模式，不拆分接口减少维护难度
-    //  */
-    // private Boolean register=false;
 
 }

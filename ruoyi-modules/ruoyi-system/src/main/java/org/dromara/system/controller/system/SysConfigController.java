@@ -54,17 +54,6 @@ public class SysConfigController {
     }
 
     /**
-     * 根据参数编号获取详细信息
-     *
-     * @param configId 参数ID
-     */
-    @SaCheckPermission("system:config:query")
-    @GetMapping(value = "/{configId}")
-    public SysConfigVo getInfo(@PathVariable Long configId) {
-        return configService.selectConfigById(configId);
-    }
-
-    /**
      * 根据参数键名查询参数值
      *
      * @param configKey 参数Key
@@ -83,7 +72,7 @@ public class SysConfigController {
     @PostMapping("/insert")
     public void add(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
-            throw new BizException("新增参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new BizException("新增参数失败，参数键名已存在");
         }
         configService.insertConfig(config);
     }
@@ -97,7 +86,7 @@ public class SysConfigController {
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
-            throw new BizException("修改参数'" + config.getConfigName() + "'失败，参数键名已存在");
+            throw new BizException("修改参数失败，参数键名已存在");
         }
         configService.updateConfig(config);
     }

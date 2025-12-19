@@ -49,16 +49,6 @@ public class SysConfigService implements ConfigService {
     }
 
     /**
-     * 查询参数配置信息
-     *
-     * @param configId 参数配置ID
-     * @return 参数配置信息
-     */
-    public SysConfigVo selectConfigById(Long configId) {
-        return baseMapper.selectVoById(configId);
-    }
-
-    /**
      * 根据键名查询参数配置信息
      *
      * @param configKey 参数key
@@ -93,7 +83,6 @@ public class SysConfigService implements ConfigService {
 
     private LambdaQueryWrapper<SysConfig> buildQueryWrapper(SysConfigBo bo) {
         LambdaQueryWrapper<SysConfig> lqw = Wrappers.lambdaQuery();
-        lqw.like(StringUtils.isNotBlank(bo.getConfigName()), SysConfig::getConfigName, bo.getConfigName());
         lqw.like(StringUtils.isNotBlank(bo.getConfigKey()), SysConfig::getConfigKey, bo.getConfigKey());
         lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), SysConfig::getCreateTime,bo.getBeginTime());
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), SysConfig::getCreateTime,bo.getEndTime());

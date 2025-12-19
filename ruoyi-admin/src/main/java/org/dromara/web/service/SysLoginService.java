@@ -15,7 +15,6 @@ import org.dromara.common.core.domain.dto.RoleDTO;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.*;
 import org.dromara.common.log.event.LogininforEvent;
 import org.dromara.common.redis.utils.RedisUtils;
@@ -167,7 +166,7 @@ public class SysLoginService {
         // 锁定时间内登录 则踢出
         if (errorNumber >= maxRetryCount) {
             recordLogininfor(username, loginFail, MessageUtils.message(loginType.getRetryLimitExceed(), maxRetryCount, lockTime));
-            throw new UserException(loginType.getRetryLimitExceed(), maxRetryCount, lockTime);
+            throw new BizException(MessageUtils.message(loginType.getRetryLimitExceed(),maxRetryCount, lockTime));
         }
 
         if (supplier.get()) {
@@ -177,11 +176,11 @@ public class SysLoginService {
             // 达到规定错误次数 则锁定登录
             if (errorNumber >= maxRetryCount) {
                 recordLogininfor(username, loginFail, MessageUtils.message(loginType.getRetryLimitExceed(), maxRetryCount, lockTime));
-                throw new UserException(loginType.getRetryLimitExceed(), maxRetryCount, lockTime);
+                throw new BizException(MessageUtils.message(loginType.getRetryLimitExceed(), maxRetryCount, lockTime));
             } else {
                 // 未达到规定错误次数
                 recordLogininfor(username, loginFail, MessageUtils.message(loginType.getRetryLimitCount(), errorNumber));
-                throw new UserException(loginType.getRetryLimitCount(), errorNumber);
+                throw new BizException(MessageUtils.message(loginType.getRetryLimitCount(), errorNumber));
             }
         }
 

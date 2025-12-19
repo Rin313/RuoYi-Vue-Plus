@@ -20,10 +20,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.TimeZone;
 
-/**
- * jackson 配置
- *
- */
 @Slf4j
 @AutoConfiguration(before = JacksonAutoConfiguration.class)
 public class JacksonConfig {
@@ -32,7 +28,7 @@ public class JacksonConfig {
     public Module registerJavaTimeModule() {
         // 全局配置序列化返回 JSON 处理
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);
+        javaTimeModule.addSerializer(Long.class, BigNumberSerializer.INSTANCE);//LONG如果不转成 String，会出现精度丢失。但非ID的LONG变量需要前端额外处理成数字，副作用很大
         javaTimeModule.addSerializer(Long.TYPE, BigNumberSerializer.INSTANCE);
         javaTimeModule.addSerializer(BigInteger.class, BigNumberSerializer.INSTANCE);
         javaTimeModule.addSerializer(BigDecimal.class, ToStringSerializer.instance);
@@ -46,7 +42,7 @@ public class JacksonConfig {
     @Bean
     public Jackson2ObjectMapperBuilderCustomizer customizer() {
         return builder -> {
-            builder.timeZone(TimeZone.getDefault());
+            builder.timeZone(TimeZone.getDefault());//TODO，待解决时区的环境依赖，应该手动指定时区而非依赖服务器时区
             log.info("初始化 jackson 配置");
         };
     }

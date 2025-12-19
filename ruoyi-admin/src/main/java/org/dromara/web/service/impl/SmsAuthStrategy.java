@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.common.core.config.BizProperties;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.constant.SystemConstants;
@@ -18,8 +19,6 @@ import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SmsLoginBody;
 import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.user.CaptchaExpireException;
-import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
@@ -30,6 +29,7 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
+import org.dromara.system.service.SysConfigService;
 import org.dromara.system.service.SysUserService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
@@ -48,6 +48,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
     private final SysLoginService loginService;
     private final SysUserMapper userMapper;
     private final SysUserService userService;
+    private final SysConfigService configService;
 
     @Override
     public LoginVo login(String body) {
@@ -58,27 +59,31 @@ public class SmsAuthStrategy implements IAuthStrategy {
         SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, phonenumber));
         LoginUser loginUser;
         if (ObjectUtil.isNull(user)) {
-            if(!validateSmsCode(phonenumber, smsCode))
-                throw new BizException("无效的验证码");
-            SysUser sysUser=new SysUser();
-            sysUser.setPhonenumber(phonenumber);
-            sysUser.setNickName("用户_"+RandomUtil.randomString(8));
-            sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
-            sysUser.setInviteCode(userService.getUniqueInviteCode());
-            if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
-                SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
-                if(ObjectUtils.isEmpty(parent))
-                    throw new UserException("user.invitecode.unknown");
-                sysUser.setParentId(parent.getUserId());
+            if(BizProperties.autoRegister&&configService.selectRegisterEnabled()){
+                if(!validateSmsCode(phonenumber, smsCode))
+                    throw new BizException("验证码错误");
+                SysUser sysUser=new SysUser();
+                sysUser.setPhonenumber(phonenumber);
+                sysUser.setNickName("用户_"+RandomUtil.randomString(8));
+                sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
+                sysUser.setInviteCode(userService.getUniqueInviteCode());
+                if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
+                    SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
+                    if(ObjectUtils.isEmpty(parent))
+                        throw new BizException(MessageUtils.message("user.invitecode.unknown"));
+                    sysUser.setParentId(parent.getUserId());
+                }
+                userMapper.insert(sysUser);
+                loginService.recordLogininfor(phonenumber, Constants.REGISTER, MessageUtils.message("user.register.success"));
+                loginUser = loginService.buildLoginUser(userMapper.selectVoById(sysUser.getUserId()));
             }
-            userMapper.insert(sysUser);
-            loginService.recordLogininfor(phonenumber, Constants.REGISTER, MessageUtils.message("user.register.success"));
-            loginUser = loginService.buildLoginUser(userMapper.selectVoById(sysUser.getUserId()));
-            // log.info("登录用户：{} 不存在.", phonenumber);
-            // throw new UserException("user.not.exists", phonenumber);
+            else{
+                log.info("登录用户：{} 不存在.", phonenumber);
+                throw new BizException("用户不存在或验证码错误");
+            }
         } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
             log.info("登录用户：{} 已被停用.", phonenumber);
-            throw new UserException("user.blocked", phonenumber);
+            throw new BizException(MessageUtils.message("user.blocked", phonenumber));
         } else{
             loginService.checkLogin(LoginType.SMS, user.getUserName(), () -> !validateSmsCode(phonenumber, smsCode));
             // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
@@ -108,7 +113,7 @@ public class SmsAuthStrategy implements IAuthStrategy {
         String code = RedisUtils.getCacheObject(GlobalConstants.CAPTCHA_CODE_KEY + phonenumber);
         if (StringUtils.isBlank(code)) {
             loginService.recordLogininfor(phonenumber, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire"));
-            throw new CaptchaExpireException();
+            throw new BizException("验证码已失效");
         }
         return code.equals(smsCode);
     }

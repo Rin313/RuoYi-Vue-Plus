@@ -12,7 +12,7 @@ import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.SocialLoginBody;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.user.UserException;
+import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
 import org.dromara.common.core.utils.ip.AddressUtils;
 import org.dromara.common.json.utils.JsonUtils;
@@ -90,10 +90,10 @@ public class SocialAuthStrategy implements IAuthStrategy {
         SysUserVo user = userMapper.selectVoById(userId);
         if (ObjectUtil.isNull(user)) {
             log.info("登录用户：{} 不存在.", "");
-            throw new UserException("user.not.exists", "");
+            throw new BizException(MessageUtils.message("user.not.exists", ""));
         } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
             log.info("登录用户：{} 已被停用.", "");
-            throw new UserException("user.blocked", "");
+            throw new BizException(MessageUtils.message("user.blocked", ""));
         }
         return user;
     }

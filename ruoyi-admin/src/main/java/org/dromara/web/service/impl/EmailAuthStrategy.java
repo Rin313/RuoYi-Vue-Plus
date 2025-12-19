@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.common.core.config.BizProperties;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.constant.SystemConstants;
@@ -18,8 +19,6 @@ import org.dromara.common.core.domain.model.EmailLoginBody;
 import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.user.CaptchaExpireException;
-import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.core.utils.ValidatorUtils;
@@ -30,6 +29,7 @@ import org.dromara.common.satoken.utils.LoginHelper;
 import org.dromara.system.domain.SysUser;
 import org.dromara.system.domain.vo.SysUserVo;
 import org.dromara.system.mapper.SysUserMapper;
+import org.dromara.system.service.SysConfigService;
 import org.dromara.system.service.SysUserService;
 import org.dromara.web.domain.vo.LoginVo;
 import org.dromara.web.service.IAuthStrategy;
@@ -48,6 +48,7 @@ public class EmailAuthStrategy implements IAuthStrategy {
     private final SysLoginService loginService;
     private final SysUserMapper userMapper;
     private final SysUserService userService;
+    private final SysConfigService configService;
 
     @Override
     public LoginVo login(String body) {
@@ -58,27 +59,31 @@ public class EmailAuthStrategy implements IAuthStrategy {
         SysUserVo user = userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getEmail, email));
         LoginUser loginUser;
         if (ObjectUtil.isNull(user)) {
-            if(!validateEmailCode(email, emailCode))
-                throw new BizException("无效的验证码");
-            SysUser sysUser=new SysUser();
-            sysUser.setEmail(email);
-            sysUser.setNickName("用户_"+RandomUtil.randomString(8));
-            sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
-            sysUser.setInviteCode(userService.getUniqueInviteCode());
-            if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
-                SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
-                if(ObjectUtils.isEmpty(parent))
-                    throw new UserException("user.invitecode.unknown");
-                sysUser.setParentId(parent.getUserId());
+            if(BizProperties.autoRegister&&configService.selectRegisterEnabled()){
+                if(!validateEmailCode(email, emailCode))
+                    throw new BizException("无效的验证码");
+                SysUser sysUser=new SysUser();
+                sysUser.setEmail(email);
+                sysUser.setNickName("用户_"+RandomUtil.randomString(8));
+                sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
+                sysUser.setInviteCode(userService.getUniqueInviteCode());
+                if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
+                    SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
+                    if(ObjectUtils.isEmpty(parent))
+                        throw new BizException("无效的邀请码");
+                    sysUser.setParentId(parent.getUserId());
+                }
+                userMapper.insert(sysUser);
+                loginService.recordLogininfor(email, Constants.REGISTER, MessageUtils.message("user.register.success"));
+                loginUser = loginService.buildLoginUser(userMapper.selectVoById(sysUser.getUserId()));
             }
-            userMapper.insert(sysUser);
-            loginService.recordLogininfor(email, Constants.REGISTER, MessageUtils.message("user.register.success"));
-            loginUser = loginService.buildLoginUser(userMapper.selectVoById(sysUser.getUserId()));
-            //log.info("登录用户：{} 不存在.", email);
-            //throw new UserException("user.not.exists", email);
+            else{
+                log.info("登录用户：{} 不存在.", email);
+                throw new BizException("用户不存在或验证码错误");
+            }
         } else if (SystemConstants.DISABLE.equals(user.getStatus())) {
             log.info("登录用户：{} 已被停用.", email);
-            throw new UserException("user.blocked", email);
+            throw new BizException(MessageUtils.message("user.blocked", email));
         } else{
             loginService.checkLogin(LoginType.EMAIL, user.getUserName(), () -> !validateEmailCode(email, emailCode));
             // 此处可根据登录用户的数据不同 自行创建 loginUser 属性不够用继承扩展就行了
@@ -106,7 +111,7 @@ public class EmailAuthStrategy implements IAuthStrategy {
         String code = RedisUtils.getCacheObject(GlobalConstants.CAPTCHA_CODE_KEY + email);
         if (StringUtils.isBlank(code)) {
             loginService.recordLogininfor(email, Constants.LOGIN_FAIL, MessageUtils.message("user.jcaptcha.expire"));
-            throw new CaptchaExpireException();
+            throw new BizException("验证码已失效");
         }
         return code.equals(emailCode);
     }

@@ -23,12 +23,6 @@ public class SysConfigBo {
     private Long configId;
 
     /**
-     * 参数名称
-     */
-    @Size(min = 0, max = 100, message = "参数名称不能超过{max}个字符")
-    private String configName;
-
-    /**
      * 参数键名
      */
     @NotBlank(message = "参数键名不能为空")

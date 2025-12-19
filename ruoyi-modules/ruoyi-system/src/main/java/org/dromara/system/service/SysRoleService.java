@@ -267,7 +267,7 @@ public class SysRoleService {
      * @return 结果
      */
     public long countUserRoleByRoleId(Long roleId) {
-        return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));//TODO
+        return userRoleMapper.selectCount(new LambdaQueryWrapper<SysUserRole>().eq(SysUserRole::getRoleId, roleId));//TODO，现在出现了角色会过期的问题
     }
 
     /**

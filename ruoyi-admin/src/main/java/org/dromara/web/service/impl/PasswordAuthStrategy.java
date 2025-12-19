@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.lang3.ObjectUtils;
+import org.dromara.common.core.config.BizProperties;
 import org.dromara.common.core.constant.Constants;
 import org.dromara.common.core.constant.GlobalConstants;
 import org.dromara.common.core.constant.SystemConstants;
@@ -17,9 +18,6 @@ import org.dromara.common.core.domain.model.LoginUser;
 import org.dromara.common.core.domain.model.PasswordLoginBody;
 import org.dromara.common.core.enums.LoginType;
 import org.dromara.common.core.exception.BizException;
-import org.dromara.common.core.exception.user.CaptchaException;
-import org.dromara.common.core.exception.user.CaptchaExpireException;
-import org.dromara.common.core.exception.user.UserException;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.MessageUtils;
 import org.dromara.common.core.utils.StringUtils;
@@ -57,11 +55,8 @@ public class PasswordAuthStrategy implements IAuthStrategy {
 
     @Override
     public LoginVo login(String body) {
-        PasswordLoginBody loginBody = JsonUtils.parseObject(body, PasswordLoginBody.class);
-        if (captchaProperties.getEnable()) {
-            validateCaptcha(loginBody.getCode(), loginBody.getUuid());
-        }
-        ValidatorUtils.validate(loginBody);
+        PasswordLoginBody loginBody = JsonUtils.parseObject(body, PasswordLoginBody.class);ValidatorUtils.validate(loginBody);
+        if (captchaProperties.getEnable()) validateCaptcha(loginBody.getCode(), loginBody.getUuid());
         SysUserVo userVo;
         SysUserBo sysUser = new SysUserBo();
         if(ObjectUtil.isNotNull(loginBody.getUsername())){
@@ -76,40 +71,45 @@ public class PasswordAuthStrategy implements IAuthStrategy {
             userVo=userMapper.selectVoOne(new LambdaQueryWrapper<SysUser>().eq(SysUser::getPhonenumber, loginBody.getPhonenumber()));
             sysUser.setPhonenumber(loginBody.getPhonenumber());
         }
-        else throw new BizException("无效输入");
+        else throw new BizException("用户不存在或密码错误");
         String inputValue=StringUtils.firstNonBlank(sysUser.getUserName(),sysUser.getEmail(),sysUser.getPhonenumber());
         LoginUser loginUser;
-        // if(loginBody.getRegister()){
-        //     if (!configService.selectRegisterEnabled())
-        //         throw new BizException("当前系统已关闭注册");
-        //     if(ObjectUtil.isNotNull(userVo))
-        //         throw new BizException("用户已存在");
-        //     sysUser.setNickName("用户_"+RandomUtil.randomString(8));
-        //     sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
-        //     sysUser.setInviteCode(userService.getUniqueInviteCode());
-        //     if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
-        //         SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
-        //         if(ObjectUtils.isEmpty(parent))
-        //             throw new UserException("user.invitecode.unknown");
-        //         sysUser.setParentId(parent.getUserId());
-        //     }
-        //     SysUser t = MapstructUtils.convert(sysUser, SysUser.class);
-        //     userMapper.insert(t);
-        //     loginService.recordLogininfor(inputValue, Constants.REGISTER, MessageUtils.message("user.register.success"));
-        //     loginUser = loginService.buildLoginUser(userMapper.selectVoById(t.getUserId()));
-        // }
-        //else{
+        if(loginBody.getRegister()){
+            if (!configService.selectRegisterEnabled())
+                throw new BizException("当前系统已关闭注册");
+            if(ObjectUtil.isNotNull(userVo))
+                throw new BizException("用户已存在");
+            sysUser.setNickName("用户_"+RandomUtil.randomString(8));
+            sysUser.setPassword(BCrypt.hashpw(loginBody.getPassword()));
+            sysUser.setInviteCode(userService.getUniqueInviteCode());
+            if(StringUtils.isNotEmpty(loginBody.getInviteCode())){
+                SysUserVo parent=userService.selectUserByInviteCode(loginBody.getInviteCode());
+                if(ObjectUtils.isEmpty(parent))
+                    throw new BizException(MessageUtils.message("user.invitecode.unknown"));
+                sysUser.setParentId(parent.getUserId());
+            }
+            SysUser t = MapstructUtils.convert(sysUser, SysUser.class);
+            userMapper.insert(t);
+            loginService.recordLogininfor(inputValue, Constants.REGISTER, MessageUtils.message("user.register.success"));
+            loginUser = loginService.buildLoginUser(userMapper.selectVoById(t.getUserId()));
+        }
+        else{
             if (ObjectUtil.isNull(userVo)) {
-                log.info("登录用户：{} 不存在.", inputValue);
-                throw new BizException("用户不存在或密码错误");
+                if(BizProperties.autoRegister&&configService.selectRegisterEnabled()){
+                    
+                }
+                else {{
+                    log.info("登录用户：{} 不存在.", inputValue);
+                    throw new BizException("用户不存在或密码错误");
+                }}
             } else if (SystemConstants.DISABLE.equals(userVo.getStatus())) {
                 log.info("登录用户：{} 已被停用.", inputValue);
-                throw new UserException("user.blocked", inputValue);
+                throw new BizException(MessageUtils.message("user.blocked", inputValue));
             }
             loginService.checkLogin(LoginType.PASSWORD, inputValue, () -> !BCrypt.checkpw(loginBody.getPassword(), userVo.getPassword()));
             // 此处可根据登录用户的数据不同 自行创建 loginUser
             loginUser = loginService.buildLoginUser(userVo);
-        //}
+        }
         loginUser.setClientKey(AddressUtils.getClientType());
         SaLoginParameter model = new SaLoginParameter();
         // 自定义分配 不同用户体系 不同 token 授权时间 不设置默认走全局 yml 配置
@@ -136,10 +136,10 @@ public class PasswordAuthStrategy implements IAuthStrategy {
         String captcha = RedisUtils.getCacheObject(verifyKey);
         RedisUtils.deleteObject(verifyKey);
         if (captcha == null) {
-            throw new CaptchaExpireException();
+            throw new BizException("验证码已失效");
         }
         if (!StringUtils.equalsIgnoreCase(code, captcha)) {
-            throw new CaptchaException();
+            throw new BizException("验证码错误");
         }
     }
 }

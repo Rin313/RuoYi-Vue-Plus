@@ -48,7 +48,7 @@ public class RedisConfig {
             javaTimeModule.addDeserializer(LocalDateTime.class, new LocalDateTimeDeserializer(formatter));
             ObjectMapper om = new ObjectMapper();
             om.registerModule(javaTimeModule);
-            om.setTimeZone(TimeZone.getDefault());
+            om.setTimeZone(TimeZone.getDefault());//TODO，待解决时区的环境依赖
             om.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
             // 指定序列化输入的类型，类必须是非final修饰的。序列化时将对象全类名一起保存下来
             om.activateDefaultTyping(LaissezFaireSubTypeValidator.instance, ObjectMapper.DefaultTyping.NON_FINAL);

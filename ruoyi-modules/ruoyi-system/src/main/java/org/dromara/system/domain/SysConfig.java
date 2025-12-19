@@ -23,11 +23,6 @@ public class SysConfig extends BaseEntity {
     private Long configId;
 
     /**
-     * 参数名称
-     */
-    private String configName;
-
-    /**
      * 参数键名
      */
     private String configKey;
