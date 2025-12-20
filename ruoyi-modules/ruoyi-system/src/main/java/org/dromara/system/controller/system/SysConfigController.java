@@ -97,8 +97,8 @@ public class SysConfigController {
     @SaCheckPermission("system:config:remove")
     @Log(title = "参数管理", businessType = BizType.DELETE)
     @PostMapping("/{configIds}")
-    public void delete(@PathVariable Long[] configIds) {
-        configService.deleteConfigByIds(Arrays.asList(configIds));
+    public void delete(@PathVariable List<Long> configIds) {
+        configService.deleteConfigByIds(configIds);
     }
 
     /**

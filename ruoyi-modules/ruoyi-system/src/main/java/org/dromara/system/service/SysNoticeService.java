@@ -15,6 +15,7 @@ import org.dromara.system.mapper.SysNoticeMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * 公告 服务层实现
@@ -76,7 +77,7 @@ public class SysNoticeService {
      * 批量删除公告信息
      *
      */
-    public int deleteNoticeByIds(Long[] ids) {
-        return baseMapper.deleteByIds(Arrays.asList(ids));
+    public int deleteNoticeByIds(List<Long> ids) {
+        return baseMapper.deleteByIds(ids);
     }
 }

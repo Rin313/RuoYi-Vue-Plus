@@ -416,15 +416,14 @@ public class SysUserService {
      * @return 结果
      */
     @Transactional(rollbackFor = Exception.class)
-    public int deleteUserByIds(Long[] userIds) {
+    public int deleteUserByIds(List<Long> userIds) {
         for (Long userId : userIds) {
             checkUserAllowed(userId);
         }
-        List<Long> ids = List.of(userIds);
         // 删除用户与角色关联
-        userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, ids));
+        userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>().in(SysUserRole::getUserId, userIds));
         // 防止更新失败导致的数据删除
-        int flag = baseMapper.deleteByIds(ids);
+        int flag = baseMapper.deleteByIds(userIds);
         if (flag < 1) {
             throw new BizException("删除用户失败!");
         }

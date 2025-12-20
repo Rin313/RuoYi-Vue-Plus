@@ -99,8 +99,8 @@ public class SysDictTypeController {
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BizType.DELETE)
     @PostMapping("/{dictIds}")
-    public void delete(@PathVariable Long[] dictIds) {
-        dictTypeService.deleteDictTypeByIds(Arrays.asList(dictIds));
+    public void delete(@PathVariable List<Long> dictIds) {
+        dictTypeService.deleteDictTypeByIds(dictIds);
     }
 
     /**

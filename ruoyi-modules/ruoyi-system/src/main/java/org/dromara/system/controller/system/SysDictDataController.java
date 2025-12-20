@@ -116,7 +116,7 @@ public class SysDictDataController {
     @SaCheckPermission("system:dict:remove")
     @Log(title = "字典类型", businessType = BizType.DELETE)
     @PostMapping("/{dictCodes}")
-    public void delete(@PathVariable Long[] dictCodes) {
-        dictDataService.deleteDictDataByIds(Arrays.asList(dictCodes));
+    public void delete(@PathVariable List<Long> dictCodes) {
+        dictDataService.deleteDictDataByIds(dictCodes);
     }
 }

@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 @Data
-@TableName
+@TableName(autoResultMap=true)
 public class BizLog {
 
     @TableId

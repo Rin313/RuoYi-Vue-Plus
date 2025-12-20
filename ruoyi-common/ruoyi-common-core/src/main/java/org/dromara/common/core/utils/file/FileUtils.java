@@ -1,19 +1,29 @@
 package org.dromara.common.core.utils.file;
 
-import cn.hutool.core.io.FileUtil;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.io.FilenameUtils;
+import org.apache.tika.Tika;
+import org.dromara.common.core.BizException;
+import org.dromara.common.core.utils.SpringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 文件处理工具类
  *
  */
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class FileUtils extends FileUtil {
+public class FileUtils {
 
     /**
      * 下载文件名重新编码
@@ -38,5 +48,69 @@ public class FileUtils extends FileUtil {
     public static String percentEncode(String s) {
         String encode = URLEncoder.encode(s, StandardCharsets.UTF_8);
         return encode.replaceAll("\\+", "%20");
+    }
+
+    /** Web 常用图片后缀 */
+    public static final Set<String> WEB_IMAGE_EXTS = Set.of(
+        "jpg", "jpeg", "png", "gif", "webp"
+    );
+    
+    /** 全部图片后缀 */
+    public static final Set<String> ALL_IMAGE_EXTS = Set.of(
+        "jpg", "jpeg", "png", "gif", "webp", 
+        "bmp", "tiff", "tif", "svg", "ico", "heic", "avif"
+    );
+    
+    // ========== 常用图片 MIME 类型 ==========
+    
+    /** Web 常用图片 MIME */
+    public static final Set<String> WEB_IMAGE_MIMES = Set.of(
+        "image/jpeg",
+        "image/png", 
+        "image/gif",
+        "image/webp"
+    );
+    
+    /** 全部图片 MIME */
+    public static final Set<String> ALL_IMAGE_MIMES = Set.of(
+        "image/jpeg",
+        "image/png",
+        "image/gif", 
+        "image/webp",
+        "image/bmp",
+        "image/x-ms-bmp",
+        "image/tiff",
+        "image/svg+xml",
+        "image/x-icon",
+        "image/vnd.microsoft.icon",
+        "image/heic",
+        "image/heif",
+        "image/avif"
+    );
+    private static final Tika tika = new Tika();
+    private static final String basePath=SpringUtils.getProperty("file.base-path");
+    public static String save(MultipartFile file, Integer MB,Set<String> allowedExts,Set<String> allowedMimes) {
+        if (file == null || file.isEmpty()) return "";//throw new BizException("空文件");前端没法清空提交的临时补丁
+        if (file.getSize() > MB*1024*1024l) throw new RuntimeException("上传文件大小不超过"+MB+"MB");
+        String originalFilename = file.getOriginalFilename();
+        String ext = FilenameUtils.getExtension(originalFilename).toLowerCase();
+        if (!allowedExts.contains(ext)) throw new RuntimeException("不支持的文件类型");
+        try (InputStream stream = file.getInputStream()) {
+            if(!allowedMimes.contains(tika.detect(stream)))
+                throw new RuntimeException("文件内容异常");
+        } catch (IOException e) {
+            throw new RuntimeException("文件读取失败", e);
+        }
+        try {
+            String dateFolder = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy/MM/dd"));
+            Path dirPath = Paths.get(basePath).toAbsolutePath().normalize().resolve(dateFolder);
+            Files.createDirectories(dirPath);
+            String newFilename = UUID.randomUUID().toString().replace("-", "") + "." + ext;
+            Path targetPath = dirPath.resolve(newFilename);
+            file.transferTo(targetPath);
+            return dateFolder + "/" + newFilename;
+        } catch (IOException e) {
+            throw new RuntimeException("保存失败", e);
+        }
     }
 }

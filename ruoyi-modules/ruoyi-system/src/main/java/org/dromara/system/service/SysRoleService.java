@@ -398,16 +398,15 @@ public class SysRoleService {
      * @param userIds 需要取消授权的用户数据ID
      * @return 结果
      */
-    public void deleteAuthUsers(Long roleId, Long[] userIds) {
-        List<Long> ids = List.of(userIds);
-        if (ids.contains(LoginHelper.getUserId())) {
+    public void deleteAuthUsers(Long roleId, List<Long> userIds) {
+        if (userIds.contains(LoginHelper.getUserId())) {
             throw new BizException("不允许修改当前用户角色!");
         }
         int rows = userRoleMapper.delete(new LambdaQueryWrapper<SysUserRole>()
             .eq(SysUserRole::getRoleId, roleId)
-            .in(SysUserRole::getUserId, ids));
+            .in(SysUserRole::getUserId, userIds));
         if (rows > 0) {
-            cleanOnlineUser(ids);
+            cleanOnlineUser(userIds);
         }
     }
 
@@ -418,14 +417,13 @@ public class SysRoleService {
      * @param userIds 需要授权的用户数据ID
      * @return 结果
      */
-    public int insertAuthUsers(Long roleId, Long[] userIds) {
+    public int insertAuthUsers(Long roleId, List<Long> userIds) {
         // 新增用户与角色管理
         int rows = 1;
-        List<Long> ids = List.of(userIds);
-        if (ids.contains(LoginHelper.getUserId())) {
+        if (userIds.contains(LoginHelper.getUserId())) {
             throw new BizException("不允许修改当前用户角色!");
         }
-        List<SysUserRole> list = StreamUtils.toList(ids, userId -> {
+        List<SysUserRole> list = StreamUtils.toList(userIds, userId -> {
             SysUserRole ur = new SysUserRole();
             ur.setUserId(userId);
             ur.setRoleId(roleId);
@@ -435,7 +433,7 @@ public class SysRoleService {
             rows = userRoleMapper.insertBatch(list) ? list.size() : 0;
         }
         if (rows > 0) {
-            cleanOnlineUser(ids);
+            cleanOnlineUser(userIds);
         }
         return rows;
     }

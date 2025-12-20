@@ -16,5 +16,5 @@ public class GenerationOptions {
     private Integer maxOutputTokens;
     
     // 是否开启思考模型 (如果后续需要支持 thinking 模式)
-    private Boolean enableThinking; 
+    //private Boolean enableThinking; 
 }

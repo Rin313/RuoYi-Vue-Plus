@@ -21,11 +21,10 @@ public class ValidatorUtils {
      * 对给定对象进行参数校验，并根据指定的校验组进行校验
      *
      * @param object 要进行校验的对象
-     * @param groups 校验组
      * @throws ConstraintViolationException 如果校验不通过，则抛出参数校验异常
      */
-    public static <T> void validate(T object, Class<?>... groups) {
-        Set<ConstraintViolation<T>> validate = VALID.validate(object, groups);
+    public static <T> void validate(T object) {
+        Set<ConstraintViolation<T>> validate = VALID.validate(object);
         if (!validate.isEmpty()) {
             throw new ConstraintViolationException("参数校验异常", validate);
         }

@@ -238,3 +238,5 @@ justauth:
       client-id: 10**********6
       client-secret: 1f7d08**********5b7**********29e
       redirect-uri: ${justauth.address}/social-callback?source=gitea
+file:
+    base-path: /var/www/upload   # 需要创建+nginx挂载

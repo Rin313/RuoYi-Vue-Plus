@@ -3,6 +3,9 @@ package org.dromara.system.controller.system;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -73,7 +76,7 @@ public class SysNoticeController {
     @SaCheckPermission("system:notice:remove")
     @Log(title = "通知公告", businessType = BizType.DELETE)
     @PostMapping("/{ids}")
-    public void delete(@PathVariable Long[] ids) {
+    public void delete(@PathVariable List<Long> ids) {
         noticeService.deleteNoticeByIds(ids);
     }
 }

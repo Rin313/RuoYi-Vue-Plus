@@ -35,9 +35,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import java.util.List;
 import java.util.Map;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 
 
@@ -225,8 +222,8 @@ public class SysUserController {
     @SaCheckPermission("system:user:remove")
     @Log(title = "用户管理", businessType = BizType.DELETE)
     @PostMapping("/{userIds}")
-    public void delete(@PathVariable Long[] userIds) {
-        if (ArrayUtil.contains(userIds, LoginHelper.getUserId())) {
+    public void delete(@PathVariable List<Long> userIds) {
+        if (userIds.contains(LoginHelper.getUserId())) {
             throw new BizException("当前用户不能删除");
         }
         userService.deleteUserByIds(userIds);

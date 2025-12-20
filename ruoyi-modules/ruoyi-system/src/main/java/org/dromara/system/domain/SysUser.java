@@ -13,7 +13,7 @@ import java.util.Map;
 @Data
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
-@TableName(value="sys_user",autoResultMap=true)
+@TableName(autoResultMap=true)
 public class SysUser extends BaseEntity {
 
     @TableId(value = "user_id")

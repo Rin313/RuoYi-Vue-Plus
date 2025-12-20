@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.validation.annotation.Validated;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.ActionVo;
@@ -38,7 +37,6 @@ public class ActionController {
 
     @SaCheckPermission("system:chapter:add")
     @Log(businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping("/insert")
     public void add(@Validated @RequestBody ActionInsertBo bo) {
         actionService.insertByBo(bo);
@@ -46,7 +44,6 @@ public class ActionController {
 
     @SaCheckPermission("system:chapter:edit")
     @Log(businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody ActionUpdateBo bo) {
         actionService.updateByBo(bo);
@@ -56,7 +53,7 @@ public class ActionController {
     @Log(businessType = BizType.DELETE)
     @PostMapping("/{ids}")
     public void delete(@NotEmpty(message = "主键不能为空")
-                          @PathVariable Long[] ids) {
-        actionService.deleteByIds(List.of(ids));
+                          @PathVariable List<Long> ids) {
+        actionService.deleteByIds(ids);
     }
 }

@@ -100,7 +100,7 @@ public class SysMenuController {
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BizType.INSERT)
-    @PostMapping
+    @PostMapping("/insert")
     public void add(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {
         //     return R.fail("新增菜单'" + menu.getMenuName() + "'失败，菜单名称已存在");
@@ -167,12 +167,11 @@ public class SysMenuController {
     @SaCheckPermission("system:menu:remove")
     @Log(title = "菜单管理", businessType = BizType.DELETE)
     @PostMapping("/cascade/{menuIds}")
-    public void delete(@PathVariable("menuIds") Long[] menuIds) {
-        List<Long> menuIdList = List.of(menuIds);
-        if (menuService.hasChildByMenuId(menuIdList)) {
+    public void delete(@PathVariable("menuIds") List<Long> menuIds) {
+        if (menuService.hasChildByMenuId(menuIds)) {
             throw new BizException("存在子菜单,不允许删除");
         }
-        menuService.deleteMenuById(menuIdList);
+        menuService.deleteMenuById(menuIds);
     }
 
 }

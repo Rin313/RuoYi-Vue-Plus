@@ -5,6 +5,7 @@ import com.google.genai.Client;
 import com.google.genai.ResponseStream;
 import com.google.genai.types.*;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.dromara.common.core.config.GeminiProperties;
 import org.dromara.system.domain.ChatMessage;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class GeminiService {
@@ -45,7 +47,7 @@ public class GeminiService {
     public String generateStructuredData(String systemPrompt, 
                                          String userMessage, 
                                          Map<String, Object> jsonSchema) {
-        // 1. 构建 Prompt (通常分析任务不需要太长的历史对话，主要是基于前文摘要+当前章节内容)
+        // 1. 构建 Prompt
         List<Content> contents = buildChatContents(null, userMessage);
         // 2. 构建配置，开启 JSON 模式
         GenerateContentConfig config = GenerateContentConfig.builder()
@@ -54,6 +56,7 @@ public class GeminiService {
                 .responseJsonSchema(jsonSchema)
                 .candidateCount(1)
                 .temperature(0.2f) // 分析任务降低随机性
+                .maxOutputTokens(1024)
                 .build();
         try {
             GenerateContentResponse response = client.models.generateContent(
@@ -84,10 +87,12 @@ public class GeminiService {
                                GenerationOptions options,
                                Consumer<String> onChunk, 
                                Runnable onComplete, 
-                               Consumer<Throwable> onError) {
-        
+                               Consumer<Throwable> onError) {  
+        log.info(userMessage);
+        log.info(systemPrompt);
         // 构建完整的上下文内容 (History + Current Message)
         List<Content> contents = buildChatContents(history, userMessage);
+        
         
         // 构建配置 (合并 系统提示词 + 默认配置 + 前端动态参数)
         GenerateContentConfig config = createConfig(systemPrompt, options);
@@ -138,12 +143,11 @@ public class GeminiService {
                 ? options.getMaxOutputTokens()
                 : properties.getMaxOutputTokens();
         
-        // 思考模式配置
         ThinkingConfig thinkingConfig = NO_THINKING_CONFIG;
-        if (options != null && Boolean.TRUE.equals(options.getEnableThinking())) {
+        //if (options != null && Boolean.TRUE.equals(options.getEnableThinking())) {
              // 这里可以根据需求开启 thinking，目前保持默认关闭
              // thinkingConfig = ThinkingConfig.builder().thinkingBudget(1024).build(); 
-        }
+        //}
 
         return GenerateContentConfig.builder()
                 .systemInstruction(systemInstruction)

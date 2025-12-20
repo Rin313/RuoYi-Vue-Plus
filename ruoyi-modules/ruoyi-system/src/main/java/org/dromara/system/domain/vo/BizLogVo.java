@@ -28,7 +28,6 @@ public class BizLogVo implements Serializable {
     /**
      * [{"asset_name","amount","before","after"},]
      */
-    @TableField(typeHandler = JacksonTypeHandler.class)
     private List<Map<String,Object>> assetLog;
     private String bizType;
     private Long createBy;

@@ -112,8 +112,8 @@ public class SysRoleController {
     @SaCheckPermission("system:role:remove")
     @Log(title = "角色管理", businessType = BizType.DELETE)
     @PostMapping("/{roleIds}")
-    public void delete(@PathVariable Long[] roleIds) {
-        roleService.deleteRoleByIds(List.of(roleIds));
+    public void delete(@PathVariable List<Long> roleIds) {
+        roleService.deleteRoleByIds(roleIds);
     }
 
     /**
@@ -123,8 +123,8 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:query")
     @GetMapping("/optionselect")
-    public List<SysRoleVo> optionselect(@RequestParam(required = false) Long[] roleIds) {
-        return roleService.selectRoleByIds(roleIds == null ? null : List.of(roleIds));
+    public List<SysRoleVo> optionselect(@RequestParam(required = false) List<Long> roleIds) {
+        return roleService.selectRoleByIds(roleIds == null ? null : roleIds);
     }
 
     /**
@@ -164,7 +164,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
     @PostMapping("/authUser/cancelAll")
-    public void cancelAuthUserAll(Long roleId, Long[] userIds) {
+    public void cancelAuthUserAll(Long roleId, List<Long> userIds) {
         roleService.deleteAuthUsers(roleId, userIds);
     }
 
@@ -177,7 +177,7 @@ public class SysRoleController {
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
     @PostMapping("/authUser/selectAll")
-    public void selectAuthUserAll(Long roleId, Long[] userIds) {
+    public void selectAuthUserAll(Long roleId, List<Long> userIds) {
         roleService.insertAuthUsers(roleId, userIds);
     }
 
