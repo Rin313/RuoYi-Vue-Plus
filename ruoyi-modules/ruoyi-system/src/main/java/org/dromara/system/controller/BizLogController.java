@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.validation.annotation.Validated;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.BizLogVo;
@@ -34,7 +33,6 @@ public class BizLogController {
     }
     // @SaCheckPermission("system:chapter:add")
     // @Log(title = "小说章节", businessType = BizType.INSERT)
-    // @RepeatSubmit()
     // @PostMapping()
     // public void add(@Validated @RequestBody ChapterInsertBo bo) {
     //     chapterService.insertByBo(bo);

@@ -6,9 +6,9 @@ import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 
-import cn.hutool.core.util.ReUtil;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
@@ -21,9 +21,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.dromara.system.domain.bo.NovelQueryBo;
-import org.dromara.system.domain.bo.NovelUpdateBo;
-import org.dromara.system.domain.bo.NovelVisitorQueryBo;
 import org.dromara.system.domain.vo.NovelVisitorVo;
 import org.dromara.system.domain.vo.NovelVo;
 import org.dromara.system.domain.Chapter;
@@ -37,6 +34,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -44,24 +42,45 @@ import java.util.Collection;
 @RequiredArgsConstructor
 @Service
 public class NovelService {
-    private final NovelMapper baseMapper;
     @Data
     @AutoMapper(target = Novel.class, reverseConvertGenerate = false)
     public static class NovelInsertBo {
         @NotBlank(message = "标题不能为空")
         private String title;
         private String author;
-
+        private String intro;
+        private String category;
         /**
          * 封面
          */
         private String url;
-        private String intro;
-        private String category;
         /**
          * 0-正常 1-停用
          */
         private String status;
+    }
+    @Data
+    @AutoMapper(target = Novel.class, reverseConvertGenerate = false)
+    public static class NovelUpdateBo {
+        @NotNull(message = "主键ID不能为空")
+        private Long id;
+        @NotBlank(message = "标题不能为空")
+        private String title;
+        private String author;
+        private String url;
+        private String intro;
+        private String category;
+        private String status;
+    }
+    @Data
+    public static class NovelQueryBo {
+        private String title;
+        private String author;
+        private String intro;
+        private String category;
+        private String status;
+        private LocalDateTime beginTime;
+        private LocalDateTime endTime;
     }
     @Transactional(rollbackFor = Exception.class)
     public void importNovel(MultipartFile img, NovelInsertBo tNovelSubmitBo) {
@@ -69,10 +88,12 @@ public class NovelService {
         baseMapper.insert(novel);
         //if (ObjectUtils.isNotEmpty(img)) {
             // String originalFilename = file.getOriginalFilename();
-            // if (originalFilename == null || !originalFilename.toLowerCase().endsWith(".txt"))
-            //     throw new BizException("仅支持txt格式文件");
             //Long novelId = novel.getId();
         //}
+    }
+    private final NovelMapper baseMapper;
+    public void updateByBo(NovelUpdateBo bo) {
+        baseMapper.updateById(MapstructUtils.convert(bo, Novel.class));
     }
     public NovelVo selectById(Long id){
         return baseMapper.selectVoById(id);
@@ -88,7 +109,7 @@ public class NovelService {
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), Novel::getCreateTime,bo.getEndTime());
         return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
-    public IPage<NovelVisitorVo> selectPageForVisitor(NovelVisitorQueryBo bo, PageQuery pageQuery) {
+    public IPage<NovelVisitorVo> selectPageForVisitor(NovelQueryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Novel> lqw = Wrappers.lambdaQuery();
         lqw.like(StringUtils.isNotBlank(bo.getTitle()), Novel::getTitle, bo.getTitle());
         lqw.like(StringUtils.isNotBlank(bo.getAuthor()), Novel::getAuthor, bo.getAuthor());
@@ -98,10 +119,6 @@ public class NovelService {
         lqw.ge(ObjectUtils.isNotEmpty(bo.getBeginTime()), Novel::getCreateTime,bo.getBeginTime());
         lqw.le(ObjectUtils.isNotEmpty(bo.getEndTime()), Novel::getCreateTime,bo.getEndTime());
         return baseMapper.selectVoPage(pageQuery.build(), lqw , NovelVisitorVo.class);
-    }
-
-    public void updateByBo(NovelUpdateBo bo) {
-        baseMapper.updateById(MapstructUtils.convert(bo, Novel.class));
     }
     public void deleteByIds(Collection<Long> ids) {
         baseMapper.deleteByIds(ids);

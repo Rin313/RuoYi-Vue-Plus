@@ -7,7 +7,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.constant.CacheConstants;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -55,7 +54,6 @@ public class SysLogininforController {
 
     @SaCheckPermission("monitor:logininfor:unlock")
     @Log(title = "账户解锁", businessType = BizType.OTHER)
-    @RepeatSubmit()
     @GetMapping("/unlock/{userName}")
     public void unlock(@PathVariable String userName) {
         String loginName = CacheConstants.PWD_ERR_CNT_KEY + userName;

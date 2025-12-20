@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.dromara.common.core.BizException;
 import org.dromara.common.core.constant.SystemConstants;
 import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -101,7 +100,6 @@ public class SysMenuController {
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:add")
     @Log(title = "菜单管理", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {
@@ -119,7 +117,6 @@ public class SysMenuController {
     @SaCheckRole(SystemConstants.SUPER_ADMIN_ROLE_KEY)
     @SaCheckPermission("system:menu:edit")
     @Log(title = "菜单管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysMenuBo menu) {
         // if (!menuService.checkMenuNameUnique(menu)) {

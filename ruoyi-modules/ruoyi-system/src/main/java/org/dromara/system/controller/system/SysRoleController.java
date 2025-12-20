@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.dromara.common.core.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -74,7 +73,6 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:add")
     @Log(title = "角色管理", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping("/insert")
     public void add(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
@@ -92,7 +90,6 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysRoleBo role) {
         roleService.checkRoleAllowed(role);
@@ -153,7 +150,6 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
-    @RepeatSubmit()
     @PostMapping("/authUser/cancel")
     public void cancelAuthUser(@RequestBody SysUserRole userRole) {
         roleService.deleteAuthUser(userRole);
@@ -167,7 +163,6 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
-    @RepeatSubmit()
     @PostMapping("/authUser/cancelAll")
     public void cancelAuthUserAll(Long roleId, Long[] userIds) {
         roleService.deleteAuthUsers(roleId, userIds);
@@ -181,7 +176,6 @@ public class SysRoleController {
      */
     @SaCheckPermission("system:role:edit")
     @Log(title = "角色管理", businessType = BizType.GRANT)
-    @RepeatSubmit()
     @PostMapping("/authUser/selectAll")
     public void selectAuthUserAll(Long roleId, Long[] userIds) {
         roleService.insertAuthUsers(roleId, userIds);

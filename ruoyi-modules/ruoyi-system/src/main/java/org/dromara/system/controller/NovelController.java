@@ -14,14 +14,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.NovelVisitorVo;
 import org.dromara.system.domain.vo.NovelVo;
-import org.dromara.system.domain.bo.NovelQueryBo;
-import org.dromara.system.domain.bo.NovelUpdateBo;
-import org.dromara.system.domain.bo.NovelVisitorQueryBo;
 import org.dromara.system.service.NovelService;
 import org.springdoc.core.annotations.ParameterObject;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -33,27 +29,14 @@ import org.dromara.common.ratelimiter.enums.LimitType;
 @RestController
 @RequestMapping("/novel")
 public class NovelController {
-
     private final NovelService novelService;
-    
-    /**
-     * 上传小说
-     *
-     * @param file
-     * @param tNovelSubmitBo 附加信息
-     */
     @SaCheckPermission("novel:add")
     @Log(title = "小说", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public void importNovel(@RequestPart(required=false) MultipartFile img,
                              @Validated @ParameterObject @ModelAttribute NovelService.NovelInsertBo tNovelSubmitBo) {
         novelService.importNovel(img, tNovelSubmitBo);
     }
-    /**
-     * 增加小说浏览量
-     * @param id 小说ID
-     */
     @SaIgnore
     @RateLimiter(time = 300, count = 1, limitType = LimitType.IP)
     @PostMapping("/view/{id}")
@@ -63,12 +46,12 @@ public class NovelController {
 
     @SaCheckPermission("novel:list")
     @GetMapping("/list")
-    public IPage<NovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
+    public IPage<NovelVo> list(NovelService.NovelQueryBo bo, PageQuery pageQuery) {
         return novelService.selectPage(bo, pageQuery);
     }
     @SaIgnore
     @GetMapping("/list/visitor")
-    public IPage<NovelVisitorVo> listForVisitor(NovelVisitorQueryBo bo, PageQuery pageQuery) {
+    public IPage<NovelVisitorVo> listForVisitor(NovelService.NovelQueryBo bo, PageQuery pageQuery) {
         return novelService.selectPageForVisitor(bo, pageQuery);
     }
 
@@ -79,17 +62,10 @@ public class NovelController {
     }
     @SaCheckPermission("novel:edit")
     @Log(title = "小说", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("update")
-    public void update(@Validated @RequestBody NovelUpdateBo bo) {
+    public void update(@Validated @RequestBody NovelService.NovelUpdateBo bo) {
         novelService.updateByBo(bo);
     }
-
-    /**
-     * 删除小说
-     *
-     * @param ids 主键串
-     */
     @SaCheckPermission("novel:remove")
     @Log(title = "小说", businessType = BizType.DELETE)
     @PostMapping("/{ids}")

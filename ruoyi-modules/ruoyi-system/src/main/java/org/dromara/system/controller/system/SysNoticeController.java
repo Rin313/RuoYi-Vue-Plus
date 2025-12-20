@@ -3,7 +3,6 @@ package org.dromara.system.controller.system;
 import cn.dev33.satoken.annotation.SaCheckPermission;
 import cn.dev33.satoken.annotation.SaIgnore;
 import lombok.RequiredArgsConstructor;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -51,7 +50,6 @@ public class SysNoticeController {
      */
     @SaCheckPermission("system:notice:add")
     @Log(title = "通知公告", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping("insert")
     public void add(@Validated @RequestBody SysNoticeBo notice) {
         notice.setNoticeType("2");
@@ -63,7 +61,6 @@ public class SysNoticeController {
      */
     @SaCheckPermission("system:notice:edit")
     @Log(title = "通知公告", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("update")
     public void update(@Validated @RequestBody SysNoticeBo notice) {
         noticeService.updateNotice(notice);

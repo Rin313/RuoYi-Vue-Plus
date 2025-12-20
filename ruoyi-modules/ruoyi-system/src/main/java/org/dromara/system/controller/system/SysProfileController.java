@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.BizException;
 import org.dromara.common.core.utils.StringUtils;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -37,7 +36,6 @@ public class SysProfileController {
     /**
      * 修改用户信息
      */
-    @RepeatSubmit
     @Log(title = "个人信息", businessType = BizType.UPDATE)
     @PostMapping("/update")
     public void updateProfile(@Validated @RequestBody SysUserProfileBo profile) {
@@ -58,7 +56,6 @@ public class SysProfileController {
      *
      * @param bo 新旧密码
      */
-    @RepeatSubmit
     @Log(title = "个人信息", businessType = BizType.UPDATE)
     @PostMapping("/updatePwd")
     public void updatePwd(@Validated @RequestBody SysUserPasswordBo bo) {
@@ -78,7 +75,6 @@ public class SysProfileController {
     //  *
     //  * @param avatarfile 用户头像
     //  */
-    // @RepeatSubmit
     // @Log(title = "用户头像", businessType = BizType.UPDATE)
     // @PostMapping(value = "/avatar", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     // public AvatarVo avatar(@RequestPart("avatarfile") MultipartFile avatarfile) {

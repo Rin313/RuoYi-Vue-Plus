@@ -14,7 +14,6 @@ import org.dromara.common.core.utils.StreamUtils;
 import org.dromara.common.core.utils.StringUtils;
 import org.dromara.common.excel.core.ExcelResult;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -187,7 +186,6 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:add")
     @Log(title = "用户管理", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysUserBo user) {
         if (!userService.checkUserNameUnique(user)) {
@@ -207,7 +205,6 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
@@ -240,7 +237,6 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:resetPwd")
     @Log(title = "用户管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/resetPwd")
     public void resetPwd(@RequestBody SysUserBo user) {
         userService.checkUserAllowed(user.getUserId());
@@ -272,7 +268,6 @@ public class SysUserController {
      */
     @SaCheckPermission("system:user:edit")
     @Log(title = "用户管理", businessType = BizType.GRANT)
-    @RepeatSubmit()
     @PostMapping("/authRole")
     public void insertAuthRole(Long userId, List<Long> roleIds) {
         userService.insertUserAuth(userId, roleIds);

@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.dromara.common.core.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -71,7 +70,6 @@ public class SysDictTypeController {
      */
     @SaCheckPermission("system:dict:add")
     @Log(title = "字典类型", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping
     public void add(@Validated @RequestBody SysDictTypeBo dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {
@@ -85,7 +83,6 @@ public class SysDictTypeController {
      */
     @SaCheckPermission("system:dict:edit")
     @Log(title = "字典类型", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysDictTypeBo dict) {
         if (!dictTypeService.checkDictTypeUnique(dict)) {

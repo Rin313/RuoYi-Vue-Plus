@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 
 import org.dromara.common.core.BizException;
 import org.dromara.common.excel.utils.ExcelUtil;
-import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.common.mybatis.core.domain.PageQuery;
@@ -69,7 +68,6 @@ public class SysConfigController {
      */
     @SaCheckPermission("system:config:add")
     @Log(title = "参数管理", businessType = BizType.INSERT)
-    @RepeatSubmit()
     @PostMapping("/insert")
     public void add(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
@@ -83,7 +81,6 @@ public class SysConfigController {
      */
     @SaCheckPermission("system:config:edit")
     @Log(title = "参数管理", businessType = BizType.UPDATE)
-    @RepeatSubmit()
     @PostMapping("/update")
     public void update(@Validated @RequestBody SysConfigBo config) {
         if (!configService.checkConfigKeyUnique(config)) {
