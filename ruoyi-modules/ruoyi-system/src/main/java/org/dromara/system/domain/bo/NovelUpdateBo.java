@@ -1,7 +1,5 @@
 package org.dromara.system.domain.bo;
 
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.system.domain.Novel;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
@@ -15,12 +13,12 @@ import lombok.Data;
 @Data
 @AutoMapper(target = Novel.class, reverseConvertGenerate = false)
 public class NovelUpdateBo {
-    @NotNull(message = "主键ID不能为空", groups = { EditGroup.class })
+    @NotNull(message = "主键ID不能为空")
     private Long id;
     /**
      * 标题
      */
-    @NotBlank(message = "标题不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "标题不能为空")
     private String title;
     /**
      * 作者名称

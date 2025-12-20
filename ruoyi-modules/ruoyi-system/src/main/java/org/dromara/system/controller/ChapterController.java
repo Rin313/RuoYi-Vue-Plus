@@ -12,8 +12,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.ChapterListVo;
 import org.dromara.system.domain.vo.ChapterVo;
@@ -47,7 +45,7 @@ public class ChapterController {
     @Log(title = "小说章节", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping("/insert")
-    public void add(@Validated(AddGroup.class) @RequestBody ChapterInsertBo bo) {
+    public void add(@Validated @RequestBody ChapterInsertBo bo) {
         chapterService.insertByBo(bo);
     }
 
@@ -55,7 +53,7 @@ public class ChapterController {
     @Log(title = "小说章节", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PostMapping("/update")
-    public void update(@Validated(EditGroup.class) @RequestBody ChapterUpdateBo bo) {
+    public void update(@Validated @RequestBody ChapterUpdateBo bo) {
         chapterService.updateByBo(bo);
     }
 

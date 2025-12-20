@@ -1,7 +1,5 @@
 package org.dromara.system.domain.bo;
 
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.system.domain.Novel;
 import io.github.linpeilie.annotations.AutoMapper;
 import jakarta.validation.constraints.NotBlank;
@@ -17,7 +15,7 @@ public class NovelInsertBo {
     /**
      * 标题
      */
-    @NotBlank(message = "标题不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "标题不能为空")
     private String title;
 
     /**

@@ -6,8 +6,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.mybatis.core.domain.BaseEntity;
 import org.dromara.system.domain.SysSocial;
 
@@ -24,25 +22,25 @@ public class SysSocialBo extends BaseEntity {
     /**
      * 主键
      */
-    @NotNull(message = "主键不能为空", groups = { EditGroup.class })
+    //@NotNull(message = "主键不能为空")
     private Long id;
 
     /**
      * 认证唯一ID
      */
-    @NotBlank(message = "认证唯一ID不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "认证唯一ID不能为空")
     private String authId;
 
     /**
      * 用户来源
      */
-    @NotBlank(message = "用户来源不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "用户来源不能为空")
     private String source;
 
     /**
      * 用户的授权令牌
      */
-    @NotBlank(message = "用户的授权令牌不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "用户的授权令牌不能为空")
     private String accessToken;
 
     /**
@@ -63,7 +61,7 @@ public class SysSocialBo extends BaseEntity {
     /**
      * 用户的 ID
      */
-    @NotBlank(message = "用户的ID不能为空", groups = { AddGroup.class, EditGroup.class })
+    @NotBlank(message = "用户的ID不能为空")
     private Long userId;
 
     /**

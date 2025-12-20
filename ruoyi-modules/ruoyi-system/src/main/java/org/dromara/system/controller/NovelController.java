@@ -16,12 +16,9 @@ import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.NovelVisitorVo;
 import org.dromara.system.domain.vo.NovelVo;
-import org.dromara.system.domain.bo.NovelInsertBo;
 import org.dromara.system.domain.bo.NovelQueryBo;
 import org.dromara.system.domain.bo.NovelUpdateBo;
 import org.dromara.system.domain.bo.NovelVisitorQueryBo;
@@ -34,7 +31,7 @@ import org.dromara.common.ratelimiter.enums.LimitType;
 @Validated
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/system/novel")
+@RequestMapping("/novel")
 public class NovelController {
 
     private final NovelService novelService;
@@ -45,13 +42,13 @@ public class NovelController {
      * @param file
      * @param tNovelSubmitBo 附加信息
      */
-    @SaCheckPermission("system:novel:add")
+    @SaCheckPermission("novel:add")
     @Log(title = "小说", businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping(value = "/import", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void importTxt(@RequestPart(required=false) MultipartFile file,
-                             @Validated(AddGroup.class) @ParameterObject @ModelAttribute NovelInsertBo tNovelSubmitBo) {
-        novelService.importTxtNovel(file, tNovelSubmitBo);
+    public void importNovel(@RequestPart(required=false) MultipartFile img,
+                             @Validated @ParameterObject @ModelAttribute NovelService.NovelInsertBo tNovelSubmitBo) {
+        novelService.importNovel(img, tNovelSubmitBo);
     }
     /**
      * 增加小说浏览量
@@ -64,7 +61,7 @@ public class NovelController {
         novelService.addViewCount(id);
     }
 
-    @SaCheckPermission("system:novel:list")
+    @SaCheckPermission("novel:list")
     @GetMapping("/list")
     public IPage<NovelVo> list(NovelQueryBo bo, PageQuery pageQuery) {
         return novelService.selectPage(bo, pageQuery);
@@ -75,16 +72,16 @@ public class NovelController {
         return novelService.selectPageForVisitor(bo, pageQuery);
     }
 
-    @SaCheckPermission("system:novel:query")
+    @SaCheckPermission("novel:query")
     @GetMapping("/{id}")
     public NovelVo getInfo(@NotNull(message = "主键不能为空") @PathVariable Long id) {
         return novelService.selectById(id);
     }
-    @SaCheckPermission("system:novel:edit")
+    @SaCheckPermission("novel:edit")
     @Log(title = "小说", businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PostMapping("update")
-    public void update(@Validated(EditGroup.class) @RequestBody NovelUpdateBo bo) {
+    public void update(@Validated @RequestBody NovelUpdateBo bo) {
         novelService.updateByBo(bo);
     }
 
@@ -93,7 +90,7 @@ public class NovelController {
      *
      * @param ids 主键串
      */
-    @SaCheckPermission("system:novel:remove")
+    @SaCheckPermission("novel:remove")
     @Log(title = "小说", businessType = BizType.DELETE)
     @PostMapping("/{ids}")
     public void delete(@NotEmpty(message = "主键不能为空")

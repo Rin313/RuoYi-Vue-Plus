@@ -74,7 +74,7 @@ public class PasswordAuthStrategy implements IAuthStrategy {
         else throw new BizException("用户不存在或密码错误");
         String inputValue=StringUtils.firstNonBlank(sysUser.getUserName(),sysUser.getEmail(),sysUser.getPhonenumber());
         LoginUser loginUser;
-        if(loginBody.getRegister()){
+        if(ObjectUtil.isNotNull(loginBody.getRegister())&&loginBody.getRegister()){
             if (!configService.selectRegisterEnabled())
                 throw new BizException("当前系统已关闭注册");
             if(ObjectUtil.isNotNull(userVo))

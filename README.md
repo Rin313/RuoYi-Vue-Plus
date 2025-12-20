@@ -3,7 +3,7 @@
 
 TODO
 - 移植xml
-- LONG类型我草泥马，怎么前端处理不了的
+- 使用json-with-bigint解决js的json处理，但在这之前必须重写出不依赖axios的管理端，同时保留axios和兼容request的话坑非常大
 
 
 model,output price,通用能力，指令遵从

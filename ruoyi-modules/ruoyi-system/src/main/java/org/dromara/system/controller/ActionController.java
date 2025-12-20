@@ -14,8 +14,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import org.springframework.validation.annotation.Validated;
 import org.dromara.common.idempotent.annotation.RepeatSubmit;
 import org.dromara.common.log.annotation.Log;
-import org.dromara.common.core.validate.AddGroup;
-import org.dromara.common.core.validate.EditGroup;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.vo.ActionVo;
 import org.dromara.system.domain.bo.ActionInsertBo;
@@ -42,7 +40,7 @@ public class ActionController {
     @Log(businessType = BizType.INSERT)
     @RepeatSubmit()
     @PostMapping("/insert")
-    public void add(@Validated(AddGroup.class) @RequestBody ActionInsertBo bo) {
+    public void add(@Validated @RequestBody ActionInsertBo bo) {
         actionService.insertByBo(bo);
     }
 
@@ -50,7 +48,7 @@ public class ActionController {
     @Log(businessType = BizType.UPDATE)
     @RepeatSubmit()
     @PostMapping("/update")
-    public void update(@Validated(EditGroup.class) @RequestBody ActionUpdateBo bo) {
+    public void update(@Validated @RequestBody ActionUpdateBo bo) {
         actionService.updateByBo(bo);
     }
 
