@@ -100,16 +100,20 @@ public class NovelService {
     private final NovelMapper baseMapper;
     @Transactional(rollbackFor = Exception.class)
     public void importNovel(MultipartFile img, NovelInsertBo bo) {
-        String url=FileUtils.save(img,5,FileUtils.WEB_IMAGE_EXTS,FileUtils.WEB_IMAGE_MIMES);
         Novel novel=MapstructUtils.convert(bo, Novel.class);
-        novel.setUrl(url);
+        if(img!=null&&!img.isEmpty()){
+            String url=FileUtils.save(img,5,FileUtils.WEB_IMAGE_EXTS,FileUtils.WEB_IMAGE_MIMES);
+            novel.setUrl(url);
+        }
         baseMapper.insert(novel);
     }
     @Transactional(rollbackFor = Exception.class)
     public void update(MultipartFile img,NovelUpdateBo bo) {
-        String url=FileUtils.save(img,5,FileUtils.WEB_IMAGE_EXTS,FileUtils.WEB_IMAGE_MIMES);
         Novel novel=MapstructUtils.convert(bo, Novel.class);
-        novel.setUrl(url);
+        if(img!=null&&!img.isEmpty()){
+            String url=FileUtils.save(img,5,FileUtils.WEB_IMAGE_EXTS,FileUtils.WEB_IMAGE_MIMES);
+            novel.setUrl(url);
+        }
         baseMapper.updateById(novel);
     }
     public Novel getById(Long id){

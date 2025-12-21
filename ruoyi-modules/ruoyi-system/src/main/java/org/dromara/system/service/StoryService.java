@@ -1,5 +1,6 @@
 package org.dromara.system.service;
 
+import org.apache.commons.lang3.ObjectUtils;
 import org.dromara.common.core.utils.MapstructUtils;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 import org.dromara.common.satoken.utils.LoginHelper;
@@ -15,15 +16,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.dromara.system.domain.Story;
+import org.dromara.system.domain.Novel;
 import org.dromara.system.domain.Novel.Character;
 import org.dromara.system.mapper.StoryMapper;
 import java.util.List;
+import java.util.ArrayList;
 import java.util.Collection;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class StoryService {
+    private final NovelService novelService;
     @Data
     @AutoMapper(target = Story.class, reverseConvertGenerate = false)
     public static class StoryInsertBo {
@@ -47,12 +51,27 @@ public class StoryService {
         private Long novelId;
     }
     private final StoryMapper baseMapper;
-    public void insert(StoryInsertBo bo) {
+    public Long insert(StoryInsertBo bo) {
+        Novel novel=novelService.getById(bo.novelId);
+        List<Character> characters=ObjectUtils.defaultIfNull(novel.getCharacters(), new ArrayList<>());
+        Character character=bo.getCharacter();
+        Boolean isPreset=false;
+        for(Character c:characters){
+            if(c.getName().equals(character.getName())){//&&c.getBaseDescription().equals(character.getBaseDescription())
+                c.setIsPlayer(true);
+                isPreset=true;
+                break;
+            }
+        }
+        if(!isPreset){
+            character.setIsPlayer(true);
+            characters.add(character);
+        }
         Story story=new Story();
         story.setNovelId(bo.getNovelId());
-        List<Character> characters=story.getCharacters();
-        characters.add(bo.getCharacter());
+        story.setCharacters(characters);
         baseMapper.insert(story);
+        return story.getId();
     }
     public void updateByBo(StoryUpdateBo bo) {
         baseMapper.updateById(MapstructUtils.convert(bo, Story.class));
@@ -64,7 +83,7 @@ public class StoryService {
         LambdaQueryWrapper<Story> lqw = Wrappers.lambdaQuery();
         lqw.eq(Story::getNovelId, bo.getNovelId());
         lqw.eq(Story::getCreateBy, LoginHelper.getUserId());
-        lqw.orderByAsc(Story::getUpdateTime);
+        lqw.orderByDesc(Story::getUpdateTime);
         return baseMapper.selectPage(pageQuery.build(), lqw);
     }
     public Story getById(Long id){

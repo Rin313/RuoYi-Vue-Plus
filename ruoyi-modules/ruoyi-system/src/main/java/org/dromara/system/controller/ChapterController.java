@@ -14,9 +14,9 @@ import org.dromara.common.log.annotation.Log;
 import org.dromara.common.log.enums.BizType;
 import org.dromara.system.domain.Chapter;
 import org.dromara.system.domain.bo.ChapterInsertBo;
-import org.dromara.system.domain.bo.ChapterQueryBo;
 import org.dromara.system.domain.bo.ChapterUpdateBo;
 import org.dromara.system.service.ChapterService;
+import org.dromara.system.service.ChapterService.ChapterQueryBo;
 import org.dromara.system.service.ChapterService.ChapterVo;
 import org.dromara.common.mybatis.core.domain.PageQuery;
 

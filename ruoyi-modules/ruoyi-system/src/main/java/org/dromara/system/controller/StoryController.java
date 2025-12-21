@@ -37,8 +37,8 @@ public class StoryController {
     @SaCheckPermission("system:story:add")
     @Log(title = "故事", businessType = BizType.INSERT)
     @PostMapping("/insert")
-    public void insert(@Validated @RequestBody StoryInsertBo bo) {
-        storyService.insert(bo);
+    public Long insert(@Validated @RequestBody StoryInsertBo bo) {
+        return storyService.insert(bo);
     }
     @SaCheckPermission("system:novel:edit")
     @Log(title = "小说", businessType = BizType.UPDATE)

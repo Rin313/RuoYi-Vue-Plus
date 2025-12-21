@@ -156,5 +156,3 @@ websocket:
   path: /resource/websocket
   # 设置访问源地址
   allowedOrigins: '*'
-gemini:
-  api-key: AIzaSyCWAu7hjRiH0FaS8IqusRYhNTUakdZJ2zU

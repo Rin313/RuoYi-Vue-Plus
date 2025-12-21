@@ -58,7 +58,7 @@ public class NovelController {
                           @PathVariable List<Long> ids) {
         novelService.deleteByIds(ids);
     }
-    @SaCheckPermission("system:novel:list")
+    @SaIgnore
     @GetMapping("/{id}")
     public Novel getInfo(@NotNull(message = "主键不能为空") @PathVariable Long id) {
         return novelService.getById(id);

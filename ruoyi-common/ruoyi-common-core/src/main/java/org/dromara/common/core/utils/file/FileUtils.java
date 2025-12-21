@@ -90,7 +90,8 @@ public class FileUtils {
     private static final Tika tika = new Tika();
     private static final String basePath=SpringUtils.getProperty("file.base-path");
     public static String save(MultipartFile file, Integer MB,Set<String> allowedExts,Set<String> allowedMimes) {
-        if (file == null || file.isEmpty()) return "";//throw new BizException("空文件");前端没法清空提交的临时补丁
+        if (file == null || file.isEmpty()) throw new BizException("空文件");//TODO：前端没法清空提交，没法在已经提交后修改
+        //直接抛异常，则不允许提交无封面文件；在外检查空或返回null，则无法进行删除；返回空字符串，则每次修改都会删除
         if (file.getSize() > MB*1024*1024l) throw new RuntimeException("上传文件大小不超过"+MB+"MB");
         String originalFilename = file.getOriginalFilename();
         String ext = FilenameUtils.getExtension(originalFilename).toLowerCase();

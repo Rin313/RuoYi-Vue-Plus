@@ -8,12 +8,12 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 
 import io.github.linpeilie.annotations.AutoMapper;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.dromara.system.domain.bo.ChapterInsertBo;
-import org.dromara.system.domain.bo.ChapterQueryBo;
 import org.dromara.system.domain.bo.ChapterUpdateBo;
 import org.dromara.system.domain.Chapter;
 import org.dromara.system.domain.ChatMessage;
@@ -38,10 +38,15 @@ public class ChapterService {
         private String title;
         private Long chapterIndex;
     }
+    @Data
+    public class ChapterQueryBo {
+        @NotNull(message = "关联小说ID不能为空")
+        private Long storyId;
+    }
     private final ChapterMapper baseMapper;
     public IPage<ChapterVo> selectPage(ChapterQueryBo bo, PageQuery pageQuery) {
         LambdaQueryWrapper<Chapter> lqw = Wrappers.lambdaQuery();
-        lqw.eq(bo.getNovelId() != null, Chapter::getStoryId, bo.getNovelId());
+        lqw.eq(Chapter::getStoryId, bo.getStoryId());
         lqw.orderByAsc(Chapter::getChapterIndex);
         return baseMapper.selectVoPage(pageQuery.build(), lqw);
     }
